@@ -1,0 +1,1 @@
+A simple rehearsal absence logger.
