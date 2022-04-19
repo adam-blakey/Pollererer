@@ -72,10 +72,22 @@
           memberCounter++;
           element.parentElement.parentElement.parentElement.parentElement.classList.add('attendance-changed-member');
         }
-          
-        document.getElementById('attendanceCounter').innerHTML = attendanceCounter;
-        document.getElementById('memberCounter').innerHTML     = memberCounter;
-        document.getElementById('updateAttendance').disabled   = false;
+
+        var attendanceCounters = document.getElementsByClassName('attendanceCounter');
+        for (var i=0; i<attendanceCounters.length; i++)
+        {
+          attendanceCounters[i].innerHTML = attendanceCounter;
+        }
+        var memberCounters = document.getElementsByClassName('memberCounter');
+        for (var i=0; i<memberCounters.length; i++)
+        {
+          memberCounters[i].innerHTML = memberCounter;
+        }
+        var updateAttendances = document.getElementsByClassName('updateAttendance');
+        for (var i=0; i<updateAttendances.length; i++)
+        {
+          updateAttendances[i].classList.remove("disabled");
+        }        
       }
 
       function updateAttendance()
@@ -110,8 +122,6 @@
           extracted_attendance_data.push(currentEntry);
         }
 
-        console.log(JSON.stringify(extracted_attendance_data));
-
         xhttp.send("attendance_data="+JSON.stringify(extracted_attendance_data));
         // xhttp.send(
         //   "session_id="    + document.getElementById("session_id").value +
@@ -120,7 +130,7 @@
         //   "&status="       + document.getElementById("status").value +
         //   "&redirect_url=" + document.getElementById("redirect_url").value
         // );
-        xhttp.onreadystatechange = function() {
+        xhttp.onload = function() {
           const JSON_response = JSON.parse(this.responseText);
 
           if (JSON_response.status == "success") {
@@ -270,49 +280,12 @@
                     <div class="table-responsive">
                       <form id="update_attendance">
                         <table id="attendance-table" class="table card-table table-vcenter text-nowrap datatable">
-                          <thead>
-                            <tr>
-                              <?php 
-                                $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
-                              ?>
-                              <th class="w-1">Members (by <?=$options[$attendance_select_sortby];?>)
-                                <?php
-                                  if ($attendance_select_direction == "DESC")
-                                  {
-                                    ?>
-                                    <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'ASC')));?>">
-                                      <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 15 12 9 18 15" /></svg>
-                                    </a>
-                                    <?php
-                                  }
-                                  else
-                                  {
-                                    ?>
-                                    <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'DESC')));?>">
-                                      <!-- Download SVG icon from http://tabler-icons.io/i/chevron-down -->
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                    </a>
-                                    <?php
-                                  }
-                                ?>
-                              </th>
-                              <?php
-                                foreach($term_dates as $term_date)
-                                {
-                                  $start = new DateTime();
-                                  $start->setTimestamp($term_date[0]);
-                                  $end = new DateTime();
-                                  $end->setTimestamp($term_date[1]);
-                                  ?>
-                                  <th class="text-center">
-                                    <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?>
-                                  </th>
-                                  <?php
-                                }
-                              ?>
-                            </tr>
-                          </thead>
+                          <div class="p-2 my-0 d-flex">
+                            <p class="ms-auto m-0 text-muted">
+                              <span style="padding-right: 10px;">You've changed <span class="memberCounter fw-bold">0</span> people's attendance over <span class="attendanceCounter fw-bold">0</span> dates.</span>
+                              <a class="updateAttendance btn btn-primary ms-auto disabled" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                            </p>
+                          </div>
                           <tbody id="move-to-top-location">
                           <?php
                           $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
@@ -365,9 +338,52 @@
                               {
                                 $sort_initial = $current_sort_initial;
                                 ?>
+                                  <thead>
+                                    <tr>
+                                      <?php 
+                                        $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                      ?>
+                                      <th class="sticky-top w-1">Members (by <?=$options[$attendance_select_sortby];?>)
+                                        <?php
+                                          if ($attendance_select_direction == "DESC")
+                                          {
+                                            ?>
+                                            <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'ASC')));?>">
+                                              <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 15 12 9 18 15" /></svg>
+                                            </a>
+                                            <?php
+                                          }
+                                          else
+                                          {
+                                            ?>
+                                            <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'DESC')));?>">
+                                              <!-- Download SVG icon from http://tabler-icons.io/i/chevron-down -->
+                                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </a>
+                                            <?php
+                                          }
+                                        ?>
+                                      </th>
+                                      <?php
+                                        foreach($term_dates as $term_date)
+                                        {
+                                          $start = new DateTime();
+                                          $start->setTimestamp($term_date[0]);
+                                          $end = new DateTime();
+                                          $end->setTimestamp($term_date[1]);
+                                          ?>
+                                          <th class="sticky-top text-center">
+                                            <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?>
+                                          </th>
+                                          <?php
+                                        }
+                                      ?>
+                                    </tr>
+                                  </thead>
                                   <tr>
                                     <td colspan="100%">
-                                      <div class="sticky-top" style="font-size: .75rem; padding: 0rem 0rem;"><?=$sort_initial;?></div>
+                                      <div class="" style="font-size: .75rem; padding: 0rem 0rem;"><?=$sort_initial;?></div>
                                     </td>
                                   </tr>
                                 <?php
@@ -378,7 +394,7 @@
                                     <div class="d-flex py-1 align-items-center">
                                       <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                       <div class="flex-fill">
-                                        <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> (<?=$member["instrument"];?>)</div>
+                                        <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
                                         <div class="text-muted">
                                           <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
@@ -424,11 +440,11 @@
 
                                       if ($attendance=="1")
                                       {
-                                        $term_date_counter[strval($term_date[1])]++;
+                                        $term_date_counter[strval($term_date[2])]++;
                                       }
                                       elseif ($attendance == NULL)
                                       {
-                                        $term_date_counter_intederminate[strval($term_date[1])]++; 
+                                        $term_date_counter_intederminate[strval($term_date[2])]++; 
                                       }
 
                                       ?>
@@ -457,7 +473,7 @@
                               foreach($term_dates as $term_date)
                               {
                                 ?>
-                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[1]])?$term_date_counter[$term_date[1]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[1]])?$term_date_counter_intederminate[$term_date[1]]:"0";?>)</td>
+                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
                                 <?php
                               }
                             ?>
@@ -468,7 +484,7 @@
                               foreach($term_dates as $term_date)
                               {
                                 ?>
-                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[1]])?$term_date_counter[$term_date[1]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[1]])?$term_date_counter_intederminate[$term_date[1]]:"0";?>)</td>
+                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
                                 <?php
                               }
                             ?>
@@ -480,9 +496,9 @@
 
                     <div class="card-footer d-flex">
                       <p class="ms-auto m-0 text-muted">
-                        <span>You've changed <span class="fw-bold" id="memberCounter">0</span> people's attendance over <span class="fw-bold" id="attendanceCounter">0</span> dates.</span>
-                        <button id="updateAttendance" class="btn btn-primary ms-auto" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result" disabled>Update</button>
-                    </p>
+                        <span style="padding-right: 10px;">You've changed <span class="memberCounter fw-bold">0</span> people's attendance over <span class="attendanceCounter fw-bold">0</span> dates.</span>
+                        <a class="updateAttendance btn btn-primary ms-auto disabled" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                      </p>
                     </div>
                   <?php
                   }
