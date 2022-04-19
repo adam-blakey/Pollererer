@@ -1,0 +1,529 @@
+<!doctype html>
+<!--
+* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
+* @version 1.0.0-beta5
+* @link https://tabler.io
+* Copyright 2018-2022 The Tabler Authors
+* Copyright 2018-2022 codecalm.net Paweł Kuna
+* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
+-->
+<?php
+  $attendance_select_sortby    = $_GET["sortby"];
+  $attendance_select_direction = $_GET["sortdir"];
+
+  if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument")))
+  {
+    $attendance_select_sortby = "last_name";
+  }
+
+  if (!in_array($attendance_select_direction, array("ASC", "DESC")))
+  {
+    $attendance_select_direction = "ASC";
+  }
+
+  $ensemble_ID = (isset($_GET["ensemble_ID"]))?intval($_GET["ensemble_ID"]):0;
+  $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
+?>
+
+<?php include_once("./includes/functions.php"); ?>
+<?php include("./includes/db_connect.php"); ?>
+<?php $db_connection = db_connect(); ?>
+
+<?php
+  $term_name = $db_connection->query("SELECT `name` FROM `terms` WHERE `ID`=".$term_ID." LIMIT 1")->fetch_all()[0][0];
+
+  $ensemble_name = $db_connection->query("SELECT `name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_all()[0][0];
+
+  if ($term_name == NULL)
+  {
+    $title = "Unknown term";
+  }
+  else if ($ensemble_name == NULL)
+  {
+    $title = "Unknown ensemble";
+  }
+  else
+  {
+    $title = $ensemble_name." Rehearsals: ".$term_name;
+  }
+
+  $term_date_counter = [];
+  $term_date_counter_intederminate = [];
+?>
+
+<html lang="en">
+  <head>
+    <?php include("./includes/head.php"); ?>
+    <title><?=$title;?></title>
+    <script type="text/javascript">
+      var attendanceCounter = 0;
+      var memberCounter     = 0;
+
+      function updateTotalChanged(element)
+      {
+        if (!element.classList.contains('attendance-changed'))
+        {
+          attendanceCounter++;
+          element.classList.add('attendance-changed');
+        }
+
+        if (!element.parentElement.parentElement.parentElement.parentElement.classList.contains('attendance-changed-member'))
+        {
+          memberCounter++;
+          element.parentElement.parentElement.parentElement.parentElement.classList.add('attendance-changed-member');
+        }
+          
+        document.getElementById('attendanceCounter').innerHTML = attendanceCounter;
+        document.getElementById('memberCounter').innerHTML     = memberCounter;
+        document.getElementById('updateAttendance').disabled   = false;
+      }
+
+      function updateAttendance()
+      {
+        document.getElementById("update-attendance-result-title").innerHTML = "Updating...";
+        document.getElementById("update-attendance-result-text").innerHTML = "Please wait.";
+        document.getElementById("update-attendance-result-icon").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>';
+        document.getElementById("update-attendance-result-button").innerHTML = "Loading...";
+        document.getElementById("update-attendance-result-button").classList.add("disabled");
+        document.getElementById("update-attendance-result-button").classList.remove("btn-danger");
+        document.getElementById("update-attendance-result-button").classList.remove("btn-success");
+        document.getElementById("update-attendance-result-button").classList.add("btn-primary");
+        document.getElementById("update-attendance-result-status").classList.remove("bg-danger");
+        document.getElementById("update-attendance-result-status").classList.remove("bg-success");
+        document.getElementById("update-attendance-result-status").classList.add("bg-primary");
+
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.open("POST", "./api/v1/update_attendance.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        var attendance_data = document.getElementsByClassName("attendance-changed");
+        var extracted_attendance_data = [];
+        for (let i=0; i<attendance_data.length; i++)
+        {
+          var data = attendance_data[i].name.split("-");
+          var currentEntry = {};
+          currentEntry["member_ID"] = data[2].substring(4);
+          currentEntry["term_dates_ID"] = data[3].substring(8);
+          currentEntry["ensemble_ID"] = data[1].substring(8);
+          currentEntry["status"] = attendance_data[i].checked;
+          extracted_attendance_data.push(currentEntry);
+        }
+
+        console.log(JSON.stringify(extracted_attendance_data));
+
+        xhttp.send("attendance_data="+JSON.stringify(extracted_attendance_data));
+        // xhttp.send(
+        //   "session_id="    + document.getElementById("session_id").value +
+        //   "&user_id="      + document.getElementById("user_id").value + 
+        //   "&shortname="    + document.getElementById("shortname").value +
+        //   "&status="       + document.getElementById("status").value +
+        //   "&redirect_url=" + document.getElementById("redirect_url").value
+        // );
+        xhttp.onreadystatechange = function() {
+          const JSON_response = JSON.parse(this.responseText);
+
+          if (JSON_response.status == "success") {
+            document.getElementById("update-attendance-result-title").innerHTML = "Success!";
+            document.getElementById("update-attendance-result-text").innerHTML = "You updated the attendance of " + memberCounter + " people over " + attendanceCounter + " dates.";
+            document.getElementById("update-attendance-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M9 12l2 2l4 -4" /></svg>';
+            document.getElementById("update-attendance-result-button").innerHTML = "Great!";
+            document.getElementById("update-attendance-result-button").classList.remove("disabled");
+            document.getElementById("update-attendance-result-button").classList.remove("btn-danger");
+            document.getElementById("update-attendance-result-button").classList.remove("btn-primary");
+            document.getElementById("update-attendance-result-button").classList.add("btn-success");
+            document.getElementById("update-attendance-result-status").classList.remove("bg-danger");
+            document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
+            document.getElementById("update-attendance-result-status").classList.add("bg-success");
+          }
+          else {
+            document.getElementById("update-attendance-result-title").innerHTML = "Oops! An error occured.";
+            document.getElementById("update-attendance-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-red icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+            document.getElementById("update-attendance-result-text").innerHTML = "Error message: " + JSON_response.error_message;
+            document.getElementById("update-attendance-result-button").innerHTML = "Understood.";
+            document.getElementById("update-attendance-result-button").classList.remove("disabled");
+            document.getElementById("update-attendance-result-button").classList.remove("btn-success");
+            document.getElementById("update-attendance-result-button").classList.remove("btn-primary");
+            document.getElementById("update-attendance-result-button").classList.add("btn-danger");
+            document.getElementById("update-attendance-result-status").classList.remove("bg-success");
+            document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
+            document.getElementById("update-attendance-result-status").classList.add("bg-danger");
+          }
+        }
+      }
+
+      function setIndeterminate()
+      {
+        var indeterminates = document.getElementsByClassName("indeterminate");
+
+        for (let i=0; i<indeterminates.length; i++)
+        {
+          indeterminates[i].indeterminate = true;
+        }
+      }
+
+      function moveToTop()
+      {
+        var rowToMove   = document.getElementById("move-to-top");
+        var rowToMoveTo = document.getElementById("move-to-top-location");
+        var table       = document.getElementById("attendance-table");
+
+        table.insertBefore(rowToMove, rowToMoveTo);
+      }
+
+      function pageLoaded()
+      {
+        setIndeterminate();
+        moveToTop();
+      }
+      //window.onload = pageLoaded();
+    </script>
+  </head>
+  <body onload="pageLoaded();">
+    <div class="wrapper">
+      <?php include("./includes/header.php"); ?>
+      <?php include("./includes/navigation.php"); ?>
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="container-xl">
+            <div class="row row-cards">              
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><?=$title;?></h3>
+                  </div>
+                  <?php 
+                  if ($ensemble_name == NULL)
+                  {
+                    ?>
+                      <div class="card-body">
+                        <p>The ensemble given with ID <?=$ensemble_ID;?> is unknown. Please double-check the URL!</p>
+                      </div>
+                    <?php
+                  }
+                  else if ($term_name == NULL)
+                  {
+                    ?>
+                      <div class="card-body">
+                        <p>The term given with ID <?=$term_ID;?> is unknown. Please double-check the URL!</p>
+                      </div>
+                    <?php
+                  }
+                  else
+                  {
+                  ?>
+                    <div class="card-body border-bottom py-3 col-form-label">
+                      <div class="ms-auto text-muted">
+                        <form method="get" action="" id="form-sort">
+                          <input type="hidden" name="theme" value="<?=$_GET['theme'];?>" form="form-sort" />
+                          <input type="hidden" name="ensemble_ID" value="<?=$_GET['ensemble_ID'];?>" form="form-sort" />
+                          <input type="hidden" name="term_ID" value="<?=$_GET['term_ID'];?>" form="form-sort" />
+                          <div class="ms-2 d-inline-block">
+                            <select class="form-select" name="sortby" form="form-sort">
+                              <?php
+                                $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+
+                                foreach ($options as $value => $option)
+                                {
+                                  $selected = ($attendance_select_sortby==$value)?"selected":"";
+                                  ?>
+                                    <option value="<?=$value;?>" <?=$selected;?>><?=$option;?></option>
+                                  <?php
+                                }
+                              ?>
+                            </select>
+                          </div>
+                          <div class="ms-2 d-inline-block">
+                            <select class="form-select" name="sortdir" form="form-sort">
+                              <?php
+                                $options = array("ASC" => "Ascending", "DESC" => "Descending");
+
+                                foreach ($options as $value => $option)
+                                {
+                                  $selected = ($attendance_select_direction==$value)?"selected":"";
+                                  ?>
+                                    <option value="<?=$value;?>" <?=$selected;?>><?=$option;?></option>
+                                  <?php
+                                }
+                              ?>
+                            </select>
+                          </div>
+                          <div class="ms-2 d-inline-block">
+                            <button type="submit" class="btn btn-primary ms-auto">Update sort</button>
+                          </div>
+                        </form>
+                      </div>
+                      <!-- <div class="ms-auto text-muted">
+                        Search:
+                        <div class="ms-2 d-inline-block">
+                          <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                        </div>
+                      </div> -->
+                    </div>
+
+                    <?php
+                      $term_dates = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID` FROM term_dates WHERE `term_ID`='".$term_ID."'")->fetch_all();
+
+                      $no_term_dates = count($term_dates);
+                    ?>
+
+                    <div class="table-responsive">
+                      <form id="update_attendance">
+                        <table id="attendance-table" class="table card-table table-vcenter text-nowrap datatable">
+                          <thead>
+                            <tr>
+                              <?php 
+                                $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                              ?>
+                              <th class="w-1">Members (by <?=$options[$attendance_select_sortby];?>)
+                                <?php
+                                  if ($attendance_select_direction == "DESC")
+                                  {
+                                    ?>
+                                    <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'ASC')));?>">
+                                      <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 15 12 9 18 15" /></svg>
+                                    </a>
+                                    <?php
+                                  }
+                                  else
+                                  {
+                                    ?>
+                                    <a href="?<?=http_build_query(array_merge($_GET, array('sortdir'=>'DESC')));?>">
+                                      <!-- Download SVG icon from http://tabler-icons.io/i/chevron-down -->
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </a>
+                                    <?php
+                                  }
+                                ?>
+                              </th>
+                              <?php
+                                foreach($term_dates as $term_date)
+                                {
+                                  $start = new DateTime();
+                                  $start->setTimestamp($term_date[0]);
+                                  $end = new DateTime();
+                                  $end->setTimestamp($term_date[1]);
+                                  ?>
+                                  <th class="text-center">
+                                    <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?>
+                                  </th>
+                                  <?php
+                                }
+                              ?>
+                            </tr>
+                          </thead>
+                          <tbody id="move-to-top-location">
+                          <?php
+                          $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
+
+                          if ($members->num_rows == 0)
+                          {
+                            ?> 
+                              <tr>
+                                <td width="99%">
+                                  No members to display.
+                                </td>
+                                <?php
+                                  foreach($term_dates as $term_date)
+                                  {
+                                    ?>
+                                    <td></td>
+                                    <?php
+                                  }
+                                ?>
+                              </tr>
+                            <?php
+                          }
+                          else
+                          {
+                            $sort_initial = '';
+
+                            while($member = $members->fetch_assoc())
+                            {
+                              switch ($attendance_select_sortby)
+                              {
+                                case 'first_name':
+                                  $current_sort_initial = substr($member["first_name"], 0, 1);
+                                  break;
+                                case 'last_name':
+                                  $current_sort_initial = substr($member["last_name"], 0, 1);
+                                  break;
+                                case 'datetime':
+                                  $current_sort_initial = '';
+                                  break;
+                                case 'instrument':
+                                  $current_sort_initial = $member["instrument"];
+                                  break;
+                                
+                                default:
+                                  $current_sort_initial = '';
+                                  break;
+                              }
+
+                              if ($current_sort_initial != $sort_initial)
+                              {
+                                $sort_initial = $current_sort_initial;
+                                ?>
+                                  <tr>
+                                    <td colspan="100%">
+                                      <div class="sticky-top" style="font-size: .75rem; padding: 0rem 0rem;"><?=$sort_initial;?></div>
+                                    </td>
+                                  </tr>
+                                <?php
+                              }
+                              ?>
+                                <tr>
+                                  <td width="99%">
+                                    <div class="d-flex py-1 align-items-center">
+                                      <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
+                                      <div class="flex-fill">
+                                        <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> (<?=$member["instrument"];?>)</div>
+                                        <div class="text-muted">
+                                          <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
+                                          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
+                                          <?php
+                                            $last_edited_query = $db_connection->query("SELECT `edit_datetime` FROM `attendance` LEFT JOIN `term_dates` ON `term_dates`.`ID`=`attendance`.`term_dates_ID` WHERE `attendance`.`member_ID`='".$member['ID']."' AND `attendance`.`ensemble_ID`=".$ensemble_ID." AND `term_dates`.`term_ID`='".$term_ID."' ORDER BY `edit_datetime` DESC LIMIT 1");
+
+                                            if ($last_edited_query->num_rows>0)
+                                            {
+                                              $last_edited = $last_edited_query->fetch_all()[0][0];
+                                            }
+                                            else
+                                            {
+                                              $last_edited = 0;
+                                            }
+                                          ?>
+                                          <?=findTimeAgo($last_edited)?>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <?php
+                                    foreach($term_dates as $term_date)
+                                    {
+                                      $attendance_query = $db_connection->query("SELECT `status` FROM `attendance` WHERE `member_ID`='".$member['ID']."' AND `ensemble_ID`='".$ensemble_ID."' AND `term_dates_ID`='".$term_date[2]."' ORDER BY `edit_datetime` DESC LIMIT 1");
+
+                                      if ($attendance_query->num_rows>0)
+                                      {
+                                        $attendance = $attendance_query->fetch_all()[0][0];
+                                      }
+                                      else
+                                      {
+                                        $attendance = NULL;
+                                      }
+
+                                      // if ($member["first_name"] == "Samantha")
+                                      // {
+                                      //   echo "SELECT `status` FROM `attendance` WHERE `member_ID`='".$member['ID']."' AND `ensemble_ID`='".$ensemble_ID."' AND `term_dates_ID`='".$term_date[1]."' ORDER BY `edit_datetime` DESC LIMIT 12";
+                                      // }
+
+                                      //($attendance==NULL)?$attendance="1":$attendance=$attendance;
+                                      ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
+                                      ($attendance=="1")?$checked="checked":$checked="";
+
+                                      if ($attendance=="1")
+                                      {
+                                        $term_date_counter[strval($term_date[1])]++;
+                                      }
+                                      elseif ($attendance == NULL)
+                                      {
+                                        $term_date_counter_intederminate[strval($term_date[1])]++; 
+                                      }
+
+                                      ?>
+                                        <td class="text-center">
+                                          <div class="col-auto">
+                                            <label class="form-colorcheckbox bigger" style="margin: 0px;">
+                                              <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> onchange="updateTotalChanged(this)" />
+                                              <span class="form-colorcheckbox-color bg-lime"></span>
+                                            </label>
+                                          </div>
+                                        </td>
+                                      <?php
+                                    }
+                                  ?>
+                                </tr>
+                              <?php
+                            }
+                          }
+                          // $attendance = $db_connection->query("SELECT `attendance`.`status`, `attendance`.`ID` FROM `attendance` INNER JOIN `term_dates` ON `attendance`.`term_dates_ID`=`term_dates`.`term_ID` WHERE `term_dates`.`term_ID`=1 GROUP BY `attendance`.`ID`");
+                            //$attendance = $db_connection->query("SELECT * FROM `attendance`");
+
+                          ?>
+                          <tr>
+                            <td></td>
+                            <?php
+                              foreach($term_dates as $term_date)
+                              {
+                                ?>
+                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[1]])?$term_date_counter[$term_date[1]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[1]])?$term_date_counter_intederminate[$term_date[1]]:"0";?>)</td>
+                                <?php
+                              }
+                            ?>
+                          </tr>
+                          <tr id="move-to-top">
+                            <td></td>
+                            <?php
+                              foreach($term_dates as $term_date)
+                              {
+                                ?>
+                                  <td class="text-center"><strong><?=isset($term_date_counter[$term_date[1]])?$term_date_counter[$term_date[1]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[1]])?$term_date_counter_intederminate[$term_date[1]]:"0";?>)</td>
+                                <?php
+                              }
+                            ?>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </form>
+                    </div>
+
+                    <div class="card-footer d-flex">
+                      <p class="ms-auto m-0 text-muted">
+                        <span>You've changed <span class="fw-bold" id="memberCounter">0</span> people's attendance over <span class="fw-bold" id="attendanceCounter">0</span> dates.</span>
+                        <button id="updateAttendance" class="btn btn-primary ms-auto" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result" disabled>Update</button>
+                    </p>
+                    </div>
+                  <?php
+                  }
+                  ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <?php include("./includes/footer.php"); ?>
+      </div>
+    </div>
+
+    <div class="modal modal-blur fade" id="update-attendance-result" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+          <div id="update-attendance-result-status" class="modal-status bg-success"></div>
+          <div class="modal-body text-center py-4">
+            <div id="update-attendance-result-icon">
+              Result icon
+            </div>
+            <h3 id="update-attendance-result-title">Result title</h3>
+            <div class="text-muted" id="update-attendance-result-text">Result text</div>
+          </div>
+          <div class="modal-footer">
+            <div class="w-100">
+              <div class="row">
+                <div class="col"><a id="update-attendance-result-button" href="#" class="btn btn-success disabled w-100" data-bs-dismiss="modal" onclick="javascript:window.location.reload()">
+                    Result button text
+                  </a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./dist/js/tabler.min.js"></script>
+    <script src="./dist/js/demo.min.js"></script>
+  </body>
+</html>
+
+<?php db_disconnect($db_connection); ?>
