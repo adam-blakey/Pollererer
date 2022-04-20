@@ -83,7 +83,7 @@
               <a href="#" class="dropdown-item">View notifications</a>
               <div class="dropdown-divider"></div>
               <a href="#" class="dropdown-item">Settings</a>
-              <a href="./logout.php" class="dropdown-item">Logout</a>
+              <a href="./logout.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="dropdown-item">Logout</a>
             </div>
           </div>
         <?php
@@ -91,7 +91,7 @@
         else
         {
         ?>
-            <a href="./login.php" class="nav-link d-flex lh-1 text-reset p-0" aria-label="Login">
+            <a href="./login.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="nav-link d-flex lh-1 text-reset p-0" aria-label="Login">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-login" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />

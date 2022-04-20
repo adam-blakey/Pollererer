@@ -93,6 +93,14 @@ function output_restricted_page()
 
 function do_logout()
 {
+  require_once("./includes/db_connect.php");
+
+  $db_connection = db_connect();
+
+  $logout_query = $db_connection->query("UPDATE `logins_sessions` SET `ended` = '1' WHERE `logins_sessions`.`ID` = '".$_COOKIE['session_ID']."';");
+
+  db_disconnect($db_connection);
+
   setcookie('session_ID', null, -1, '/');
 }
 
@@ -104,7 +112,7 @@ function login_valid()
 
   $db_connection = db_connect();
 
-  $session_query = $db_connection->query("SELECT `expiry` FROM `logins_sessions` WHERE `ID`='".$session_ID."' AND `expiry`>CURRENT_TIMESTAMP() ORDER BY `start` DESC LIMIT 1");
+  $session_query = $db_connection->query("SELECT `expiry` FROM `logins_sessions` WHERE `ID`='".$session_ID."' AND `expiry`>CURRENT_TIMESTAMP() AND `ended`='0' ORDER BY `start` DESC LIMIT 1");
 
   $expiry_date = new DateTime('now');
 
