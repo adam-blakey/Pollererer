@@ -78,6 +78,7 @@
     <html lang="en">
       <head>
         <?php include("./includes/head.php"); ?>
+        <meta name="robots" content="noindex,nofollow">
         <title><?=$title;?></title>
         <script type="text/javascript">
           var attendanceCounter = 0;
