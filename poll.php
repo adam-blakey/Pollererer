@@ -223,6 +223,16 @@
               <div class="container-xl">
                 <div class="row row-cards">              
                   <div class="col-12">
+                    <div class="card mb-3">
+                      <div class="card-header">
+                        <h3 class="card-title">GDPR warning</h3>
+                      </div>
+                      <div class="card-body border-bottom py-3">
+                        <p>Please be aware that anyone else in the group can see what you select in the options below.</p>
+                        <p>If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
+                      </div>
+                    </div>
+
                     <div class="card">
                       <div class="card-header">
                         <h3 class="card-title"><?=$title;?></h3>
