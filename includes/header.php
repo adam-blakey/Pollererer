@@ -27,62 +27,126 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="4" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
       </a>
       <?php
-        if (login_restricted(1))
+        if (login_valid())
         {
           ?>
-          <div class="nav-item dropdown d-none d-md-flex me-3">
-            <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
-              <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-              <span class="badge bg-red"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end dropdown-menu-card">
-              <div class="list-group list-group-flush list-group-hoverable">
-                <div class="list-group-item">
-                  <div class="row align-items-center">
-                    <div class="col-auto"><span class="badge bg-red"></span></div>
-                    <div class="col-auto">
-                      <a href="#">
-                        <span class="avatar">AB</span>
-                      </a>
+
+          <?php
+            // ************************************** //
+            // HARD-CODED FOR GENERIC ENSEMBLE LOGINS //
+            // ************************************** //
+            $login_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `members`.`first_name`, `members`.`last_name` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
+
+            if ($login_query->num_rows == 0)
+            {
+              $icon_style = "";
+              $name       = "Unknown User";
+              $role       = "Unknown role";
+
+              $group_user = false;
+            }
+            else
+            {
+              $login_query_result = $login_query->fetch_assoc();
+
+              if ($login_query_result["member_ID"] == "-1")
+              {
+                $icon_style = "style=\"background-image: url('https://attendance.nsw.org.uk/dist/img/ensemble-logos/nswo/NSWO social icon (RGB)-16.jpg')\"";
+                $name       = "NSWO";
+                $role       = "NSWO User";
+
+                $group_user = true;
+              }
+              elseif ($login_query_result["member_ID"] == "-2")
+              {
+                $icon_style = "style=\"background-image: url('https://attendance.nsw.org.uk/dist/img/ensemble-logos/nwe/NWE social icon (RGB)-17.jpg')\"";
+                $name       = "NWE";
+                $role       = "NWE User"; 
+
+                $group_user = true;
+              }
+              else
+              {
+                $icon_style = "";
+                $name       = $login_query_result["first_name"]." ".$login_query_result["last_name"];;
+                $role       = "Unknown role";
+
+                $group_user = false;
+              }
+            }
+
+            // ************************************** //
+            // ************************************** //
+          ?>
+
+          <?php
+            if (!$group_user)
+            {
+              ?>
+              <div class="nav-item dropdown d-none d-md-flex me-3">
+                <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
+                  <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                  <span class="badge bg-red"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-card">
+                  <div class="list-group list-group-flush list-group-hoverable">
+                    <div class="list-group-item">
+                      <div class="row align-items-center">
+                        <div class="col-auto"><span class="badge bg-red"></span></div>
+                        <div class="col-auto">
+                          <a href="#">
+                            <span class="avatar">AB</span>
+                          </a>
+                        </div>
+                        <div class="col-auto">
+                          <a href="#" class="text-body d-block">Adam Blakey (NSWO, Clarinet)</a>
+                          <small class="text-wrap text-muted">Edited their attendance for 1st May to 'not attending'.</small>
+                          <small class="d-block text-muted mt-n1">8 minutes ago</small>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-auto">
-                      <a href="#" class="text-body d-block">Adam Blakey (NSWO, Clarinet)</a>
-                      <small class="text-wrap text-muted">Edited their attendance for 1st May to 'not attending'.</small>
-                      <small class="d-block text-muted mt-n1">8 minutes ago</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-group-item">
-                  <div class="row align-items-center">
-                    <div class="col-auto"><span class="badge bg-red"></span></div>
-                    <div class="col-auto">
-                      <a href="#">
-                        <span class="avatar">BL</span>
-                      </a>
-                    </div>
-                    <div class="col-auto">
-                      <a href="#" class="text-body d-block">Bridget Langham (NSWO, Saxophone)</a>
-                      <small class="text-wrap text-muted mt-n1">Edited their attendance for 1st May to 'attending'.</small>
-                      <small class="d-block text-muted mt-n1">13 minutes ago</small>
+                    <div class="list-group-item">
+                      <div class="row align-items-center">
+                        <div class="col-auto"><span class="badge bg-red"></span></div>
+                        <div class="col-auto">
+                          <a href="#">
+                            <span class="avatar">BL</span>
+                          </a>
+                        </div>
+                        <div class="col-auto">
+                          <a href="#" class="text-body d-block">Bridget Langham (NSWO, Saxophone)</a>
+                          <small class="text-wrap text-muted mt-n1">Edited their attendance for 1st May to 'attending'.</small>
+                          <small class="d-block text-muted mt-n1">13 minutes ago</small>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+              <?php
+            }
+          ?>
+
           <div class="nav-item dropdown">
             <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-              <span class="avatar avatar-sm">AB</span>
+              <span class="avatar avatar-sm" <?=$icon_style;?>></span>
               <div class="d-none d-xl-block ps-2">
-                <div>AB</div>
-                <div class="mt-1 small text-muted">Administrator</div>
+                <div><?=$name;?></div>
+                <div class="mt-1 small text-muted"><?=$role;?></div>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <a href="#" class="dropdown-item">View notifications</a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item">Settings</a>
+              <?php
+                if (!$group_user)
+                {
+                  ?>
+                    <a href="#" class="dropdown-item">View notifications</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Settings</a>
+                  <?php
+                }
+              ?>
               <a href="./logout.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="dropdown-item">Logout</a>
             </div>
           </div>

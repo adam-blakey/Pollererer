@@ -133,10 +133,25 @@ function login_restricted($user_level_required)
 
   $db_connection = db_connect();
 
-  //$db_connection->query("");
-  $current_user_level = 5;
+  if (isset($_COOKIE['session_ID']))
+  {
+    $login_query = $db_connection->query("SELECT `members`.`user_level` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
 
-  if (login_valid() && $current_user_level >= $user_level_required)
+    if ($login_query->num_rows == 0)
+    {
+      $current_user_level = 0;
+    }
+    else
+    {
+      $current_user_level = $login_query->fetch_assoc()["user_level"];
+    }
+  }
+  else
+  {
+    $current_user_level = 0;
+  }
+
+  if (login_valid() && $current_user_level == $user_level_required)
   {
     return true;
   }

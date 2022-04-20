@@ -119,8 +119,8 @@
               <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login to your account</h2>
                 <div class="mb-3">
-                  <label class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="emailField" placeholder="Enter email" tabindex="1">
+                  <label class="form-label">Username</label>
+                  <input type="text" class="form-control" id="emailField" placeholder="Enter username" tabindex="1">
                 </div>
                 <div class="mb-2">
                   <label class="form-label">
