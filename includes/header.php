@@ -2,11 +2,18 @@
 
 <header class="navbar navbar-expand-md navbar-light d-print-none">
   <div class="container-xl">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <?php
+      if (login_restricted(1))
+      {
+      ?>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      <?php
+      }
+    ?>
     <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-      <a href=".">
+      <a href="https://nsw.org.uk" target="_blank">
         <img src="./static/logo-horizontal.png" width="110" height="32" alt="Nottingham Symphonic Winds" class="navbar-brand-image">
       </a>
     </h1>

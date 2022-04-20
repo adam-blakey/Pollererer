@@ -18,7 +18,7 @@
 			$status        = ($data["status"])?1:0;
 
 			$edit_member_ID = 0;
-			$IP = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$IP = $_SERVER['REMOTE_ADDR'];
 
 			$insert_query = $db_connection->query("INSERT INTO `attendance` (`member_ID`, `edit_datetime`, `edit_member_ID`, `term_dates_ID`, `ensemble_ID`, `IP`, `status`) VALUES ('".$member_ID."', '".time()."', '".$edit_member_ID."', '".$term_dates_ID."', '".$ensemble_ID."', '".$IP."', '".$status."')");
 

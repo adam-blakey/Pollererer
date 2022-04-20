@@ -38,7 +38,7 @@
           </div>
         </form>
         <div class="text-center text-muted mt-3">
-          Forget it, <a href="./login.php">send me back</a> to the sign in screen.
+          Forget it, <a class="btn btn-link" onclick="history.back()">send me back</a> to the sign in screen.
         </div>
       </div>
     </div>
