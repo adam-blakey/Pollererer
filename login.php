@@ -144,6 +144,9 @@
                 <div class="form-footer">
                   <button type="button" id="do-login-button" onclick="doLogin()" class="btn btn-primary w-100" tabindex="4">Log in</button>
                 </div>
+                <div class="pb-2 pt-4 text-muted">
+                    By logging in, you allow us to store a cookie in your browser with a unique session ID; this session ID is linked to your IP address, and is used only to monitor compromised logins and rate limit repeated requests.
+                </div>
               </div>
             </form>
             <div class="d-flex py-1 align-items-center">
