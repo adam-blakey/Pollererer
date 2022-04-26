@@ -281,7 +281,7 @@
                               <div class="ms-2 d-inline-block">
                                 <select class="form-select" name="sortdir" form="form-sort">
                                   <?php
-                                    $options = array("ASC" => "Ascending", "DESC" => "Descending");
+                                    $options = array("ASC" => "Asc.", "DESC" => "Desc.");
 
                                     foreach ($options as $value => $option)
                                     {
@@ -294,7 +294,7 @@
                                 </select>
                               </div>
                               <div class="ms-2 d-inline-block">
-                                <button type="submit" class="btn btn-primary ms-auto">Update sort</button>
+                                <button type="submit" class="btn btn-primary ms-auto my-2">Update sort</button>
                               </div>
                             </form>
                           </div>
@@ -318,7 +318,8 @@
                               <div class="p-2 my-0 d-flex">
                                 <p class="ms-auto m-0 text-muted">
                                   <span style="padding-right: 10px;">You've changed <span class="memberCounter fw-bold">0</span> people's attendance over <span class="attendanceCounter fw-bold">0</span> dates.</span>
-                                  <a class="updateAttendance btn btn-primary ms-auto disabled" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                                  <a class="updateAttendance btn btn-primary ms-auto disabled my-2" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                                  <a class="btn my-2" onclick="location.reload()">Reset</a>
                                 </p>
                               </div>
                               <tbody id="move-to-top-location">
@@ -407,9 +408,14 @@
                                               $start->setTimestamp($term_date[0]);
                                               $end = new DateTime();
                                               $end->setTimestamp($term_date[1]);
+
+                                              ($term_date[1]<time())?$strike_through_start="<s>":$strike_through_start="";
+                                              ($term_date[1]<time())?$strike_through_end="</s>":$strike_through_end="";
                                               ?>
                                               <th class="sticky-top text-center">
+                                                <?=$strike_through_start;?>
                                                 <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?>
+                                                <?=$strike_through_end;?>
                                               </th>
                                               <?php
                                             }
@@ -472,6 +478,7 @@
                                           //($attendance==NULL)?$attendance="1":$attendance=$attendance;
                                           ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
                                           ($attendance=="1")?$checked="checked":$checked="";
+                                          ($term_date[1]<time())?$disabled="disabled":$disabled="";
 
                                           if ($attendance=="1")
                                           {
@@ -486,7 +493,7 @@
                                             <td class="text-center">
                                               <div class="col-auto">
                                                 <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                                                  <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> onchange="updateTotalChanged(this)" />
+                                                  <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
                                                   <span class="form-colorcheckbox-color bg-lime"></span>
                                                 </label>
                                               </div>
@@ -532,7 +539,8 @@
                         <div class="card-footer d-flex">
                           <p class="ms-auto m-0 text-muted">
                             <span style="padding-right: 10px;">You've changed <span class="memberCounter fw-bold">0</span> people's attendance over <span class="attendanceCounter fw-bold">0</span> dates.</span>
-                            <a class="updateAttendance btn btn-primary ms-auto disabled" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                            <a class="updateAttendance btn btn-primary ms-auto disabled my-2" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                            <a class="btn my-2" onclick="location.reload()">Reset</a>
                           </p>
                         </div>
                       <?php
