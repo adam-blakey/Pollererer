@@ -24,7 +24,7 @@
 			$select_result = $select_query->fetch_all()[0];
 			$db_password   = $select_result[0];
 			$ID            = $select_result[1];
-			$IP            = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$IP            = $_SERVER['REMOTE_ADDR'];
 
 			if(password_verify($password, $db_password))
 			{
