@@ -1,4 +1,4 @@
-<?php require_once("./includes/kernel.php"); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
 
 <?php
   $redirect_page = isset($_GET["redirect_page"])?urldecode($_GET["redirect_page"]):"/index.php";
@@ -53,7 +53,7 @@
     <!doctype html>
     <html lang="en">
       <head>
-        <?php include("./includes/head.php"); ?>
+        <?php include($_SERVER['DOCUMENT_ROOT']."/includes/head.php"); ?>
         <title>Login to NSW Attendance</title>
         <script type="text/javascript">
           function togglePassword()
@@ -91,7 +91,7 @@
                 if (JSON_response.status == "success") {
                   document.getElementById("do-login-button").innerHTML = "Success!";
                   document.cookie = 'session_ID='+JSON_response.session_ID+'; expires='+JSON_response.expiry+'; path=/';
-                  window.location.href = "https://attendance.nsw.org.uk<?=$redirect_page;?>";
+                  window.location.href = "<?=$config["base_url"];?><?=$redirect_page;?>";
                 } 
                 else {
                   document.getElementById("do-login-button").innerHTML = "Log in";

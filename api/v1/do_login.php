@@ -14,7 +14,7 @@
 	}
 	else
 	{
-		include("../../includes/db_connect.php");
+		include($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 		$db_connection = db_connect();
 
 		$select_query = $db_connection->query("SELECT `password`, `ID` FROM `logins` WHERE `email` = '".$email."' LIMIT 1");

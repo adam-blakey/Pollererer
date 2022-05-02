@@ -1,4 +1,4 @@
-<?php include_once("./includes/functions.php");?>
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/functions.php");?>
 
 <header class="navbar navbar-expand-md navbar-light d-print-none">
   <div class="container-xl">
@@ -51,7 +51,7 @@
 
               if ($login_query_result["member_ID"] == "-1")
               {
-                $icon_style = "style=\"background-image: url('https://attendance.nsw.org.uk/dist/img/ensemble-logos/nswo/NSWO social icon (RGB)-16.jpg')\"";
+                $icon_style = "style=\"background-image: url('".$config["base_url"]."/dist/img/ensemble-logos/nswo/NSWO social icon (RGB)-16.jpg')\"";
                 $name       = "NSWO";
                 $role       = "NSWO User";
 
@@ -59,7 +59,7 @@
               }
               elseif ($login_query_result["member_ID"] == "-2")
               {
-                $icon_style = "style=\"background-image: url('https://attendance.nsw.org.uk/dist/img/ensemble-logos/nwe/NWE social icon (RGB)-17.jpg')\"";
+                $icon_style = "style=\"background-image: url('".$config["base_url"]."/dist/img/ensemble-logos/nwe/NWE social icon (RGB)-17.jpg')\"";
                 $name       = "NWE";
                 $role       = "NWE User"; 
 

@@ -3,7 +3,7 @@
 
 	if (count($ensemble_data) >= 1)
 	{
-		include("../../includes/db_connect.php");
+		include($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 		$db_connection = db_connect();
 
 		$JSON_response->status = "success";

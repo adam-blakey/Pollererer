@@ -1,3 +1,3 @@
 <?php
-	require("./cron/pre-rehearsal-email.php");
+	require($_SERVER['DOCUMENT_ROOT']."/cron/pre-rehearsal-email.php");
 ?>

@@ -25,8 +25,8 @@
   $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
 ?>
 
-<?php include_once("./includes/functions.php"); ?>
-<?php include("./includes/db_connect.php"); ?>
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/functions.php"); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php"); ?>
 <?php $db_connection = db_connect(); ?>
 
 <?php
@@ -77,7 +77,7 @@
     ?>
     <html lang="en">
       <head>
-        <?php include("./includes/head.php"); ?>
+        <?php include($_SERVER['DOCUMENT_ROOT']."/includes/head.php"); ?>
         <meta name="robots" content="noindex,nofollow">
         <title><?=$title;?></title>
         <script type="text/javascript">
@@ -216,8 +216,8 @@
       </head>
       <body onload="pageLoaded();">
         <div class="wrapper">
-          <?php include("./includes/header.php"); ?>
-          <?php include("./includes/navigation.php"); ?>
+          <?php include($_SERVER['DOCUMENT_ROOT']."/includes/header.php"); ?>
+          <?php include($_SERVER['DOCUMENT_ROOT']."/includes/navigation.php"); ?>
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
@@ -551,7 +551,7 @@
                 </div>
               </div>
             </div>
-            <?php include("./includes/footer.php"); ?>
+            <?php include($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
           </div>
         </div>
 

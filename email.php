@@ -2,7 +2,7 @@
 	$ensemble_ID  = (isset($_GET["ensemble_ID"]))?$_GET["ensemble_ID"]:0;
 	$term_date_ID = (isset($_GET["term_date_ID"]))?$_GET["term_date_ID"]:0;
 
-	require_once("./includes/kernel.php");
+	require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php");
 
 	if ($ensemble_ID == 0 or $term_date_ID == 0)
 	{

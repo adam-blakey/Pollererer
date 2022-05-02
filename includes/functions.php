@@ -91,7 +91,7 @@ function output_restricted_page()
 
 function do_logout()
 {
-  require_once("./includes/db_connect.php");
+  require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 
   $db_connection = db_connect();
 
@@ -106,7 +106,7 @@ function login_valid()
 {
   $session_ID = $_COOKIE['session_ID'];
 
-  require_once("./includes/db_connect.php");
+  require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 
   $db_connection = db_connect();
 
@@ -129,7 +129,7 @@ function login_valid()
 
 function login_restricted($user_level_required)
 {
-  require_once("./includes/db_connect.php");
+  require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 
   $db_connection = db_connect();
 

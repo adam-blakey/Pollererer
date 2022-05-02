@@ -1,5 +1,5 @@
 <?php
-	require_once("./includes/kernel.php");
+	require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php");
 
 	$time = time();
 
@@ -327,11 +327,11 @@
 														$message .= '<table cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
 															$message .= '<tr>';
 																$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;">';
-																	//$message .= '<a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="https://attendance.nsw.org.uk/emails/example/assets/sample-tabler-gray.png" width="116" height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
+																	//$message .= '<a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="<?=$config["base_url"];?>/emails/example/assets/sample-tabler-gray.png" width="116" height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
 																$message .= '<span class="text-muted-light font-sm" style="color: #bbc8cd; text-decoration: none; font-size: 13px;">Details correct as of '.date("jS M Y @ H:i:s").'</span>';
 																$message .= '</td>';
 																$message .= '<td class="text-right" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;" align="right">';
-																	$message .= '<a href="https://attendance.nsw.org.uk/email.php?ensemble_ID='.$ensemble_ID.'&term_date_ID='.$term_date_ID.'" class="text-muted-light font-sm" style="color: #bbc8cd; text-decoration: none; font-size: 13px;">';
+																	$message .= '<a href="<?=$config["base_url"];?>/email.php?ensemble_ID='.$ensemble_ID.'&term_date_ID='.$term_date_ID.'" class="text-muted-light font-sm" style="color: #bbc8cd; text-decoration: none; font-size: 13px;">';
 																		$message .= 'View online';
 																	$message .= '</a>';
 																$message .= '</td>';
@@ -351,7 +351,7 @@
 																			$message .= '<tr>';
 																				$message .= '<td class="col text-mobile-center va-middle lh-1" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; line-height: 100%;" valign="middle">';
 																					$message .= '<a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;">';
-																						$message .= '</a><a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="https://attendance.nsw.org.uk/static/logo-horizontal.png" height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
+																						$message .= '</a><a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="<?=$config["base_url"];?>/static/logo-horizontal.png" height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
 			$message .= '																		';
 																				$message .= '</td>';
 																				$message .= '<td class="col-spacer col-spacer-sm" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; width: 16px;" valign="top"></td>';
@@ -433,7 +433,7 @@
 																					{
 																						$message .= '<tr class="list-item">';
 																							$message .= '<td class="pr-md w-1p" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; width: 1%; padding-right: 16px;">';
-																								$message .= '<img src="https://attendance.nsw.org.uk/emails/example/assets/icons-green-check.png" class=" va-middle" width="18" height="18" alt="check" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
+																								$message .= '<img src="<?=$config["base_url"];?>/emails/example/assets/icons-green-check.png" class=" va-middle" width="18" height="18" alt="check" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
 																							$message .= '</td>';
 																							$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px;">';
 																								$message .= '<a href="https://tabler.io/emails?utm_source=demo" class="text-default" style="color: #444; text-decoration: none;">'.$status->first_name." ".$status->last_name.'</a>';
@@ -456,7 +456,7 @@
 																					{
 																						$message .= '<tr class="list-item">';
 																							$message .= '<td class="pr-md w-1p" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; width: 1%; padding-right: 16px;">';
-																								$message .= '<img src="https://attendance.nsw.org.uk/emails/example/assets/icons-gray-slash.png" class=" va-middle" width="18" height="18" alt="slash" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
+																								$message .= '<img src="<?=$config["base_url"];?>/emails/example/assets/icons-gray-slash.png" class=" va-middle" width="18" height="18" alt="slash" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
 																							$message .= '</td>';
 																							$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px;">';
 																								$message .= '<a href="https://tabler.io/emails?utm_source=demo" class="text-default" style="color: #444; text-decoration: none;">'.$status->first_name." ".$status->last_name.'</a>';
@@ -479,7 +479,7 @@
 																					{
 																						$message .= '<tr class="list-item">';
 																							$message .= '<td class="pr-md w-1p" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; width: 1%; padding-right: 16px;">';
-																								$message .= '<img src="https://attendance.nsw.org.uk/emails/example/assets/icons-red-x.png" class=" va-middle" width="18" height="18" alt="x" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
+																								$message .= '<img src="<?=$config["base_url"];?>/emails/example/assets/icons-red-x.png" class=" va-middle" width="18" height="18" alt="x" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
 																							$message .= '</td>';
 																							$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px;">';
 																								$message .= '<a href="https://tabler.io/emails?utm_source=demo" class="text-default" style="color: #444; text-decoration: none;">'.$status->first_name." ".$status->last_name.'</a>';
@@ -510,7 +510,7 @@
 															$message .= '</tr>';
 															$message .= '<tr>';
 																$message .= '<td class="pt-md" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 16px;">';
-																	$message .= 'You are receiving this email because you are an administrator of Pollererer. <a href="https://attendance.nsw.org.uk/emails" class="text-muted" style="color: #9eb0b7; text-decoration: none;">Unsubscribe (NOT YET IMPLMENTED)</a>';
+																	$message .= 'You are receiving this email because you are an administrator of Pollererer. <a href="<?=$config["base_url"];?>/emails" class="text-muted" style="color: #9eb0b7; text-decoration: none;">Unsubscribe (NOT YET IMPLMENTED)</a>';
 																$message .= '</td>';
 															$message .= '</tr>';
 														$message .= '</table>';

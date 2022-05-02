@@ -1,4 +1,4 @@
-<?php require_once("./includes/kernel.php"); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
 
 <!doctype html>
 <!--
@@ -11,7 +11,7 @@
 -->
 <html lang="en">
   <head>
-    <?php include("./includes/head.php"); ?>
+    <?php include($_SERVER['DOCUMENT_ROOT']."/includes/head.php"); ?>
     <title>Forgot password - NSW Attendance</title>
   </head>
   <body  class=" border-top-wide border-primary d-flex flex-column">

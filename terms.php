@@ -1,4 +1,4 @@
-<?php require_once("./includes/kernel.php"); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
 
 <?php $db_connection = db_connect(); ?>
 
@@ -11,13 +11,13 @@
 
     <html lang="en">
       <head>
-        <?php include("./includes/head.php"); ?>
+        <?php include($_SERVER['DOCUMENT_ROOT']."/includes/head.php"); ?>
         <title>Terms</title>
       </head>
       <body>
         <div class="wrapper">
-          <?php include("./includes/header.php"); ?>
-          <?php include("./includes/navigation.php"); ?>
+          <?php include($_SERVER['DOCUMENT_ROOT']."/includes/header.php"); ?>
+          <?php include($_SERVER['DOCUMENT_ROOT']."/includes/navigation.php"); ?>
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
@@ -28,7 +28,7 @@
                 </div>
               </div>
             </div>
-            <?php include("./includes/footer.php"); ?>
+            <?php include($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
           </div>
         </div>
 

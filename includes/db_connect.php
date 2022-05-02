@@ -1,8 +1,8 @@
 <?php
 	function db_connect()
 	{
-		//return new mysqli("192.168.1.241:3306", "attendance", "NCkf@ud1@V(a[E9A", "attendance");
-		return new mysqli("localhost", "les99cou_pollererer", "NCkf@ud1@V(a[E9A", "les99cou_pollererer");
+		require($_SERVER['DOCUMENT_ROOT']."/config.php");
+		return new mysqli($config["db_host"], $config["db_username"], $config["db_password"], $config["db_name"]);
 	}
 
 	function db_disconnect($db_connection)
