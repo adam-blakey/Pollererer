@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 4.9.7
 -- https://www.phpmyadmin.net/
 --
--- Host: 192.168.1.241:3306
--- Generation Time: Apr 19, 2022 at 08:22 AM
--- Server version: 10.5.15-MariaDB-log
--- PHP Version: 8.0.15
+-- Host: localhost:3306
+-- Generation Time: May 02, 2022 at 09:43 PM
+-- Server version: 10.3.34-MariaDB-log-cll-lve
+-- PHP Version: 7.3.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `attendance`
+-- Database: `eefbadcc_attendance`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `attendance` (
   `ID` int(10) NOT NULL,
   `member_ID` int(10) NOT NULL,
-  `edit_datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `edit_datetime` int(12) NOT NULL,
   `edit_member_ID` int(10) NOT NULL,
   `term_dates_ID` int(10) NOT NULL,
   `ensemble_ID` int(10) NOT NULL,
@@ -46,7 +47,8 @@ CREATE TABLE `attendance` (
 
 CREATE TABLE `ensembles` (
   `ID` int(10) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL,
+  `admin_email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -72,7 +74,8 @@ CREATE TABLE `logins_sessions` (
   `member_ID` int(10) NOT NULL,
   `start` datetime NOT NULL,
   `expiry` datetime NOT NULL,
-  `IP` varchar(255) NOT NULL
+  `IP` varchar(255) NOT NULL,
+  `ended` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -104,6 +107,19 @@ CREATE TABLE `members-ensembles` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pre-rehearsal-email`
+--
+
+CREATE TABLE `pre-rehearsal-email` (
+  `been_sent` int(1) NOT NULL,
+  `ensemble_ID` int(10) NOT NULL,
+  `term_date_ID` int(10) NOT NULL,
+  `message_content` mediumblob NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `terms`
 --
 
@@ -120,7 +136,8 @@ CREATE TABLE `terms` (
 
 CREATE TABLE `term_dates` (
   `ID` int(10) NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `datetime` int(12) NOT NULL,
+  `datetime_end` int(12) NOT NULL,
   `term_ID` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -170,6 +187,12 @@ ALTER TABLE `members-ensembles`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `ensemble_ID` (`ensemble_ID`),
   ADD KEY `member_ID` (`member_ID`);
+
+--
+-- Indexes for table `pre-rehearsal-email`
+--
+ALTER TABLE `pre-rehearsal-email`
+  ADD PRIMARY KEY (`ensemble_ID`,`term_date_ID`);
 
 --
 -- Indexes for table `terms`
@@ -255,6 +278,12 @@ ALTER TABLE `logins_sessions`
 ALTER TABLE `members-ensembles`
   ADD CONSTRAINT `members-ensembles_ibfk_1` FOREIGN KEY (`ensemble_ID`) REFERENCES `ensembles` (`ID`),
   ADD CONSTRAINT `members-ensembles_ibfk_2` FOREIGN KEY (`member_ID`) REFERENCES `members` (`ID`);
+
+--
+-- Constraints for table `pre-rehearsal-email`
+--
+ALTER TABLE `pre-rehearsal-email`
+  ADD CONSTRAINT `pre-rehearsal-email_ibfk_1` FOREIGN KEY (`ensemble_ID`) REFERENCES `ensembles` (`ID`);
 
 --
 -- Constraints for table `term_dates`

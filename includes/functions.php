@@ -104,27 +104,34 @@ function do_logout()
 
 function login_valid()
 {
-  $session_ID = $_COOKIE['session_ID'];
-
-  require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
-
-  $db_connection = db_connect();
-
-  $session_query = $db_connection->query("SELECT `expiry` FROM `logins_sessions` WHERE `ID`='".$session_ID."' AND `expiry`>CURRENT_TIMESTAMP() AND `ended`='0' ORDER BY `start` DESC LIMIT 1");
-
-  $expiry_date = new DateTime('now');
-
-  if ($session_query and $session_query->num_rows == 1)
+  if (isset($_COOKIE['session_ID']))
   {
-    return true;
+    $session_ID = $_COOKIE['session_ID'];
+
+    require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
+
+    $db_connection = db_connect();
+
+    $session_query = $db_connection->query("SELECT `expiry` FROM `logins_sessions` WHERE `ID`='".$session_ID."' AND `expiry`>CURRENT_TIMESTAMP() AND `ended`='0' ORDER BY `start` DESC LIMIT 1");
+
+    $expiry_date = new DateTime('now');
+
+    if ($session_query and $session_query->num_rows == 1)
+    {
+      return true;
+    }
+    else
+    {
+      do_logout();
+      return false;
+    }
+
+    db_disconnect($db_connection);
   }
   else
   {
-    do_logout();
     return false;
   }
-
-  db_disconnect($db_connection);
 }
 
 function login_restricted($user_level_required)

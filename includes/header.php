@@ -1,4 +1,5 @@
-<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/functions.php");?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/functions.php");?>
 
 <header class="navbar navbar-expand-md navbar-light d-print-none">
   <div class="container-xl">
@@ -13,7 +14,7 @@
       }
     ?>
     <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-      <a href="https://nsw.org.uk" target="_blank">
+      <a href="<?=$config['home_url'];?>" target="_blank">
         <img src="./static/logo-horizontal.png" width="110" height="32" alt="Nottingham Symphonic Winds" class="navbar-brand-image">
       </a>
     </h1>

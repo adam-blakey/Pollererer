@@ -8,8 +8,9 @@
 * Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
 -->
 <?php
-  $attendance_select_sortby    = $_GET["sortby"];
-  $attendance_select_direction = $_GET["sortdir"];
+  $attendance_select_sortby    = isset($_GET["sortby"])?$_GET["sortby"]:"";
+  $attendance_select_direction = isset($_GET["sortdir"])?$_GET["sortdir"]:"";
+  $theme                       = isset($_GET["theme"])?$_GET["theme"]:"";
 
   if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument")))
   {
@@ -25,14 +26,13 @@
   $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
 ?>
 
-<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/functions.php"); ?>
-<?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php"); ?>
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
 <?php $db_connection = db_connect(); ?>
 
 <?php
-  $term_name = $db_connection->query("SELECT `name` FROM `terms` WHERE `ID`=".$term_ID." LIMIT 1")->fetch_all()[0][0];
+  $term_name = $db_connection->query("SELECT `name` FROM `terms` WHERE `ID`=".$term_ID." LIMIT 1")->fetch_array()[0];
 
-  $ensemble_name = $db_connection->query("SELECT `name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_all()[0][0];
+  $ensemble_name = $db_connection->query("SELECT `name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_array()[0];
 
   if ($term_name == NULL)
   {
@@ -49,30 +49,12 @@
 
   $term_date_counter = [];
   $term_date_counter_intederminate = [];
+
+  $headings_printed = false;
 ?>
 
 <?php
-  // ************************************** //
-  // HARD-CODED FOR GENERIC ENSEMBLE LOGINS //
-  // ************************************** //
-  if ($ensemble_ID == 1)
-  {
-    $user_level_required = -1;
-  }
-  elseif ($ensemble_ID == 2)
-  {
-    $user_level_required = -2; 
-  }
-  elseif ($ensemble_ID == 3)
-  {
-    $user_level_required = -3;
-  }
-  else
-  {
-    $user_level_required = 0;
-  }
-
-  if (login_valid() and login_restricted($user_level_required))
+  if (login_valid() and login_restricted(-$ensemble_ID))
   {
     ?>
     <html lang="en">
@@ -260,7 +242,7 @@
                         <div class="card-body border-bottom py-3 col-form-label">
                           <div class="ms-auto text-muted">
                             <form method="get" action="" id="form-sort">
-                              <input type="hidden" name="theme" value="<?=$_GET['theme'];?>" form="form-sort" />
+                              <input type="hidden" name="theme" value="<?=$theme;?>" form="form-sort" />
                               <input type="hidden" name="ensemble_ID" value="<?=$_GET['ensemble_ID'];?>" form="form-sort" />
                               <input type="hidden" name="term_ID" value="<?=$_GET['term_ID'];?>" form="form-sort" />
                               <div class="ms-2 d-inline-block">
@@ -307,7 +289,12 @@
                         </div>
 
                         <?php
-                          $term_dates = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID` FROM term_dates WHERE `term_ID`='".$term_ID."'")->fetch_all();
+                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID` FROM term_dates WHERE `term_ID`='".$term_ID."'");
+
+                          while ($result = $term_dates_query->fetch_array())
+                          {
+                            $term_dates[] = $result;
+                          }
 
                           $no_term_dates = count($term_dates);
                         ?>
@@ -370,9 +357,10 @@
                                       break;
                                   }
 
-                                  if ($current_sort_initial != $sort_initial)
+                                  if (($current_sort_initial != $sort_initial and $config["repeat_headings"]) or !$headings_printed)
                                   {
-                                    $sort_initial = $current_sort_initial;
+                                    $headings_printed = true;
+                                    $sort_initial     = $current_sort_initial;
                                     ?>
                                       <thead>
                                         <tr>
@@ -444,7 +432,7 @@
 
                                                 if ($last_edited_query->num_rows>0)
                                                 {
-                                                  $last_edited = $last_edited_query->fetch_all()[0][0];
+                                                  $last_edited = $last_edited_query->fetch_array()[0];
                                                 }
                                                 else
                                                 {
@@ -463,7 +451,7 @@
 
                                           if ($attendance_query->num_rows>0)
                                           {
-                                            $attendance = $attendance_query->fetch_all()[0][0];
+                                            $attendance = $attendance_query->fetch_array()[0];
                                           }
                                           else
                                           {

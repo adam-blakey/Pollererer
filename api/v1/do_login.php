@@ -2,6 +2,8 @@
 	$email    = strip_tags($_POST["email"]);
 	$password = strip_tags($_POST["password"]);
 
+	$JSON_response = new stdClass();
+
 	if (!isset($_POST["email"]))
 	{
 		$JSON_response->status        = "error";	
@@ -21,14 +23,14 @@
 
 		if ($select_query->num_rows == 1)
 		{
-			$select_result = $select_query->fetch_all()[0];
+			$select_result = $select_query->fetch_array();
 			$db_password   = $select_result[0];
 			$ID            = $select_result[1];
 			$IP            = $_SERVER['REMOTE_ADDR'];
 
 			if(password_verify($password, $db_password))
 			{
-				$session_ID = $db_connection->query("SELECT UUID()")->fetch_all()[0][0];
+				$session_ID = $db_connection->query("SELECT UUID()")->fetch_array()[0];
 				$created_session = $db_connection->query("INSERT INTO `logins_sessions` (`ID`, `member_ID`, `start`, `expiry`, `IP`) VALUES ('".$session_ID."', '".$ID."', CURRENT_TIMESTAMP(), DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 7 DAY), '".$IP."')");
 
 				$expiry_date = new DateTime('+1 week');
