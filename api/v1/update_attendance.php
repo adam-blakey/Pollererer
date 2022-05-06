@@ -3,6 +3,8 @@
 
 	//$attendance_data = json_decode('[{"member_ID":"77","term_dates_ID":"12","ensemble_ID":"1","status":true}]', true);
 
+	$JSON_response = new stdClass();
+
 	if (count($attendance_data) >= 1)
 	{
 		include($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
