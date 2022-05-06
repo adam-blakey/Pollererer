@@ -5,5 +5,5 @@
 
   do_logout();
 
-  header("Location: <?=$config["base_url"];?>".$redirect_page);
+  header("Location: ".$config["base_url"].$redirect_page);
 ?>
