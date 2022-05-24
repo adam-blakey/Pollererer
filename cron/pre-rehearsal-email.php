@@ -1,5 +1,54 @@
 <?php
+// // https://www.php.net/manual/en/function.mail.php
+// function mail_with_attachment
+// (
+//     string $fileAttachment,
+//     string $mailMessage,
+//     string $subject,
+//     string $toAddress,
+//     string $ccAddress,
+//     string $fromAddress
+// )
+// : bool
+// {
+//     $fileAttachment = trim($fileAttachment);
+//     $from           = $fromMail;
+//     $pathInfo       = pathinfo($fileAttachment);
+//     $attchmentName  = $pathInfo["filename"];
+   
+//     $attachment    = chunk_split(base64_encode(file_get_contents($fileAttachment)));
+//     $boundary      = "PHP-mixed-".md5(time());
+//     $boundWithPre  = "\n--".$boundary;
+   
+//    	$headers  = "MIME-Version: 1.0\r\n";
+//     $headers .= "From: ".$config["software_name"]." <$fromAddress>\r\n";
+//     $headers .= "Content-Type: multipart/mixed; boundary=\"".$boundary."\"";
+//     $headers .= "CC: <$ccAddress>\r\n";
+// 		$headers .= "X-Mailer: PHP/".phpversion()."\r\n";
+   
+//     $message  = $boundWithPre;
+//     $message .= "\n Content-Type: text/html; charset=UTF-8\n";
+//     $message .= "\n $mailMessage";
+   
+//     $message .= $boundWithPre;
+//     $message .= "\nContent-Type: application/octet-stream; name=\"".$attchmentName."\"";
+//     $message .= "\nContent-Transfer-Encoding: base64\n";
+//     $message .= "\nContent-Disposition: attachment\n";
+//     $message .= $attachment;
+//     $message .= $boundWithPre."--";
+   
+//     return mail($toAddress, $subject, $message, $headers);
+// }
+
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+
+	require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/Exception.php");
+	require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/PHPMailer.php");
+	require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/SMTP.php");
+
 	require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php");
+	require_once($_SERVER['DOCUMENT_ROOT']."/cron/generate-seating-plan-pdf.php");
 
 	$time = new DateTime();
 	$time ->setTimestamp(time());
@@ -118,7 +167,7 @@
 			$headers .= "CC: <".$config["admin_email"].">\r\n";
 			$headers .= "X-Mailer: PHP/".phpversion()."\r\n";
 
-			$message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+			$message  = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
 			$message .= '<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">';
 			$message .= '';
 			$message .= '<head>';
@@ -535,27 +584,50 @@
 			$message .= '';
 			$message .= '</html>';
 
-			$mail = mail($to, $subject, $message, $headers);
+			$mail = new PHPMailer(true);
 
-			if ($mail)
+			try
 			{
+				$mail->isSMTP();
+				$mail->Host       = $config["smtp_host"];
+				$mail->SMTPAuth   = true;
+				$mail->Username   = $config["smtp_username"];
+				$mail->Password   = $config["smtp_password"];
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+				$mail->Port       = $config["smtp_port"];
+
+				$mail->setFrom($config["email_from"], $config["software_name"]);
+				foreach (explode(", ", $to) as $address)
+				{
+					$mail->addAddress($address);
+				}
+				$mail->addCC("nsworep@nsw.org.uk");
+
+				$mail->addAttachment(generate_seating_plan_PDF($ensemble_ID, $term_date_ID));
+
+				$mail->isHTML(true);
+				$mail->Subject = $subject;
+				$mail->Body = $message;
+
+				$mail->send();
+
 				echo "Pre-rehearsal email succeeded.";
+
+				if ($been_sent_check->num_rows == 0)
+				{
+					$been_sent_update = $db_connection->query("INSERT INTO `pre-rehearsal-email` (`been_sent`, `ensemble_ID`, `term_date_ID`, `message_content`) VALUES ('1', '".$ensemble_ID."', '".$term_date_ID."', '".base64_encode($message)."');");
+				}
+				else
+				{
+					$been_sent_update = $db_connection->query("UPDATE `pre-rehearsal-email` SET `been_sent` = '1', `message_content`='".base64_encode($message)."' WHERE `pre-rehearsal-email`.`ensemble_ID` = '".$ensemble_ID."' AND `pre-rehearsal-email`.`term_date_ID` = '".$term_date_ID."';");
+				}
 			}
-			else
+			catch (Exception $e)
 			{
-				echo "Pre-rehearsal email failed; ".$mail;
+				echo "Pre-rehearsal email failed; ".$mail->ErrorInfo;
 			}
 
 			// echo $message;
-
-			if ($been_sent_check->num_rows == 0)
-			{
-				$been_sent_update = $db_connection->query("INSERT INTO `pre-rehearsal-email` (`been_sent`, `ensemble_ID`, `term_date_ID`, `message_content`) VALUES ('1', '".$ensemble_ID."', '".$term_date_ID."', '".base64_encode($message)."');");
-			}
-			else
-			{
-				$been_sent_update = $db_connection->query("UPDATE `pre-rehearsal-email` SET `been_sent` = '1', `message_content`='".base64_encode($message)."' WHERE `pre-rehearsal-email`.`ensemble_ID` = '".$ensemble_ID."' AND `pre-rehearsal-email`.`term_date_ID` = '".$term_date_ID."';");
-			}
 		}
 	}
 
