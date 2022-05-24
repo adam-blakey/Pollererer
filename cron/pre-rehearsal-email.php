@@ -512,7 +512,7 @@
 															$message .= '</tr>';
 															$message .= '<tr>';
 																$message .= '<td class="pt-md" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 16px;">';
-																	$message .= 'You are receiving this email because you are an administrator of Pollererer. <a href="<?=$config["base_url"];?>/emails" class="text-muted" style="color: #9eb0b7; text-decoration: none;">Unsubscribe (NOT YET IMPLMENTED)</a>';
+																	$message .= 'You are receiving this email because you are an administrator of Pollererer. <a href="'.$config["base_url"].'/emails" class="text-muted" style="color: #9eb0b7; text-decoration: none;">Unsubscribe (NOT YET IMPLMENTED)</a>';
 																$message .= '</td>';
 															$message .= '</tr>';
 														$message .= '</table>';
