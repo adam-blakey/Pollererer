@@ -1,3 +1,4 @@
 /includes/db_connect.php
 /emails/example/node_modules/*
 /emails/sample/*
+/uploads/*

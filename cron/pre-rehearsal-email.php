@@ -603,7 +603,10 @@
 				}
 				$mail->addCC("nsworep@nsw.org.uk");
 
-				$mail->addAttachment(generate_seating_plan_PDF($ensemble_ID, $term_date_ID));
+				if ($config["email_pdf"])
+				{
+					$mail->addAttachment(generate_seating_plan_PDF($ensemble_ID, $term_date_ID));
+				}
 
 				$mail->isHTML(true);
 				$mail->Subject = $subject;
