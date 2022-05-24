@@ -18,7 +18,7 @@
         
         <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
           <?php
-            $logins = $db_connection->query("SELECT `ID`, `emails`, `password`, `members`.`first_name`, `members`.`last_name` FROM `logins` LEFT JOIN `members` ON `logins`.`ID` = `members`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `members`.`first_name` ASC");
+            $logins = $db_connection->query("SELECT `email`, `password`, `members`.`first_name`, `members`.`last_name`, `members`.`image` FROM `logins` LEFT JOIN `members` ON `logins`.`ID` = `members`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `members`.`first_name` ASC");
 
             if ($logins->num_rows == 0)
             {
@@ -50,12 +50,25 @@
                     <div class="row">
                       <div class="col-auto">
                         <a href="#">
-                          <span class="avatar"><?=substr($login["first_name"], 0, 1).substr($login["last_name"], 0, 1);?></span>
+                          <?php
+                            if ($login["image"]!="")
+                            {
+                              ?>
+                                <span class="avatar" style="background-image: url(<?=$login["image"];?>)"></span>
+                              <?php
+                            }
+                            else
+                            {
+                              ?>
+                                <span class="avatar"><?=substr($login["first_name"], 0, 1).substr($login["last_name"], 0, 1);?></span>
+                              <?php
+                            }
+                          ?>
                         </a>
                       </div>
                       <div class="col text-truncate">
                         <a href="#" class="text-body d-block"><?=$login["first_name"]." ".$login["last_name"];?></a>
-                        <div class="text-muted text-truncate mt-n1"><?=$login["instrument"];?>, <?=$login["ensemble_name"];?></div>
+                        <div class="text-muted text-truncate mt-n1"><?=$login["email"];?></div>
                       </div>
                     </div>
                   </div>
@@ -182,7 +195,7 @@
         
         <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
           <?php
-            $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
+            $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
 
             if ($members->num_rows == 0)
             {
@@ -214,7 +227,20 @@
                     <div class="row">
                       <div class="col-auto">
                         <a href="#">
-                          <span class="avatar"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
+                          <?php
+                            if ($member["image"]!="")
+                            {
+                              ?>
+                                <span class="avatar" style="background-image: url(<?=$member["image"];?>)"></span>
+                              <?php
+                            }
+                            else
+                            {
+                              ?>
+                                <span class="avatar"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
+                              <?php
+                            }
+                          ?>
                         </a>
                       </div>
                       <div class="col text-truncate">
@@ -334,11 +360,21 @@
                 {
                   while($poll = $polls->fetch_assoc())
                   {
+                    $first_date_query = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` ASC LIMIT 1")->fetch_array()[0];
+                    $last_date_query  = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` DESC LIMIT 1")->fetch_array()[0];
+
+                    $first_date = new DateTime();
+                    $first_date ->setTimestamp($first_date_query);
+                    $first_date ->setTimeZone(new DateTimeZone('Europe/London'));
+                    $last_date  = new DateTime();
+                    $last_date  ->setTimestamp($last_date_query);
+                    $last_date  ->setTimeZone(new DateTimeZone('Europe/London'));
+
                     ?>
                     <tr>
                       <td><?=$poll["term_name"];?></td>
                       <td><?=$poll["ensemble_name"];?></td>
-                      <td class="text-muted">DATE RANGE</td>
+                      <td class="text-muted"><?=$first_date->format("jS M Y");?> — <?=$last_date->format("jS M Y");?></td>
                       <td class="text-muted">
                         <a target="_blank" href="./poll.php?<?=http_build_query(array("ensemble_ID" => $poll["ensemble_ID"], "term_ID" => $poll["term_ID"]));?>" class="text-reset">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -375,7 +411,7 @@
         </div>
         <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
           <?php
-            $notifications = $db_connection->query("SELECT `members`.`first_name`, `members`.`last_name`, `edit_datetime`, `members`.`instrument`, `status`, `term_dates`.`datetime` AS `rehearsal_date` FROM `attendance` LEFT JOIN `members` ON `attendance`.`member_ID` = `members`.`ID` LEFT JOIN `term_dates` ON `attendance`.`term_dates_ID` = `term_dates`.`ID` ORDER BY `edit_datetime` DESC");
+            $notifications = $db_connection->query("SELECT `members`.`first_name`, `members`.`last_name`, `edit_datetime`, `members`.`instrument`, `status`, `members`.`image`, `term_dates`.`datetime` AS `rehearsal_date` FROM `attendance` LEFT JOIN `members` ON `attendance`.`member_ID` = `members`.`ID` LEFT JOIN `term_dates` ON `attendance`.`term_dates_ID` = `term_dates`.`ID` ORDER BY `edit_datetime` DESC");
 
             if ($notifications->num_rows == 0)
             {
@@ -393,14 +429,18 @@
             {
               while($notification = $notifications->fetch_assoc())
               {
+                $date = new DateTime();
+                $date ->setTimestamp($notification["rehearsal_date"]);
+                $date ->setTimeZone(new DateTimeZone('Europe/London'));
+
                 if ($notification["status"] == 1)
                 {
-                  $notification_text = " is coming to ".$notification["rehearsal_date"];
+                  $notification_text = " is coming to ".$date->format("jS M Y @ H:i:s");
                   $notification_colour = "bg-green";
                 }
                 else
                 {
-                  $notification_text = " is <strong>not</strong> coming to ".$notification["rehearsal_date"];
+                  $notification_text = " is <strong>not</strong> coming to ".$date->format("jS M Y @ H:i:s");
                   $notification_colour = "bg-red";
                 }
                 ?>
@@ -409,7 +449,20 @@
                       <div class="col-auto"><span class="badge <?=$notification_colour;?>"></span></div>
                       <div class="col-auto">
                         <a href="#">
-                          <span class="avatar"><?=substr($notification["first_name"], 0, 1).substr($notification["last_name"], 0, 1);?></span>
+                          <?php
+                            if ($notification["image"]!="")
+                            {
+                              ?>
+                                <span class="avatar" style="background-image: url(<?=$notification["image"];?>)"></span>
+                              <?php
+                            }
+                            else
+                            {
+                              ?>
+                                <span class="avatar"><?=substr($notification["first_name"], 0, 1).substr($notification["last_name"], 0, 1);?></span>
+                              <?php
+                            }
+                          ?>
                         </a>
                       </div>
                       <div class="col text-truncate">
@@ -448,7 +501,7 @@
         </div>
         <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
           <?php
-            $ensembles = $db_connection->query("SELECT `ID`, `name` FROM `ensembles` ORDER BY `name` ASC");
+            $ensembles = $db_connection->query("SELECT `ID`, `name`, `image` FROM `ensembles` ORDER BY `name` ASC");
 
             if ($ensembles->num_rows == 0)
             {
@@ -471,7 +524,20 @@
                   <div class="row">
                     <div class="col-auto">
                       <a href="#">
-                        <span class="avatar"><?=$ensemble["name"];?></span>
+                        <?php
+                          if ($ensemble["image"]!="")
+                          {
+                            ?>
+                              <span class="avatar" style="background-image: url(<?=$ensemble["image"];?>)"></span>
+                            <?php
+                          }
+                          else
+                          {
+                            ?>
+                              <span class="avatar"><?=$ensemble["name"];?></span>
+                            <?php
+                          }
+                        ?>
                       </a>
                     </div>
                     <div class="col text-truncate">
@@ -569,7 +635,7 @@
 	      </div>
 	      <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
 	        <?php
-	          $terms = $db_connection->query("SELECT `ID`, `name` FROM `terms` ORDER BY `name` ASC");
+	          $terms = $db_connection->query("SELECT `ID`, `name`, `image` FROM `terms` ORDER BY `name` ASC");
 
 	          if ($terms->num_rows == 0)
 	          {
@@ -592,7 +658,20 @@
 	                  <div class="row">
 	                    <div class="col-auto">
 	                      <a href="#">
-	                        <span class="avatar"><?=$term["name"];?></span>
+                          <?php
+                            if ($term["image"]!="")
+                            {
+                              ?>
+                                <span class="avatar" style="background-image: url(<?=$term["image"];?>)"></span>
+                              <?php
+                            }
+                            else
+                            {
+                              ?>
+                                <span class="avatar"><?=$term["name"];?></span>
+                              <?php
+                            }
+                          ?>
 	                      </a>
 	                    </div>
 	                    <div class="col text-truncate">
