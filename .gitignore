@@ -2,3 +2,4 @@
 /emails/example/node_modules/*
 /emails/sample/*
 /uploads/*
+/config.php
