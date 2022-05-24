@@ -114,8 +114,8 @@
 			$subject  = "Rehearsal Attendance for ".$rehearsal["ensemble_name"]." on ".date("jS M", $rehearsal_date);;
 			$headers  = "MIME-Version: 1.0\r\n";
 			$headers .= "Content-type:text/html;charset=UTF-8\r\n";
-			$headers .= "From: NSW Attendance <attendance@nsw.org.uk>\r\n";
-			$headers .= "CC: <nsworep@nsw.org.uk>\r\n";
+			$headers .= "From: ".$config["software_name"]." <".$config["software_name"].">\r\n";
+			$headers .= "CC: <".$config["admin_email"].">\r\n";
 			$headers .= "X-Mailer: PHP/".phpversion()."\r\n";
 
 			$message = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
@@ -507,7 +507,7 @@
 														$message .= '<table class="font-sm text-center text-muted" cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; color: #9eb0b7; text-align: center; font-size: 13px;">';
 															$message .= '<tr>';
 																$message .= '<td class="px-lg" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-right: 24px; padding-left: 24px;">';
-																	$message .= 'If you have any questions, feel free to message us at <a href="mailto:nsworep@nsw.org.uk" class="text-muted" style="color: #9eb0b7; text-decoration: none;">nsworep@nsw.org.uk</a>.';
+																	$message .= 'If you have any questions, feel free to message us at <a href="mailto:'.$config["admin_email"].'" class="text-muted" style="color: #9eb0b7; text-decoration: none;">'.$config["admin_email"].'</a>.';
 																$message .= '</td>';
 															$message .= '</tr>';
 															$message .= '<tr>';
