@@ -13,7 +13,7 @@
 		    //Page header
 		    public function Header() {
 		        // Logo
-		        $image_file = $_SERVER['DOCUMENT_ROOT'].'/static/logo-horizontal.png';
+		        $image_file = $config['logo_url'];
 		        //$image_file = K_PATH_IMAGES.'logo_example.jpg';
 		        $this->Image($image_file, 10, 10, 55, '', 'png', '', 'T', false, 300, '', false, false, 0, false, false, false);
 		        // Set font

@@ -402,7 +402,7 @@
 																			$message .= '<tr>';
 																				$message .= '<td class="col text-mobile-center va-middle lh-1" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; line-height: 100%;" valign="middle">';
 																					$message .= '<a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;">';
-																						$message .= '</a><a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="'.$config["base_url"].'/static/logo-horizontal.png" height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
+																						$message .= '</a><a href="https://tabler.io/emails?utm_source=demo" style="color: #467fcf; text-decoration: none;"><img src="'.$config["logo_url"].' height="34" alt="" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: baseline; font-size: 0; border-width: 0;" /></a>';
 			$message .= '																		';
 																				$message .= '</td>';
 																				$message .= '<td class="col-spacer col-spacer-sm" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; width: 16px;" valign="top"></td>';

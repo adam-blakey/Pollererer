@@ -10,7 +10,7 @@
         <ul class="list-inline list-inline-dots mb-0">
           <li class="list-inline-item">
             Copyright &copy; 2022
-            <a href="https://adam.blakey.family/" target="_blank" class="link-secondary">Adam Blakey</a> for <a href="https://nsw.org.uk/" target="_blank" class="link-secondary">Nottingham Symphonic Winds</a>
+            <a href="https://adam.blakey.family/" target="_blank" class="link-secondary">Adam Blakey</a> for <a href="<?=$config["home_url"];?>" target="_blank" class="link-secondary"><?=$config["group_name"];?></a>
           </li>
           <li class="list-inline-item">
             Design by <a href="https://tabler.io/" target="_blank" class="link-secondary">Tabler</a>

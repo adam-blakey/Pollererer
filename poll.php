@@ -339,7 +339,7 @@
                         </div>
 
                         <?php
-                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_concert`, `location` FROM term_dates WHERE `term_ID`='".$term_ID."' ORDER BY `datetime` ASC");
+                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' ORDER BY `datetime` ASC");
 
                           while ($result = $term_dates_query->fetch_array())
                           {

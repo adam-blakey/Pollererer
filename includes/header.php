@@ -15,7 +15,7 @@
     ?>
     <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
       <a href="<?=$config['home_url'];?>" target="_blank">
-        <img src="./static/logo-horizontal.png" width="110" height="32" alt="Nottingham Symphonic Winds" class="navbar-brand-image">
+        <img src="<?=$config["logo_url"];?>" width="110" height="32" alt="<?$config["software_name"];?>" class="navbar-brand-image">
       </a>
     </h1>
     <div class="navbar-nav flex-row order-md-last">
@@ -36,7 +36,7 @@
             // ************************************** //
             // HARD-CODED FOR GENERIC ENSEMBLE LOGINS //
             // ************************************** //
-            $login_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `members`.`first_name`, `members`.`last_name` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
+            $login_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `members`.`first_name`, `members`.`last_name`, `image` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
 
             if ($login_query->num_rows == 0)
             {
@@ -50,30 +50,11 @@
             {
               $login_query_result = $login_query->fetch_assoc();
 
-              if ($login_query_result["member_ID"] == "-1")
-              {
-                $icon_style = "style=\"background-image: url('".$config["base_url"]."/dist/img/ensemble-logos/nswo/NSWO social icon (RGB)-16.jpg')\"";
-                $name       = "NSWO";
-                $role       = "NSWO User";
+              $icon_style = "style=\"background-image: url('".$login_query_result["image"]."')\"";
+              $name       = "Blackwood";
+              $role       = "Blackwood User";
 
-                $group_user = true;
-              }
-              elseif ($login_query_result["member_ID"] == "-2")
-              {
-                $icon_style = "style=\"background-image: url('".$config["base_url"]."/dist/img/ensemble-logos/nwe/NWE social icon (RGB)-17.jpg')\"";
-                $name       = "NWE";
-                $role       = "NWE User"; 
-
-                $group_user = true;
-              }
-              else
-              {
-                $icon_style = "";
-                $name       = $login_query_result["first_name"]." ".$login_query_result["last_name"];;
-                $role       = "Unknown role";
-
-                $group_user = false;
-              }
+              $group_user = true;
             }
 
             // ************************************** //
