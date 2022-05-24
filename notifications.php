@@ -22,7 +22,7 @@
               <div class="container-xl">
                 <div class="row row-cards">              
                   <div class="col-12">
-                    <?php output_notifications(Inf); ?>
+                    <?php output_notifications(INF); ?>
                   </div>
                 </div>
               </div>

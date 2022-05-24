@@ -97,6 +97,56 @@
             }        
           }
 
+          function viewEditHistory()
+          {
+            document.getElementById("edit-history-contents").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading...';
+
+            var edit_history_contents  = '<table class="table table-vcenter card-table table-striped">';
+                edit_history_contents += '  <thead>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <th>When</th>';
+                edit_history_contents += '      <th>Rehearsal</th>';
+                edit_history_contents += '      <th>Changed to</th>';
+                edit_history_contents += '      <th>By</th>';
+                edit_history_contents += '    </tr>';
+                edit_history_contents += '  </thead>';
+                edit_history_contents += '  <tbody>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <td>18 minutes ago</td>';
+                edit_history_contents += '      <td>26th May 2022</td>';
+                edit_history_contents += '      <td>Attending</td>';
+                edit_history_contents += '      <td>Blackwood User</td>';
+                edit_history_contents += '    </tr>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <td>2 weeks ago</td>';
+                edit_history_contents += '      <td>26th May 2022</td>';
+                edit_history_contents += '      <td>Not attending</td>';
+                edit_history_contents += '      <td>Adam Blakey</td>';
+                edit_history_contents += '    </tr>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <td>2 weeks ago</td>';
+                edit_history_contents += '      <td>9th June 2022</td>';
+                edit_history_contents += '      <td>Attending</td>';
+                edit_history_contents += '      <td>Adam Blakey</td>';
+                edit_history_contents += '    </tr>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <td>2 weeks ago</td>';
+                edit_history_contents += '      <td>23rd June 2022</td>';
+                edit_history_contents += '      <td>Attending</td>';
+                edit_history_contents += '      <td>Adam Blakey</td>';
+                edit_history_contents += '    </tr>';
+                edit_history_contents += '    <tr>';
+                edit_history_contents += '      <td>2 weeks ago</td>';
+                edit_history_contents += '      <td>30th June 2022</td>';
+                edit_history_contents += '      <td>Not attending</td>';
+                edit_history_contents += '      <td>Adam Blakey</td>';
+                edit_history_contents += '    </tr>';                                                
+                edit_history_contents += '  </tbody>';
+                edit_history_contents += '</table>';
+
+            document.getElementById("edit-history-contents").innerHTML = edit_history_contents;
+          }
+
           function updateAttendance()
           {
             document.getElementById("update-attendance-result-title").innerHTML = "Updating...";
@@ -289,7 +339,7 @@
                         </div>
 
                         <?php
-                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID` FROM term_dates WHERE `term_ID`='".$term_ID."'");
+                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' ORDER BY `datetime` ASC");
 
                           while ($result = $term_dates_query->fetch_array())
                           {
@@ -393,16 +443,19 @@
                                             foreach($term_dates as $term_date)
                                             {
                                               $start = new DateTime();
-                                              $start->setTimestamp($term_date[0]);
-                                              $end = new DateTime();
-                                              $end->setTimestamp($term_date[1]);
+                                              $start ->setTimestamp($term_date[0]);
+                                              $start ->setTimeZone(new DateTimeZone('Europe/London'));
+                                              $end   = new DateTime();
+                                              $end   ->setTimestamp($term_date[1]);
+                                              $end   ->setTimeZone(new DateTimeZone('Europe/London'));
 
                                               ($term_date[1]<time())?$strike_through_start="<s>":$strike_through_start="";
                                               ($term_date[1]<time())?$strike_through_end="</s>":$strike_through_end="";
+                                              ($term_date[3])?$is_concert="bg-primary text-white":$is_concert="";
                                               ?>
-                                              <th class="sticky-top text-center">
+                                              <th class="sticky-top text-center align-text-top <?=$is_concert;?>">
                                                 <?=$strike_through_start;?>
-                                                <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?>
+                                                <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?><!--<br /><span style="word-wrap: normal; white-space: pre-wrap">(<?=$term_date[4];?>)</span>-->
                                                 <?=$strike_through_end;?>
                                               </th>
                                               <?php
@@ -410,11 +463,18 @@
                                           ?>
                                         </tr>
                                       </thead>
-                                      <tr>
-                                        <td colspan="100%">
-                                          <div class="" style="font-size: .75rem; padding: 0rem 0rem;"><?=$sort_initial;?></div>
-                                        </td>
-                                      </tr>
+                                      <?php
+                                        if ($config["repeat_headings"])
+                                        {
+                                          ?>
+                                            <tr>
+                                              <td colspan="100%">
+                                                <div class="" style="font-size: .75rem; padding: 0rem 0rem;"><?=$sort_initial;?></div>
+                                              </td>
+                                            </tr>
+                                          <?php
+                                        }
+                                      ?>
                                     <?php
                                   }
                                   ?>
@@ -424,7 +484,7 @@
                                           <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                           <div class="flex-fill">
                                             <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
-                                            <div class="text-muted">
+                                            <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
                                               <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
                                               <?php
@@ -440,7 +500,7 @@
                                                 }
                                               ?>
                                               <?=findTimeAgo($last_edited)?>
-                                            </div>
+                                            </a>
                                           </div>
                                         </div>
                                       </td>
@@ -467,6 +527,7 @@
                                           ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
                                           ($attendance=="1")?$checked="checked":$checked="";
                                           ($term_date[1]<time())?$disabled="disabled":$disabled="";
+                                          ($term_date[3])?$is_concert="bg-primary bg-opacity-25":$is_concert="";
 
                                           if ($attendance=="1")
                                           {
@@ -478,7 +539,7 @@
                                           }
 
                                           ?>
-                                            <td class="text-center">
+                                            <td class="text-center <?=$is_concert;?>">
                                               <div class="col-auto">
                                                 <label class="form-colorcheckbox bigger" style="margin: 0px;">
                                                   <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
@@ -498,7 +559,7 @@
 
                               ?>
                               <tr>
-                                <td></td>
+                                <td><!--<div class="avatar bg-primary" style="height: 1rem; width: 1rem;"></div> = concert--></td>
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
@@ -509,7 +570,7 @@
                                 ?>
                               </tr>
                               <tr id="move-to-top">
-                                <td></td>
+                                <td><!--<div class="avatar bg-primary" style="height: 1rem; width: 1rem;"></div> = concert--></td>
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
@@ -563,6 +624,23 @@
                       </a></div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal modal-blur fade" id="edit-history" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="edit-history-title">Adam Blakey</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="edit-history-contents">
+                This is under development!!
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>

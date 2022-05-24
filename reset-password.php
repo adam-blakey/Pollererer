@@ -5,49 +5,7 @@
 ?>
 
 <?php
-  if(login_valid())
-  {
-    ?>
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-        <title>Page 403</title>
-        <!-- CSS files -->
-        <link href="./dist/css/tabler.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-flags.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-payments.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-vendors.min.css" rel="stylesheet"/>
-        <link href="./dist/css/demo.min.css" rel="stylesheet"/>
-      </head>
-      <body  class=" border-top-wide border-primary d-flex flex-column">
-        <div class="page page-center">
-          <div class="container-tight py-4">
-            <div class="empty">
-              <div class="empty-header">Login page</div>
-              <p class="empty-title">You're already logged in!</p>
-              <p class="empty-subtitle text-muted">
-                Please logout if you want to login as a different user.
-              </p>
-              <div class="empty-action">
-                <a href="./logout.php?redirect_page=<?=urlencode($redirect_page);?>" class="btn btn-primary">
-                  <!-- Download SVG icon from http://tabler-icons.io/i/lock-off -->
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-off" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="3" y1="3" x2="21" y2="21" /><path d="M19 19a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4m4 0h2a2 2 0 0 1 2 2v2" /><circle cx="12" cy="16" r="1" /><path d="M8 11v-3m.712 -3.278a4 4 0 0 1 7.288 2.278v4" /></svg>
-                  Logout
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <script src="./dist/js/tabler.min.js"></script>
-        <script src="./dist/js/demo.min.js"></script>
-      </body>
-    </html>
-    <?php
-  }
-  else
+  if(true) // reset token is valid
   {
     ?>
     <!doctype html>
@@ -59,6 +17,20 @@
           function togglePassword()
           {
             var passwordField = document.getElementById("passwordField");
+
+            if (passwordField.type === "password")
+            {
+              passwordField.type = "text";
+            }
+            else
+            {
+              passwordField.type = "password";
+            }
+          }
+
+          function togglePasswordConfirm()
+          {
+            var passwordField = document.getElementById("passwordConfirmField");
 
             if (passwordField.type === "password")
             {
@@ -117,22 +89,32 @@
             </div>
             <form class="card card-md" action="." method="get" autocomplete="off">
               <div class="card-body">
-                <h2 class="card-title text-center mb-4">Login to your account</h2>
+                <h2 class="card-title text-center mb-4">Reset password</h2>
                 <div class="mb-3">
-                  <label class="form-label">Username</label>
-                  <input type="text" class="form-control" id="emailField" placeholder="Enter username" tabindex="1">
+                  <label class="form-label">Email</label>
+                  <input type="text" class="form-control" id="emailField" placeholder="Enter username" tabindex="1" value="bill.gates@microsoft.com" disabled>
                 </div>
                 <div class="mb-2">
                   <label class="form-label">
                     Password
-                    <span class="form-label-description">
-                      <a href="./forgot-password.php" tabindex="5">I forgot password</a>
-                    </span>
                   </label>
                   <div class="input-group input-group-flat">
                     <input type="password" class="form-control" id="passwordField" placeholder="Password"  autocomplete="off"  tabindex="2">
                     <span class="input-group-text">
                       <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip" onclick="togglePassword()" tabindex="3"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="2" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">
+                    Password again
+                  </label>
+                  <div class="input-group input-group-flat">
+                    <input type="password" class="form-control" id="passwordConfirmField" placeholder="Don't get it wrong"  autocomplete="off"  tabindex="4">
+                    <span class="input-group-text">
+                      <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip" onclick="togglePasswordConfirm()" tabindex="5"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="2" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
                       </a>
                     </span>
@@ -144,22 +126,8 @@
                 <div class="form-footer">
                   <button type="button" id="do-login-button" onclick="doLogin()" class="btn btn-primary w-100" tabindex="4">Log in</button>
                 </div>
-                <div class="pb-2 pt-4 text-muted">
-                    By logging in, you allow us to store a cookie in your browser with a unique session ID; this session ID is linked to your IP address, and is used only to monitor compromised logins and rate limit repeated requests.
-                </div>
               </div>
             </form>
-            <div class="d-flex py-1 align-items-center">
-              <a class="btn btn-link" onclick="history.back()">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <line x1="5" y1="12" x2="11" y2="18" />
-                  <line x1="5" y1="12" x2="11" y2="6" />
-                </svg>
-                Take me back
-              </a>
-            </div>
           </div>
         </div>
         <!-- Libs JS -->

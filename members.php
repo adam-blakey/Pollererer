@@ -23,7 +23,7 @@
               <div class="container-xl">
                 <div class="row row-cards">              
                   <div class="col-12">
-                    <?php output_members(Inf); ?>
+                    <?php output_members(INF); ?>
                   </div>
                 </div>
               </div>
