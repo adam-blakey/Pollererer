@@ -57,9 +57,9 @@
 		        		}
 		        	}
 
-	            $this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($i+1), 1,  0, 'C', 1);
-	            $this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
-	            $this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
+		            $this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($j+1), 1,  0, 'C', 1);
+		            $this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
+		            $this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
 		        }
 		        $this->Ln();
 
