@@ -97,11 +97,32 @@
             }        
           }
 
-          function viewEditHistory()
+          function viewEditHistory(member_ID, ensemble_ID, term_ID)
           {
             document.getElementById("edit-history-contents").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading...';
 
-            var edit_history_contents  = '<table class="table table-vcenter card-table table-striped">';
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.open("POST", "./api/v1/get_attendance-edit-history.php", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+            xhttp.send(
+              "member_ID="    + member_ID +
+              "&ensemble_ID=" + ensemble_ID +
+              "&term_ID="     + term_ID
+            );
+
+            xhttp.onload = function() {
+              const JSON_response = JSON.parse(this.responseText);
+
+              var edit_history_contents = '';
+              var edit_history_title    = '';
+              if (JSON_response.status == "no_results") {
+                edit_history_contents = JSON_response.edit_history;
+                edit_history_title    = JSON_response.member_name;
+              }
+              else if (JSON_response.status == "success") {
+                edit_history_contents  = '<table class="table table-vcenter card-table table-striped">';
                 edit_history_contents += '  <thead>';
                 edit_history_contents += '    <tr>';
                 edit_history_contents += '      <th>When</th>';
@@ -109,42 +130,28 @@
                 edit_history_contents += '      <th>Changed to</th>';
                 edit_history_contents += '      <th>By</th>';
                 edit_history_contents += '    </tr>';
-                edit_history_contents += '  </thead>';
                 edit_history_contents += '  <tbody>';
-                edit_history_contents += '    <tr>';
-                edit_history_contents += '      <td>18 minutes ago</td>';
-                edit_history_contents += '      <td>26th May 2022</td>';
-                edit_history_contents += '      <td>Attending</td>';
-                edit_history_contents += '      <td>Blackwood User</td>';
-                edit_history_contents += '    </tr>';
-                edit_history_contents += '    <tr>';
-                edit_history_contents += '      <td>2 weeks ago</td>';
-                edit_history_contents += '      <td>26th May 2022</td>';
-                edit_history_contents += '      <td>Not attending</td>';
-                edit_history_contents += '      <td>Adam Blakey</td>';
-                edit_history_contents += '    </tr>';
-                edit_history_contents += '    <tr>';
-                edit_history_contents += '      <td>2 weeks ago</td>';
-                edit_history_contents += '      <td>9th June 2022</td>';
-                edit_history_contents += '      <td>Attending</td>';
-                edit_history_contents += '      <td>Adam Blakey</td>';
-                edit_history_contents += '    </tr>';
-                edit_history_contents += '    <tr>';
-                edit_history_contents += '      <td>2 weeks ago</td>';
-                edit_history_contents += '      <td>23rd June 2022</td>';
-                edit_history_contents += '      <td>Attending</td>';
-                edit_history_contents += '      <td>Adam Blakey</td>';
-                edit_history_contents += '    </tr>';
-                edit_history_contents += '    <tr>';
-                edit_history_contents += '      <td>2 weeks ago</td>';
-                edit_history_contents += '      <td>30th June 2022</td>';
-                edit_history_contents += '      <td>Not attending</td>';
-                edit_history_contents += '      <td>Adam Blakey</td>';
-                edit_history_contents += '    </tr>';                                                
+                for (let i=0; i<JSON_response.edit_history.length; i++) {
+                  edit_history_contents += '    <tr>';
+                  edit_history_contents += '      <td>'+JSON_response.edit_history[i][0]+'</td>';
+                  edit_history_contents += '      <td>'+JSON_response.edit_history[i][1]+'</td>';
+                  edit_history_contents += '      <td>'+JSON_response.edit_history[i][2]+'</td>';
+                  edit_history_contents += '      <td>'+JSON_response.edit_history[i][3]+'</td>';
+                  edit_history_contents += '    </tr>';
+                }
                 edit_history_contents += '  </tbody>';
                 edit_history_contents += '</table>';
 
-            document.getElementById("edit-history-contents").innerHTML = edit_history_contents;
+                edit_history_title = JSON_response.member_name;
+              }
+              else {
+                edit_history_contents = 'An error occured: '+JSON_response.error_message;
+                edit_history_title    = 'An error occured';
+              }
+
+              document.getElementById("edit-history-contents").innerHTML = edit_history_contents;
+              document.getElementById("edit-history-title").innerHTML    = edit_history_title;
+            }
           }
 
           function updateAttendance()
@@ -484,7 +491,7 @@
                                           <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                           <div class="flex-fill">
                                             <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
-                                            <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
+                                            <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>, <?=$ensemble_ID;?>, <?=$term_ID;?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
                                               <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
                                               <?php
@@ -637,7 +644,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body" id="edit-history-contents">
-                This is under development!!
+                Content
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
