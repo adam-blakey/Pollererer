@@ -186,7 +186,7 @@
               extracted_attendance_data.push(currentEntry);
             }
 
-            xhttp.send("attendance_data="+JSON.stringify(extracted_attendance_data));
+            xhttp.send("attendance_data="+JSON.stringify(extracted_attendance_data)+"&session_ID=<?=$_COOKIE["session_ID"];?>");
             // xhttp.send(
             //   "session_id="    + document.getElementById("session_id").value +
             //   "&user_id="      + document.getElementById("user_id").value + 
