@@ -5,7 +5,7 @@
 
 	$JSON_response = new stdClass();
 
-	if (count($member_ID) >= 1)
+	if ($member_ID != '0')
 	{
 		include($_SERVER['DOCUMENT_ROOT']."/includes/functions.php");
 		include($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
