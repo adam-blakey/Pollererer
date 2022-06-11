@@ -227,6 +227,31 @@
 		// 		array('Oboe', 'Saxophone', 'Clarinet', 'Trumpet', '')
 		// 	)
 		// );
+
+		// REALLY HACKY WAY OF DOING THINGS.
+		$num_cols = max(array_keys($attendance))+1;
+		$num_rows = 0;
+		for ($i=0; $i < $num_cols; ++$i)
+		{
+			if (max(array_keys($attendance[$i])) > $num_rows)
+			{
+				$num_rows = max(array_keys($attendance[$i]));
+			}
+		}
+		$num_rows += 1;
+		for ($j=0; $j < $num_rows; ++$j)
+		{
+			for ($i=0; $i < $num_cols; ++$i)
+			{
+				if(!isset($names[$i][$j]))
+				{
+					$names      [$i][$j] = '';
+					$instruments[$i][$j] = '';
+					$attendance [$i][$j] = NULL;
+				}
+			}
+		}
+
 		$pdf->SeatingTable(
 			$names,
 			$instruments,
@@ -241,8 +266,12 @@
 		$filename = $_SERVER['DOCUMENT_ROOT'].'/seating-plans/'.'seating_'.$ensemble_name.'_'.$term_date_date->format("Ymj").'.pdf';
 		$pdf->Output($filename, 'F');
 
+		//echo '<pre>'; print_r($names); echo '</pre>';
+
 		return $filename;
 	}
+
+	//generate_seating_plan_PDF(3, 3);
 
 	//echo $message;
 ?>
