@@ -1,3 +1,4 @@
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
 
 <?php
@@ -16,11 +17,11 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
         <title>Page 403</title>
         <!-- CSS files -->
-        <link href="./dist/css/tabler.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-flags.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-payments.min.css" rel="stylesheet"/>
-        <link href="./dist/css/tabler-vendors.min.css" rel="stylesheet"/>
-        <link href="./dist/css/demo.min.css" rel="stylesheet"/>
+        <link href="<?=$config['base_url'];?>/dist/css/tabler.min.css" rel="stylesheet"/>
+        <link href="<?=$config['base_url'];?>/dist/css/tabler-flags.min.css" rel="stylesheet"/>
+        <link href="<?=$config['base_url'];?>/dist/css/tabler-payments.min.css" rel="stylesheet"/>
+        <link href="<?=$config['base_url'];?>/dist/css/tabler-vendors.min.css" rel="stylesheet"/>
+        <link href="<?=$config['base_url'];?>/dist/css/demo.min.css" rel="stylesheet"/>
       </head>
       <body  class=" border-top-wide border-primary d-flex flex-column">
         <div class="page page-center">
@@ -32,7 +33,7 @@
                 Please logout if you want to login as a different user.
               </p>
               <div class="empty-action">
-                <a href="./logout.php?redirect_page=<?=urlencode($redirect_page);?>" class="btn btn-primary">
+                <a href="<?=$config['base_url'];?>/logout.php?redirect_page=<?=urlencode($redirect_page);?>" class="btn btn-primary">
                   <!-- Download SVG icon from http://tabler-icons.io/i/lock-off -->
                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-off" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="3" y1="3" x2="21" y2="21" /><path d="M19 19a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4m4 0h2a2 2 0 0 1 2 2v2" /><circle cx="12" cy="16" r="1" /><path d="M8 11v-3m.712 -3.278a4 4 0 0 1 7.288 2.278v4" /></svg>
                   Logout
@@ -41,8 +42,8 @@
             </div>
           </div>
         </div>
-        <script src="./dist/js/tabler.min.js"></script>
-        <script src="./dist/js/demo.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/tabler.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/demo.min.js"></script>
       </body>
     </html>
     <?php
@@ -76,7 +77,7 @@
 
             var xhttp = new XMLHttpRequest();
 
-            xhttp.open("POST", "./api/v1/do_login.php", true);
+            xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/do_login.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             var emailField    = document.getElementById("emailField").value;
@@ -126,7 +127,7 @@
                   <label class="form-label">
                     Password
                     <span class="form-label-description">
-                      <a href="./forgot-password.php" tabindex="5">I forgot password</a>
+                      <a href="<?=$config['base_url'];?>/forgot-password.php" tabindex="5">I forgot password</a>
                     </span>
                   </label>
                   <div class="input-group input-group-flat">
@@ -164,8 +165,8 @@
         </div>
         <!-- Libs JS -->
         <!-- Tabler Core -->
-        <script src="./dist/js/tabler.min.js"></script>
-        <script src="./dist/js/demo.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/tabler.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/demo.min.js"></script>
       </body>
     </html>
     <?php

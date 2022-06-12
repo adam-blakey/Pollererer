@@ -1,3 +1,5 @@
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
+
 <?php
 function output_missing_page()
 {
@@ -12,11 +14,11 @@ function output_missing_page()
       <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
       <title>Page 404</title>
       <!-- CSS files -->
-      <link href="./dist/css/tabler.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-flags.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-payments.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-vendors.min.css" rel="stylesheet"/>
-      <link href="./dist/css/demo.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-flags.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-payments.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-vendors.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/demo.min.css" rel="stylesheet"/>
     </head>
     <body  class=" border-top-wide border-primary d-flex flex-column">
       <div class="page page-center">
@@ -28,7 +30,7 @@ function output_missing_page()
               Please double-check the URL.
             </p>
             <div class="empty-action">
-              <a href="./login.php" class="btn btn-primary">
+              <a href="<?=$config['base_url'];?>/login.php" class="btn btn-primary">
                 <!-- Download SVG icon from http://tabler-icons.io/i/login -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="5" y="11" width="14" height="10" rx="2" /><circle cx="12" cy="16" r="1" /><path d="M8 11v-4a4 4 0 0 1 8 0v4" /></svg>
                 Login
@@ -37,8 +39,8 @@ function output_missing_page()
           </div>
         </div>
       </div>
-      <script src="./dist/js/tabler.min.js"></script>
-      <script src="./dist/js/demo.min.js"></script>
+      <script src="<?=$config['base_url'];?>/dist/js/tabler.min.js"></script>
+      <script src="<?=$config['base_url'];?>/dist/js/demo.min.js"></script>
     </body>
   </html>
   <?php
@@ -57,11 +59,11 @@ function output_restricted_page()
       <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
       <title>Page 403</title>
       <!-- CSS files -->
-      <link href="./dist/css/tabler.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-flags.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-payments.min.css" rel="stylesheet"/>
-      <link href="./dist/css/tabler-vendors.min.css" rel="stylesheet"/>
-      <link href="./dist/css/demo.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-flags.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-payments.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/tabler-vendors.min.css" rel="stylesheet"/>
+      <link href="<?=$config['base_url'];?>/dist/css/demo.min.css" rel="stylesheet"/>
     </head>
     <body  class=" border-top-wide border-primary d-flex flex-column">
       <div class="page page-center">
@@ -73,7 +75,7 @@ function output_restricted_page()
               If you think you should have access, then please login below.
             </p>
             <div class="empty-action">
-              <a href="./login.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="btn btn-primary">
+              <a href="<?=$config['base_url'];?>/login.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="btn btn-primary">
                 <!-- Download SVG icon from http://tabler-icons.io/i/login -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="5" y="11" width="14" height="10" rx="2" /><circle cx="12" cy="16" r="1" /><path d="M8 11v-4a4 4 0 0 1 8 0v4" /></svg>
                 Login
@@ -82,8 +84,8 @@ function output_restricted_page()
           </div>
         </div>
       </div>
-      <script src="./dist/js/tabler.min.js"></script>
-      <script src="./dist/js/demo.min.js"></script>
+      <script src="<?=$config['base_url'];?>/dist/js/tabler.min.js"></script>
+      <script src="<?=$config['base_url'];?>/dist/js/demo.min.js"></script>
     </body>
   </html>
   <?php
