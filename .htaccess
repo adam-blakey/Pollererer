@@ -2,5 +2,4 @@ RewriteEngine on
 ErrorDocument 404 /404.php
 
 RewriteRule ^poll\.php$ - [L]
-RewriteRule ^([^/]+)/([^/]+)/?$ /poll.php?ensemble_name=$1&term_name=$2 [L,QSA]
-#RewriteRule ^([^/]+)/?$ /poll.php?ensemble_ID=$1&term_ID=1 [L,QSA]
+RewriteRule ^([^/]+)/([^/]+)/$ /poll.php?ensemble_name=$1&term_name=$2 [L,QSA]

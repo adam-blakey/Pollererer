@@ -122,7 +122,7 @@
 
             var xhttp = new XMLHttpRequest();
 
-            xhttp.open("POST", "./api/v1/get_attendance-edit-history.php", true);
+            xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/get_attendance-edit-history.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             xhttp.send(
@@ -189,7 +189,7 @@
 
             var xhttp = new XMLHttpRequest();
 
-            xhttp.open("POST", "./api/v1/update_attendance.php", true);
+            xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_attendance.php", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             var attendance_data = document.getElementsByClassName("attendance-changed");
@@ -672,8 +672,8 @@
           </div>
         </div>
 
-        <script src="./dist/js/tabler.min.js"></script>
-        <script src="./dist/js/demo.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/tabler.min.js"></script>
+        <script src="<?=$config['base_url'];?>/dist/js/demo.min.js"></script>
       </body>
     </html>
     <?php
