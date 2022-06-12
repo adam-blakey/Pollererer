@@ -92,7 +92,7 @@
                 if (JSON_response.status == "success") {
                   document.getElementById("do-login-button").innerHTML = "Success!";
                   document.cookie = 'session_ID='+JSON_response.session_ID+'; expires='+JSON_response.expiry+'; path=/';
-                  window.location.href = "<?=$config["base_url"];?><?=$redirect_page;?>";
+                  window.location.href = "<?=$config['base_url'];?><?=$redirect_page;?>";
                 } 
                 else {
                   document.getElementById("do-login-button").innerHTML = "Log in";
