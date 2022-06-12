@@ -92,7 +92,7 @@
                 if (JSON_response.status == "success") {
                   document.getElementById("do-login-button").innerHTML = "Success!";
                   document.cookie = 'session_ID='+JSON_response.session_ID+'; expires='+JSON_response.expiry+'; path=/';
-                  window.location.href = "<?=$config['base_url'];?><?=$redirect_page;?>";
+                  window.location.href = "<?=$config["base_url"];?><?=$redirect_page;?>";
                 } 
                 else {
                   document.getElementById("do-login-button").innerHTML = "Log in";
@@ -102,10 +102,10 @@
             }
           }
 
-          // document.getElementById("do-login-button").addEventListener("keypress",
+          // document.getElementById("passwordField").addEventListener("keypress",
           //   function onEvent(event) {
-          //     if (event.key == "Enter") {
-          //       document.getElementById("do-login-button").click();
+          //     if (event.keyCode === 13) {
+          //       doLogin()
           //     }
           //   })
         </script>
@@ -116,7 +116,7 @@
             <div class="text-center mb-4">
               <a href="." class="navbar-brand navbar-brand-autodark"><img src="<?=$config["logo_url"];?>" height="36" alt=""></a>
             </div>
-            <form class="card card-md" action="." method="get" autocomplete="off">
+            <form class="card card-md" autocomplete="off">
               <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login to your account</h2>
                 <div class="mb-3">
@@ -143,7 +143,7 @@
                   
                 </div>
                 <div class="form-footer">
-                  <button type="submit" id="do-login-button" onclick="doLogin()" class="btn btn-primary w-100" tabindex="4">Log in</button>
+                  <button type="button" id="do-login-button" onclick="doLogin()" class="btn btn-primary w-100" tabindex="4">Log in</button>
                 </div>
                 <div class="pb-2 pt-4 text-muted">
                     By logging in, you allow us to store a cookie in your browser with a unique session ID; this session ID is linked to your IP address, and is used only to monitor compromised logins and rate limit repeated requests.
