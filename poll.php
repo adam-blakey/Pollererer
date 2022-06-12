@@ -7,6 +7,9 @@
 * Copyright 2018-2022 codecalm.net Paweł Kuna
 * Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
 -->
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
+<?php $db_connection = db_connect(); ?>
+
 <?php
   $attendance_select_sortby    = isset($_GET["sortby"])?$_GET["sortby"]:"";
   $attendance_select_direction = isset($_GET["sortdir"])?$_GET["sortdir"]:"";
@@ -22,12 +25,42 @@
     $attendance_select_direction = "ASC";
   }
 
-  $ensemble_ID = (isset($_GET["ensemble_ID"]))?intval($_GET["ensemble_ID"]):0;
-  $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
-?>
+  if (isset($_GET["ensemble_name"]) and isset($_GET["term_name"]))
+  {
+    $ensemble_ID_query = $db_connection->prepare("SELECT `ID` FROM `ensembles` WHERE `safe_name`=? LIMIT 1");
+    $ensemble_ID_query ->bind_param("s", $_GET["ensemble_name"]);
+    $ensemble_ID_query ->execute();
+    if($result = $ensemble_ID_query->get_result())
+    { 
+      $ensemble_ID = $result->fetch_array()[0];
+    }
+    else
+    {
+      echo "Error occured: Could not get the ensemble ID.";
+      die();
+    }
+    $ensemble_ID_query->close();
 
-<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/kernel.php"); ?>
-<?php $db_connection = db_connect(); ?>
+    $term_ID_query = $db_connection->prepare("SELECT `ID` FROM `terms` WHERE `safe_name`=? LIMIT 1");
+    $term_ID_query ->bind_param("s", $_GET["term_name"]);
+    $term_ID_query ->execute();
+    if($result = $term_ID_query->get_result())
+    {
+      $term_ID = $result->fetch_array()[0]; 
+    }
+    else
+    {
+      echo "Error occured: Could not get the term ID.";
+      die();
+    }
+    $term_ID_query->close();
+  }
+  else
+  {
+    $ensemble_ID = (isset($_GET["ensemble_ID"]))?intval($_GET["ensemble_ID"]):0;
+    $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
+  }
+?>
 
 <?php
   $term_name = $db_connection->query("SELECT `name` FROM `terms` WHERE `ID`=".$term_ID." LIMIT 1")->fetch_array()[0];
