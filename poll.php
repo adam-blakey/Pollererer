@@ -30,30 +30,16 @@
     $ensemble_ID_query = $db_connection->prepare("SELECT `ID` FROM `ensembles` WHERE `safe_name`=? LIMIT 1");
     $ensemble_ID_query ->bind_param("s", $_GET["ensemble_name"]);
     $ensemble_ID_query ->execute();
-    if($result = $ensemble_ID_query->get_result())
-    { 
-      $ensemble_ID = $result->fetch_array()[0];
-    }
-    else
-    {
-      echo "Error occured: Could not get the ensemble ID.";
-      die();
-    }
-    $ensemble_ID_query->close();
+    $ensemble_ID_query ->bind_result($ensemble_ID);
+    $ensemble_ID_query ->fetch();
+    $ensemble_ID_query ->close();
 
     $term_ID_query = $db_connection->prepare("SELECT `ID` FROM `terms` WHERE `safe_name`=? LIMIT 1");
     $term_ID_query ->bind_param("s", $_GET["term_name"]);
     $term_ID_query ->execute();
-    if($result = $term_ID_query->get_result())
-    {
-      $term_ID = $result->fetch_array()[0]; 
-    }
-    else
-    {
-      echo "Error occured: Could not get the term ID.";
-      die();
-    }
-    $term_ID_query->close();
+    $term_ID_query ->bind_result($term_ID);
+    $term_ID_query ->fetch();
+    $term_ID_query ->close();
   }
   else
   {
