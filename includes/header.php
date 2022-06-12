@@ -51,8 +51,8 @@
               $login_query_result = $login_query->fetch_assoc();
 
               $icon_style = "style=\"background-image: url('".$login_query_result["image"]."')\"";
-              $name       = "Blackwood";
-              $role       = "Blackwood User";
+              $name       = $login_query_result["first_name"]." ".$login_query_result["last_name"];
+              $role       = $login_query_result["first_name"]." User";
 
               $group_user = true;
             }
