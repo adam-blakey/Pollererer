@@ -38,13 +38,6 @@
 
               while($login = $logins->fetch_assoc())
               {
-                if ($sort_initial != substr($login["first_name"], 0, 1))
-                {
-                  $sort_initial = substr($login["first_name"], 0, 1);
-                  ?>
-                    <div class="list-group-header sticky-top"><?=$sort_initial;?></div>
-                  <?php
-                }
                 ?>
                   <div class="list-group-item">
                     <div class="row">
@@ -102,6 +95,7 @@
                   <div class="mb-3">
                     <label class="form-label">Member</label>
                     <select id="add-login-member-ID" class="form-select">
+                      <option value="" disabled selected></option>
                       <?php
                         $members = $db_connection->query("SELECT `first_name`, `last_name`, `ID` FROM `members` WHERE `ID`>=1 ORDER BY `first_name` ASC");
 
@@ -123,7 +117,7 @@
                   <div class="mb-3">
                     <label class="form-label">First name</label>
                     <div class="input-group input-group-flat">
-                      <input type="text" class="form-control" value="<?=$member["first_name"];?>" autocomplete="off" disabled>
+                      <input type="text" class="form-control" value="Adam" autocomplete="off" disabled>
                     </div>
                   </div>
                 </div>
@@ -131,7 +125,7 @@
                   <div class="mb-3">
                     <label class="form-label">Last name</label>
                     <div class="input-group input-group-flat">
-                      <input type="text" class="form-control" value="<?=$member["last_name"];?>" autocomplete="off" disabled>
+                      <input type="text" class="form-control" value="Blakey" autocomplete="off" disabled>
                     </div>
                   </div>
                 </div>
@@ -195,7 +189,8 @@
         
         <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
           <?php
-            $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
+            //$members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
+            $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image` FROM `members` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
 
             if ($members->num_rows == 0)
             {
@@ -215,6 +210,32 @@
 
               while($member = $members->fetch_assoc())
               {
+                $ensembles = $db_connection->query("SELECT `ensembles`.`name` AS `name` FROM `ensembles` LEFT JOIN `members-ensembles` ON `members-ensembles`.`ensemble_ID`=`ensembles`.`ID` WHERE `member_ID`='".$member["ID"]."'");
+
+                if ($ensembles->num_rows == 0)
+                {
+                  $ensemble_list = "no ensembles";
+                }
+                else
+                {
+                  $first_loop = true;
+                  while($ensemble = $ensembles->fetch_assoc())
+                  {
+                    if ($first_loop)
+                    {
+                      $ensemble_list = "";
+                      $first_loop = false;
+                    }
+                    else
+                    {
+                      $ensemble_list .= ", ";
+                    }
+
+                    $ensemble_list .= $ensemble["name"];
+                  }
+                }
+
+
                 if ($sort_initial != substr($member["first_name"], 0, 1))
                 {
                   $sort_initial = substr($member["first_name"], 0, 1);
@@ -245,7 +266,7 @@
                       </div>
                       <div class="col text-truncate">
                         <a href="#" class="text-body d-block"><?=$member["first_name"]." ".$member["last_name"];?></a>
-                        <div class="text-muted text-truncate mt-n1"><?=$member["instrument"];?>, <?=$member["ensemble_name"];?></div>
+                        <div class="text-muted text-truncate mt-n1"><?=$member["instrument"];?>; <?=$ensemble_list;?></div>
                       </div>
                     </div>
                   </div>
@@ -294,8 +315,8 @@
 	              <div class="col-lg-4">
 	                <div class="mb-3">
 	                  <label class="form-label">Ensemble</label>
-	                  <select class="form-select">
-	                    <option value="1" selected>NSWO</option>
+	                  <select class="form-select" multiple="">
+	                    <option value="1">NSWO</option>
 	                    <option value="2">NWE</option>
 	                  </select>
 	                </div>
@@ -528,7 +549,7 @@
                           if ($ensemble["image"]!="")
                           {
                             ?>
-                              <span class="avatar" style="background-image: url(<?=$ensemble["image"];?>)"></span>
+                              <span class="avatar" style="background-image: url('<?=$ensemble["image"];?>')"></span>
                             <?php
                           }
                           else
@@ -564,17 +585,17 @@
 	            <div class="row">
 	              <div class="col-lg-6">
 	                <div class="mb-3">
-	                  <label class="form-label">First name</label>
+	                  <label class="form-label">Ensemble name</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="John" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="The Clarinet Ensemble" autocomplete="off">
 	                  </div>
 	                </div>
 	              </div>
 	              <div class="col-lg-6">
 	                <div class="mb-3">
-	                  <label class="form-label">Last name</label>
+	                  <label class="form-label">Safe name</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="Smith" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="the-clarinet-ensemble" autocomplete="off">
 	                  </div>
 	                </div>
 	              </div>
@@ -582,19 +603,18 @@
 	            <div class="row">
 	              <div class="col-lg-8">
 	                <div class="mb-3">
-	                  <label class="form-label">Instrument</label>
+	                  <label class="form-label">Admin emails</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="Clarinet" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="admin@example.com,another@example.com" autocomplete="off">
 	                  </div>
 	                </div>
 	              </div>
 	              <div class="col-lg-4">
 	                <div class="mb-3">
-	                  <label class="form-label">Ensemble</label>
-	                  <select class="form-select">
-	                    <option value="1" selected>NSWO</option>
-	                    <option value="2">NWE</option>
-	                  </select>
+	                  <label class="form-label">Image</label>
+	                  <div class="input-group input-group-flat">
+                      <input type="text" class="form-control" value="" placeholder="https://ensemble.com/image.jpg" autocomplete="off">
+                    </div>
 	                </div>
 	              </div>
 	            </div>
@@ -698,37 +718,28 @@
 	            <div class="row">
 	              <div class="col-lg-6">
 	                <div class="mb-3">
-	                  <label class="form-label">First name</label>
+	                  <label class="form-label">Term name</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="John" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="Summer 2022" autocomplete="off">
 	                  </div>
 	                </div>
 	              </div>
 	              <div class="col-lg-6">
 	                <div class="mb-3">
-	                  <label class="form-label">Last name</label>
+	                  <label class="form-label">Safe name</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="Smith" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="summer-2022" autocomplete="off">
 	                  </div>
 	                </div>
 	              </div>
 	            </div>
 	            <div class="row">
-	              <div class="col-lg-8">
+	              <div class="col-lg-12">
 	                <div class="mb-3">
-	                  <label class="form-label">Instrument</label>
+	                  <label class="form-label">Image</label>
 	                  <div class="input-group input-group-flat">
-	                    <input type="text" class="form-control" value="" placeholder="Clarinet" autocomplete="off">
+	                    <input type="text" class="form-control" value="" placeholder="https://ensemble.com/summer-logo.jpg" autocomplete="off">
 	                  </div>
-	                </div>
-	              </div>
-	              <div class="col-lg-4">
-	                <div class="mb-3">
-	                  <label class="form-label">Ensemble</label>
-	                  <select class="form-select">
-	                    <option value="1" selected>NSWO</option>
-	                    <option value="2">NWE</option>
-	                  </select>
 	                </div>
 	              </div>
 	            </div>
