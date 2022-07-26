@@ -1,8 +1,10 @@
-<?php require_once($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
+<?php require($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
 
 <?php
 function output_missing_page()
 {
+  require($_SERVER['DOCUMENT_ROOT']."/config.php");
+
   http_response_code(404);
 
   ?>
@@ -48,6 +50,8 @@ function output_missing_page()
 
 function output_restricted_page()
 {
+  require($_SERVER['DOCUMENT_ROOT']."/config.php");
+  
   http_response_code(403);
 
   ?>

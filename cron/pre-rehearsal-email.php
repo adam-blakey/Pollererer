@@ -106,13 +106,15 @@
 					}
 					else
 					{
-						$attendance = NULL;
+						$attendance["status"] = NULL;
+						$attendance["edit_datetime"] = 0;
 					}
 
 					$new_status = new attendanceStatus
 					(
 						$member["ID"],
-						$member["ensemble_ID"],
+						//$member["ensemble_ID"],
+						$ensemble_ID,
 						$attendance["status"],
 						$member["first_name"],
 						$member["last_name"],
@@ -426,7 +428,7 @@
 																								$message .= '<table class="chart" cellpadding="0" cellspacing="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; table-layout: fixed;">';
 																									$message .= '<tr>';
 																										$message .= '<td width="'.($attendance_count/$total_count*100)."%".'" class="chart-percentage bg-green" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; padding-left: 5px; border-radius: 2px 0 0 2px; color: #fff;" bgcolor="#5eba00">'.round($attendance_count/$total_count*100, 1)."%".'</td>';
-																										$message .= '<td width="'.((1 - $attendance_count/$total_count)*100)."%".'" class="chart-percentage bg-green-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; border-radius: 0 2px 2px 0;" bgcolor="#eff8e6"> </td>';
+																										$message .= '<td width="'.((1 - $attendance_count/$total_count)*100)."%".'" class="chart-percentage bg-green-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; border-radius: 0 2px 2px 0;" bgcolor="#eff8e6"></td>';
 																									$message .= '</tr>';
 																								$message .= '</table>';
 																							$message .= '</td>';
@@ -445,7 +447,7 @@
 																								$message .= '<table class="chart" cellpadding="0" cellspacing="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; table-layout: fixed;">';
 																									$message .= '<tr>';
 																										$message .= '<td width="'.($no_response_count/$total_count*100)."%".'" class="chart-percentage bg-orange" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; padding-left: 5px; border-radius: 2px 0 0 2px; color: #fff;" bgcolor="#fd9644">'.round($no_response_count/$total_count*100, 1)."%".'</td>';
-																										$message .= '<td width="'.((1 - $no_response_count/$total_count)*100)."%".'" class="chart-percentage bg-orange-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fff5ec"> </td>';
+																										$message .= '<td width="'.((1 - $no_response_count/$total_count)*100)."%".'" class="chart-percentage bg-orange-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fff5ec"></td>';
 																									$message .= '</tr>';
 																								$message .= '</table>';
 																							$message .= '</td>';
@@ -464,7 +466,7 @@
 																								$message .= '<table class="chart" cellpadding="0" cellspacing="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; table-layout: fixed;">';
 																									$message .= '<tr>';
 																										$message .= '<td width="'.($absence_count/$total_count*100)."%".'" class="chart-percentage bg-red" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; padding-left: 5px; border-radius: 2px 0 0 2px; color: #fff;" bgcolor="#cd201f">'.round($absence_count/$total_count*100, 1)."%".'</td>';
-																										$message .= '<td width="'.((1 - $absence_count/$total_count)*100)."%".'" class="chart-percentage bg-red-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fae9e9"> </td>';
+																										$message .= '<td width="'.((1 - $absence_count/$total_count)*100)."%".'" class="chart-percentage bg-red-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fae9e9"></td>';
 																									$message .= '</tr>';
 																								$message .= '</table>';
 																							$message .= '</td>';
