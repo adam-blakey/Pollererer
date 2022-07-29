@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 02, 2022 at 09:43 PM
--- Server version: 10.3.34-MariaDB-log-cll-lve
--- PHP Version: 7.3.33
+-- Generation Time: Jul 29, 2022 at 08:42 PM
+-- Server version: 10.3.35-MariaDB-log-cll-lve
+-- PHP Version: 7.4.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `eefbadcc_attendance`
+-- Database: `pollererer`
 --
 
 -- --------------------------------------------------------
@@ -47,8 +47,10 @@ CREATE TABLE `attendance` (
 
 CREATE TABLE `ensembles` (
   `ID` int(10) NOT NULL,
+  `safe_name` varchar(64) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `admin_email` varchar(255) NOT NULL
+  `admin_email` varchar(255) NOT NULL,
+  `image` varchar(1023) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -89,7 +91,10 @@ CREATE TABLE `members` (
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `instrument` varchar(255) NOT NULL,
-  `user_level` int(1) NOT NULL
+  `row` int(2) NOT NULL,
+  `seat` int(2) NOT NULL,
+  `user_level` int(1) NOT NULL,
+  `image` varchar(1023) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -103,6 +108,18 @@ CREATE TABLE `members-ensembles` (
   `member_ID` int(10) NOT NULL,
   `ensemble_ID` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `member_ID` int(10) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expiry` int(12) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -125,7 +142,9 @@ CREATE TABLE `pre-rehearsal-email` (
 
 CREATE TABLE `terms` (
   `ID` int(10) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `safe_name` varchar(64) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `image` varchar(1023) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -138,6 +157,7 @@ CREATE TABLE `term_dates` (
   `ID` int(10) NOT NULL,
   `datetime` int(12) NOT NULL,
   `datetime_end` int(12) NOT NULL,
+  `is_featured` int(1) NOT NULL,
   `term_ID` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -187,6 +207,12 @@ ALTER TABLE `members-ensembles`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `ensemble_ID` (`ensemble_ID`),
   ADD KEY `member_ID` (`member_ID`);
+
+--
+-- Indexes for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`member_ID`,`token`);
 
 --
 -- Indexes for table `pre-rehearsal-email`
