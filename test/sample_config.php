@@ -1,7 +1,7 @@
 <?php
 
 $config = array(
-	"base_url"        => "https://test.blakey.family",
+	"base_url"        => "http://localhost:8080/",
 	"home_url"        => "https://blakey.family",
 	"db_host"         => "localhost",
 	"db_username"     => "root",
