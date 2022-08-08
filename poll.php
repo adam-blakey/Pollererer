@@ -575,7 +575,7 @@
                                           ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
                                           ($attendance=="1")?$checked="checked":$checked="";
                                           ($term_date[1]<time())?$disabled="disabled":$disabled="";
-                                          ($term_date[3])?$is_featured="bg-primary bg-opacity-25":$is_featured="";
+                                          ($term_date[3])?$is_featured="bg-blue-25":$is_featured="";
 
                                           if ($attendance=="1")
                                           {
