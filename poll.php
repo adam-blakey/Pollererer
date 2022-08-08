@@ -387,7 +387,7 @@
                                 </select>
                               </div>
                               <div class="ms-2 d-inline-block">
-                                <button type="submit" class="btn btn-primary ms-auto my-2">Update sort</button>
+                                <button type="submit" class="btn btn-primary ms-auto my-2">Change sort</button>
                               </div>
                             </form>
                           </div>
