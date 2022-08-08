@@ -387,7 +387,7 @@
                         </div>
 
                         <?php
-                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' ORDER BY `datetime` ASC");
+                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') ORDER BY `datetime` ASC");
 
                           while ($result = $term_dates_query->fetch_array())
                           {
@@ -499,9 +499,9 @@
 
                                               ($term_date[1]<time())?$strike_through_start="<s>":$strike_through_start="";
                                               ($term_date[1]<time())?$strike_through_end="</s>":$strike_through_end="";
-                                              ($term_date[3])?$is_concert="bg-primary text-white":$is_concert="";
+                                              ($term_date[3])?$is_featured="bg-primary text-white":$is_featured="";
                                               ?>
-                                              <th class="sticky-top text-center align-text-top <?=$is_concert;?>">
+                                              <th class="sticky-top text-center align-text-top <?=$is_featured;?>">
                                                 <?=$strike_through_start;?>
                                                 <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?><!--<br /><span style="word-wrap: normal; white-space: pre-wrap">(<?=$term_date[4];?>)</span>-->
                                                 <?=$strike_through_end;?>
@@ -575,7 +575,7 @@
                                           ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
                                           ($attendance=="1")?$checked="checked":$checked="";
                                           ($term_date[1]<time())?$disabled="disabled":$disabled="";
-                                          ($term_date[3])?$is_concert="bg-primary bg-opacity-25":$is_concert="";
+                                          ($term_date[3])?$is_featured="bg-primary bg-opacity-25":$is_featured="";
 
                                           if ($attendance=="1")
                                           {
@@ -587,7 +587,7 @@
                                           }
 
                                           ?>
-                                            <td class="text-center <?=$is_concert;?>">
+                                            <td class="text-center <?=$is_featured;?>">
                                               <div class="col-auto">
                                                 <label class="form-colorcheckbox bigger" style="margin: 0px;">
                                                   <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
