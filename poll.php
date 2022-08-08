@@ -279,7 +279,7 @@
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
-                <div class="row row-cards">              
+                <div class="row row-cards mb-3">              
                   <!--<div class="col-12">-->
                   <div class="col-md-3 col-lg-3">
                     <div class="card mb-3 bg-blue text-white">
