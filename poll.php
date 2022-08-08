@@ -281,11 +281,10 @@
               <div class="container-xl">
                 <div class="row row-cards">              
                   <!--<div class="col-12">-->
-                  <div class="col-md-6 col-lg-3">
+                  <div class="col-md-3 col-lg-3">
                     <div class="card mb-3 bg-blue text-white">
                       <div class="card-stamp">
                         <div class="card-stamp-icon bg-white text-primary">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/star -->
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-mobile" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="7" y="4" width="10" height="16" rx="1" /><line x1="11" y1="5" x2="13" y2="5" /><line x1="12" y1="17" x2="12" y2="17.01" /></svg>
                         </div>
                       </div>
@@ -297,8 +296,23 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6 col-lg-9">
-                    <div class="card mb-3">
+                  <div class="col-md-3 col-lg-3">
+                    <div class="card mb-3 bg-blue text-white">
+                      <div class="card-stamp">
+                        <div class="card-stamp-icon bg-white text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-desktop" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="4" width="18" height="12" rx="1" /><line x1="7" y1="20" x2="17" y2="20" /><line x1="9" y1="16" x2="9" y2="20" /><line x1="15" y1="16" x2="15" y2="20" /></svg>
+                        </div>
+                      </div>
+                      <div class="card-header">
+                        <h3 class="card-title">On desktop?</h3>
+                      </div>
+                      <div class="card-body border-bottom py-3">
+                        <p>Scroll to bottom of page to reveal horizontal scrollbar.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-lg-6">
+                    <div class="card mb-6">
                       <div class="ribbon ribbon-top bg-red">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-triangle" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
                       </div>
@@ -306,13 +320,12 @@
                         <h3 class="card-title">GDPR warning</h3>
                       </div>
                       <div class="card-body border-bottom py-3">
-                        <p>Please be aware that anyone else in the group can see what you select in the options below.</p>
-                        <p>If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
+                        <p>Please be aware that anyone else in the group can see what you select in the options below. If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                  <div class="col-12">
+                <div class="col-12">
                     <div class="card">
                       <div class="card-header">
                         <h3 class="card-title"><?=$title;?></h3>
