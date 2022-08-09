@@ -53,6 +53,8 @@
 
   $ensemble_name = $db_connection->query("SELECT `name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_array()[0];
 
+  $ensemble_safe_name = $db_connection->query("SELECT `safe_name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_array()[0];
+
   if ($term_name == NULL)
   {
     $title = "Unknown term";
@@ -264,10 +266,55 @@
             table.insertBefore(rowToMove, rowToMoveTo);
           }
 
+          function checkPollEnded()
+          {
+            <?php
+              $poll_ended = $db_connection->query("SELECT `datetime` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `datetime` >= UNIX_TIMESTAMP()");
+
+              if ($poll_ended->num_rows == 0)
+              {
+                $new_poll_info = $db_connection->query("SELECT `name`, `safe_name` FROM terms WHERE `ID`>='".$term_ID."' ORDER BY `ID` DESC LIMIT 1");
+
+                if ($new_poll_info->num_rows == 1)
+                {
+                  $poll_info = $new_poll_info->fetch_assoc();
+                  ?>
+                  var poll_ended    = true;
+                  var link          = "<?=$config['base_url']."/".$ensemble_safe_name."/".$poll_info["safe_name"]."/";?>";
+                  var ensemble      = "<?=$ensemble_name;?>";
+                  var new_term_name = "<?=$poll_info["name"];?>";
+                  <?php
+                }
+                else
+                {
+                  ?>
+                  var poll_ended = false;
+                  <?php
+                }
+              }
+              else
+              {
+                ?>
+                var poll_ended = false;
+                <?php
+              }
+            ?>
+            
+            if (poll_ended)
+            {
+              $('#poll-ended-box')       .modal('show');
+              $('#poll-ended-box-icon')  .html('<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-yellow icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><circle cx="18" cy="18" r="4" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg>');
+              $('#poll-ended-box-title') .html("This poll has ended");
+              $('#poll-ended-box-text')  .html("Did you mean to go to " + ensemble + " " + new_term_name + "?");
+              $('#poll-ended-box-button').attr("href", link);
+            }
+          }
+
           function pageLoaded()
           {
             setIndeterminate();
             moveToTop();
+            checkPollEnded();
           }
           //window.onload = pageLoaded();
         </script>
@@ -702,6 +749,38 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal modal-blur fade" id="poll-ended-box" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div id="poll-ended-box-status" class="modal-status bg-yellow"></div>
+              <div class="modal-body text-center py-4">
+                <div id="poll-ended-box-icon">
+                  Result icon
+                </div>
+                <h3 id="poll-ended-box-title">Result title</h3>
+                <div class="text-muted" id="poll-ended-box-text">Result text</div>
+              </div>
+              <div class="modal-footer">
+                <div class="w-100">
+                  <div class="row">
+                    <div class="col">
+                      <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                        No, stay here.
+                      </a>
+                    </div>
+                    <div class="col">
+                      <a id="poll-ended-box-button" href="#" class="btn btn-yellow w-100">
+                        Yes, take me there!
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
