@@ -23,29 +23,11 @@ SET time_zone = "+00:00";
 --
 
 --
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`ID`, `member_ID`, `edit_datetime`, `edit_member_ID`, `term_dates_ID`, `ensemble_ID`, `IP`, `status`) VALUES
-(1, 1, 1650355779, -1, 1, 1, '', 1),
-(2, 2, 1650355779, -1, 1, 1, '', 1),
-(3, 3, 1650356655, -1, 2, 1, '', 1),
-(4, 5, 1650356655, -1, 2, 1, '', 0);
-
---
 -- Dumping data for table `ensembles`
 --
 
 INSERT INTO `ensembles` (`ID`, `safe_name`, `name`, `admin_email`, `image`) VALUES
-(1, 'test-ensemble', 'Test Ensemble', 'spam@adamblakey.co.uk', 'https://attendance.nsw.org.uk/uploads/ensemble-logos/test.svg'),
-
---
--- Dumping data for table `logins`
---
-
-INSERT INTO `logins` (`ID`, `email`, `password`) VALUES
-(-1, 'test-ensemble', '$2y$10$jjve4ShtvdqFJXNKHzGSte1bGLkyxcyJROKpzGVgsYiAH4q6gyeWG'),
-(1, 'admin@example.com', '$2y$10$f0TP0bKkLkmL7iIM4C3Cvu18EkBUBoGS7MH1ZNugltn9zXmdMD2Em'),
+(1, 'test-ensemble', 'Test Ensemble', 'spam@adamblakey.co.uk', 'https://attendance.nsw.org.uk/uploads/ensemble-logos/test.svg');
 
 --
 -- Dumping data for table `members`
@@ -85,8 +67,27 @@ INSERT INTO `terms` (`ID`, `safe_name`, `name`, `image`) VALUES
 
 INSERT INTO `term_dates` (`ID`, `datetime`, `datetime_end`, `is_featured`, `term_ID`) VALUES
 (1, 4102477200, 4102488000, 0, 1),
-(1, 4103082000, 4103092800, 0, 1),
-(1, 4103686800, 4103697600, 0, 1);
+(2, 4103082000, 4103092800, 0, 1),
+(3, 4103686800, 4103697600, 0, 1);
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`ID`, `member_ID`, `edit_datetime`, `edit_member_ID`, `term_dates_ID`, `ensemble_ID`, `IP`, `status`) VALUES
+(1, 1, 1650355779, -1, 1, 1, '', 1),
+(2, 2, 1650355779, -1, 1, 1, '', 1),
+(3, 3, 1650356655, -1, 2, 1, '', 1),
+(4, 5, 1650356655, -1, 2, 1, '', 0);
+
+--
+-- Dumping data for table `logins`
+--
+
+INSERT INTO `logins` (`ID`, `email`, `password`) VALUES
+(-1, 'test-ensemble', '$2y$10$jjve4ShtvdqFJXNKHzGSte1bGLkyxcyJROKpzGVgsYiAH4q6gyeWG'),
+(1, 'admin@example.com', '$2y$10$f0TP0bKkLkmL7iIM4C3Cvu18EkBUBoGS7MH1ZNugltn9zXmdMD2Em');
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
