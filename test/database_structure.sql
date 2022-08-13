@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `attendance`
 --
 
-CREATE TABLE `attendance` (
+CREATE TABLE IF NOT EXISTS `attendance` (
   `ID` int(10) NOT NULL,
   `member_ID` int(10) NOT NULL,
   `edit_datetime` int(12) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `attendance` (
 -- Table structure for table `ensembles`
 --
 
-CREATE TABLE `ensembles` (
+CREATE TABLE IF NOT EXISTS `ensembles` (
   `ID` int(10) NOT NULL,
   `safe_name` varchar(64) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE `ensembles` (
 -- Table structure for table `logins`
 --
 
-CREATE TABLE `logins` (
+CREATE TABLE IF NOT EXISTS `logins` (
   `ID` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL
@@ -71,7 +71,7 @@ CREATE TABLE `logins` (
 -- Table structure for table `logins_sessions`
 --
 
-CREATE TABLE `logins_sessions` (
+CREATE TABLE IF NOT EXISTS `logins_sessions` (
   `ID` varchar(255) NOT NULL,
   `member_ID` int(10) NOT NULL,
   `start` datetime NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `logins_sessions` (
 -- Table structure for table `members`
 --
 
-CREATE TABLE `members` (
+CREATE TABLE IF NOT EXISTS `members` (
   `ID` int(11) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE `members` (
 -- Table structure for table `members-ensembles`
 --
 
-CREATE TABLE `members-ensembles` (
+CREATE TABLE IF NOT EXISTS `members-ensembles` (
   `ID` int(10) NOT NULL,
   `member_ID` int(10) NOT NULL,
   `ensemble_ID` int(10) NOT NULL
@@ -115,7 +115,7 @@ CREATE TABLE `members-ensembles` (
 -- Table structure for table `password_reset_tokens`
 --
 
-CREATE TABLE `password_reset_tokens` (
+CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
   `member_ID` int(10) NOT NULL,
   `token` varchar(255) NOT NULL,
   `expiry` int(12) NOT NULL
@@ -127,7 +127,7 @@ CREATE TABLE `password_reset_tokens` (
 -- Table structure for table `pre-rehearsal-email`
 --
 
-CREATE TABLE `pre-rehearsal-email` (
+CREATE TABLE IF NOT EXISTS `pre-rehearsal-email` (
   `been_sent` int(1) NOT NULL,
   `ensemble_ID` int(10) NOT NULL,
   `term_date_ID` int(10) NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE `pre-rehearsal-email` (
 -- Table structure for table `terms`
 --
 
-CREATE TABLE `terms` (
+CREATE TABLE IF NOT EXISTS `terms` (
   `ID` int(10) NOT NULL,
   `safe_name` varchar(64) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE `terms` (
 -- Table structure for table `term_dates`
 --
 
-CREATE TABLE `term_dates` (
+CREATE TABLE IF NOT EXISTS `term_dates` (
   `ID` int(10) NOT NULL,
   `datetime` int(12) NOT NULL,
   `datetime_end` int(12) NOT NULL,
