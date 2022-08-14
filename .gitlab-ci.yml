@@ -42,10 +42,10 @@ test:
     - php --ini
     - ls
     - pwd
-    - cd /builds/adam.blakey/pollererer
+    - cd /builds/adam.blakey/Pollererer
     - ls
     - ls ./test/
     - cp ./test/sample_config.php ./config.php
-    - php -S localhost:8080 -t /builds/adam.blakey/pollererer/
+    - php -S localhost:8080 -t /builds/adam.blakey/Pollererer/
     - wget http://localhost:8080/test/database_load.php
     - php index.php
