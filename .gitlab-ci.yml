@@ -46,6 +46,6 @@ test:
     - ls
     - ls ./test/
     - cp ./test/sample_config.php ./config.php
-    - php -S localhost:8080 -t /builds/adam.blakey/Pollererer/
+    - nohup php -S localhost:8080 -t /builds/adam.blakey/Pollererer/ > phpd.log 2>&1 &
     - wget http://localhost:8080/test/database_load.php
     - php index.php
