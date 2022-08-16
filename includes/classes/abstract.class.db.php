@@ -1,31 +1,111 @@
 <?php
+/**
+ * @copyright Copyright (c) 2022, Adam Blakey
+ *
+ * @author Adam Blakey <adam@blakey.family>
+ *
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 
+/**
+ * Class AbstractClassDb
+ * 
+ * Abstract class for database-held data. Children should represent the structure
+ * of each table in the database. Assumes that each table has a primary key of ID.
+ *
+ * @package   Pollererer
+ * @author    Adam Blakey <adam@blakey.family>
+ * @copyright 2022 Adam Blakey
+ * @license   AGPL-3.0
+ */
 abstract class db
 {
+  /**
+   * @var integer $ID We assume that every table has a primary key of ID.
+   */
   protected int    $ID;
-
+  /**
+   * @var mysqli $db_connection The already connected dataase connection.
+   */
   protected mysqli $db_connection;
+  /**
+   * @var string $table_name The name of the table in the database (defined
+   * in the child class).
+   */
   protected string $table_name;
+  /**
+   * @var bool $details_changed Flag to keep track of when the details have
+   * fallen out-of-sync with those stored in the database.
+   */
   protected bool   $details_changed = false;
+  /**
+   * @var bool $loaded_from_database Flag to keep track of when the object has
+   * been loaded from the database.
+   */
   protected bool   $loaded_from_database = false;
+  /**
+   * @var int $no_table_columns Stores the number of columns in the table
+   * (equivalently, the number of properties in the child class).
+   */
   protected int    $no_table_columns;
+  /**
+   * @var array $table_columns Stores the names of the properties in the child
+   * class.
+   */
   protected array  $table_columns;
+  /**
+   * @var array $abstract_properties Stores the names of the properties that
+   * only exist in this abstract class.
+   */
   protected array  $abstract_properties;
 
-  public function __construct($db_connection, $ID = 0, $table_name)
+  /****************************************************************************/
+
+  /**
+   * Constructor
+   * 
+   * @param mysqli  $db_connection The database connection to use.
+   * @param integer $ID            The ID of the object to load (0 if doesn't
+   *                               exist in database yet).
+   * @param string  $table_name    The name of the table to use.
+   * 
+   * @return void
+   */
+  public function __construct($db_connection, $ID, $table_name)
   {
+    $this->ID            = $ID;
+    $this->db_connection = $db_connection;
+    $this->table_name    = $table_name;
+
+    $this->loadChildColumnNames();
+    $this->loadAbstractColumnNames();
+
     if ($ID > 0)
-    {
-      $this->ID            = $ID;
-      $this->db_connection = $db_connection;
-      $this->table_name    = $table_name;
-      
-      $this->loadChildColumnNames();
-      $this->loadAbstractColumnNames();
+    {      
       $this->loadFromDatabase();
     }
   }
 
+  /**
+   * Get
+   * 
+   * @param string $property The property to get.
+   * 
+   * @return mixed The value of the asked property.
+   */
   public function __get($property)
   {
     if (property_exists($this, $property))
@@ -40,6 +120,15 @@ abstract class db
     }
   }
 
+  /**
+   * Set
+   * 
+   * @param string $property The property to get.
+   * @param mixed  $value    The value to set.
+   * 
+   * @return bool True if the property was successfully set, 
+   *              False otherwise.
+   */
   public function __set($property, $value)
   {
     if (property_exists($this, $property) && !in_array($property, $this->abstract_properties))
@@ -55,6 +144,12 @@ abstract class db
     }
   }
 
+  /**
+   * IDExistsInDatabase
+   * 
+   * @return bool True if a record with specified ID exists in the database,
+   *              False otherwise.
+   */
   public function IDExistsInDatabase()
   {
     $sql = "SELECT `ID` FROM `".$this->table_name."` WHERE `ID` = ? LIMIT 1";
@@ -75,6 +170,14 @@ abstract class db
     $statement->close();
   }
 
+  /**
+   * LoadFromDatabase
+   * 
+   * Load all columns from the database into the local object.
+   * 
+   * @return bool True if the object was successfully loaded from the database,
+   *              False otherwise.
+   */
   public function loadFromDatabase()
   {
     if ($this->ID > 0 && $this->db_connection->ping())
@@ -112,6 +215,14 @@ abstract class db
     }
   }
 
+  /**
+   * SaveToDatabase
+   * 
+   * Save all properties to their columns in the database.
+   * 
+   * @return bool True if the object was successfully saved to the database,
+   *              False otherwise.
+   */
   public function saveToDatabase()
   {
     if(!$this->IDExistsInDatabase())
@@ -138,7 +249,8 @@ abstract class db
       }
       else
       {
-        die("Can't create record with ID=".$this->ID." in database table `".$this->table_name."`: ".$this->db_connection->error);
+        //die("Can't create record with ID=".$this->ID." in database table `".$this->table_name."`: ".$this->db_connection->error);
+        return false;
       }
 
       $statement->close();
@@ -162,13 +274,28 @@ abstract class db
     }
 
     $this->loadFromDatabase();
+
+    return true;
   }
 
+  /** 
+   * NameOfClass
+   * 
+   * @return string The name of the class.
+   */
   public function nameOfClass()
   {
     return get_class($this);
   }
 
+  /**
+   * LoadChildColumnNames
+   * 
+   * Loads all the columns of the child into the local variable
+   *  `table_columns`.
+   * 
+   * @return bool True if the child column names were successfully loaded.
+   */
   private function loadChildColumnNames()
   {
     $derived_class = new ReflectionClass($this->nameOfClass());
@@ -187,6 +314,14 @@ abstract class db
     return true;
   }
 
+  /**
+   * LoadAbstractColumnNames
+   * 
+   * Loads all the columns of the parent into the local variable
+   *  `abstract_properties`.
+   * 
+   * @return bool True if the parent properties names were successfully loaded.
+   */
   private function loadAbstractColumnNames()
   {
     $derived_class = new ReflectionClass($this->nameOfClass());
@@ -205,6 +340,12 @@ abstract class db
     return true;
   }
 
+  /**
+   * GetValuesArray
+   * 
+   * @return array An array of all the values of the object, in order 
+   * with the variable `table_columns`.
+   */
   private function getValuesArray()
   {
     foreach ($this->table_columns as $column => $type)
