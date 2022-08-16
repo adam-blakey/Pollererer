@@ -6,14 +6,9 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
-
+[![Twitter][twitter-shield]][twitter-url]
 
 <!-- PROJECT LOGO -->
 <br />
@@ -22,25 +17,17 @@
     <img src="https://gitlab.com/uploads/-/system/project/avatar/38570009/Screenshot_from_2022-08-13_22-24-50.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h1>THIS STILL NEEDS SOME WORK!!</h1>
-
-  <h3 align="center">Pollererer</h3>
+  <h1 align="center">Pollererer</h1>
 
   <p align="center">
     A simple music rehearsal absence logging system.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://gitlab.com/adam.blakey/Pollererer/-/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://gitlab.com/adam.blakey/Pollererer/-/issues">Request Feature</a>
   </p>
 </p>
-
-
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -51,105 +38,95 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Pollererer Screenshot][product-screenshot]](https://gitlab.com/adam.blakey/Pollererer/)
+
+This project was created for three main reasons:
+
+1. To help me keep track of rehearsal absences for a local music group.
+2. An excuse to use Tabler.io's amazing admin interface.
+3. An opportunity to learn about the ingredients of a modern web application.
 
 There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue.
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
-
 ### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+
+These are the main pieces of software that this project uses.
+
+* [Tabler](https://tabler.io)
 * [Bootstrap](https://getbootstrap.com)
 * [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local instance of Pollererer running, you'll need to follow the following steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+You'll need to install
+
+* apache2
+* php
+* mysql (or equivalent)
+
 ```sh
-npm install npm@latest -g
+apt install apache2 php mysql
 ```
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo to your web server root.
+2. Setup database; we suggest a username and database name of 'pollererer'.
+3. Copy the sample config from test/sample_config.php to config.php
 ```sh
-git clone https://github.com/your_username_/Project-Name.git
+cp test/sample_config.php config.php
 ```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
-```
+4. Appropriately edit the config.php file to match your environment, for example:
+```PHP
+<?php
 
+$config = array(
+	"base_url"        => "http://localhost:8080/",
+	"home_url"        => "https://blakey.family",
+	"db_host"         => "localhost",
+	"db_username"     => "mysql_user",
+	"db_password"     => "mysql_strong_password",
+	"db_name"         => "mysql_database",
+	"repeat_headings" => true,
+	"software_name"   => "Pollererer Attendance",
+	"smtp_host"       => "",
+	"smtp_username"   => "",
+	"smtp_password"   => "",
+	"smtp_port"       => 0,
+	"email_from"      => "attendance@pollererer.com",
+	"email_pdf"       => array(),
+	"admin_email"     => "spam@adamblakey.co.uk",
+	"logo_url"        => "https://attendance.nsw.org.uk/uploads/logo-horizontal.png",
+	"group_name"      => "Pollererer Test"
+);
 
+?>
+```
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Main features and usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+You may use this project to:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
+* Ask members of your music group to login and input their availability for rehearsals and concerts.
+* Email rehearsal organisers with seating plan and attendance list before a rehearsal starts.
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
+Distributed under the GNU GPLv3 License. See `LICENSE` for more information.
 
 <!-- CONTACT -->
 ## Contact
@@ -158,28 +135,13 @@ Adam Blakey - [@HereAdamJust](https://twitter.com/HereAdamJust)
 
 Project Link: [https://gitlab.com/adam.blakey/Pollererer](https://gitlab.com/adam.blakey/Pollererer)
 
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [Tabler](https://tabler.io/)
-
-
-
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[license-shield]: https://img.shields.io/gitlab/license/adam.blakey/pollererer?style=flat-square
+[license-url]: https://gitlab.com/adam.blakey/Pollererer/-/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/adammatthewblakey/
+[twitter-url]: https://twitter.com/HereAdamJust
+[twitter-shield]: https://img.shields.io/twitter/follow/HereAdamJust?style=flat-square
+
 [product-screenshot]: images/screenshot.png
