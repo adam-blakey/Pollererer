@@ -246,7 +246,7 @@ function login_restricted($user_level_required)
     $current_user_level = 0;
   }
 
-  if (login_valid() && $current_user_level == $user_level_required)
+  if (login_valid() && ($current_user_level == $user_level_required || $current_user_level >= 1))
   {
     return true;
   }
