@@ -18,7 +18,7 @@ abstract class db
       $this->ID            = $ID;
       $this->db_connection = $db_connection;
       
-      $this->calculate_numberOfColumns();
+      $this->loadColumnNames();
       $this->loadFromDatabase();
     }
   }
@@ -95,19 +95,10 @@ abstract class db
         $member   = $result->fetch_assoc();
         $statement->close();
 
-        foreach ($this->table_columns as $column)
+        foreach ($this->table_columns as $column => $type)
         {
           $this->$column = $member[$column];
         }
-
-        // $this->ID         = $member["ID"];
-        // $this->first_name = $member["first_name"];
-        // $this->last_name  = $member["last_name"];
-        // $this->instrument = $member["instrument"];
-        // $this->row        = $member["row"];
-        // $this->seat       = $member["seat"];
-        // $this->user_level = $member["user_level"];
-        // $this->image      = $member["image"];
         
         $this->loaded_from_database = true;
         $this->details_changed      = false;
@@ -130,12 +121,19 @@ abstract class db
     if(!$this->IDExistsInDatabase())
     {
       $sql = "INSERT INTO `".$this->table_name."` " .
-        "(`first_name`, `last_name`, `instrument`, `row`, `seat`, `user_level`, `image`) " .
+        "(`".implode("`, `", $this->table_columns)."`) " .
         "VALUES ".
-        "(? , ? , ? , ? , ? , ? , ?)";
+        "(".implode(", ", array_fill(0, $this->no_table_columns, "?")).")";
 
       $statement = $this->db_connection->prepare($sql);
-      $statement ->bind_param("sssiiis", $this->first_name, $this->last_name, $this->instrument, $this->row, $this->seat, $this->user_level, $this->image);
+      
+      $bind_param_types = "";
+      foreach($this->table_columns as $column => $type)
+      {
+        $bind_param_types .= substr($type, 0, 1);
+      }
+
+      $statement ->bind_param($bind_param_types, ...$this->getValuesArray());
       $statement ->execute();
 
       if ($statement->affected_rows == 1)
@@ -175,7 +173,7 @@ abstract class db
     return get_class($this);
   }
 
-  private function calculate_numberOfColumns()
+  private function loadColumnNames()
   {
     $derived_class = new ReflectionClass($this->nameOfClass());
 
@@ -186,10 +184,20 @@ abstract class db
     $this->table_columns = array();
     foreach ($table_columns as $column)
     {
-      $this->table_columns[] = $column->name;
+      $this->table_columns[$column->name] = $column->getType()->getName();
     }
 
     return true;
+  }
+
+  private function getValuesArray()
+  {
+    foreach ($this->table_columns as $column => $type)
+    {
+      $values[] = $this->$column;
+    }
+
+    return $values;
   }
 }
 
