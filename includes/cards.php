@@ -219,11 +219,12 @@
                 else
                 {
                   $first_loop = true;
+                  $ensemble_list = "";
                   while($ensemble = $ensembles->fetch_assoc())
                   {
                     if ($first_loop)
                     {
-                      $ensemble_list = "";
+                      $ensemble_list .= "";
                       $first_loop = false;
                     }
                     else
