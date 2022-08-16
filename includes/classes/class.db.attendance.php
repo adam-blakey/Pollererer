@@ -1,21 +1,22 @@
 <?php
 
-class db_attendance
+require_once($_SERVER["DOCUMENT_ROOT"] . "/includes/classes/abstract.class.db.php");
+
+class db_attendance extends db
 {
-  private $ID;
-  private $member_ID;
-  private $edit_datetime;
-  private $term_dates_ID;
-  private $ensemble_ID;
-  private $IP;
-  private $status;
+  protected int    $member_ID;
+  protected string $edit_datetime;
+  protected int    $edit_member_ID;
+  protected int    $term_dates_ID;
+  protected int    $ensemble_ID;
+  protected string $IP;
+  protected int    $status;
 
-  private $db_connection;
-
-  function __construct($db_connection, $ID = 0)
+  public function __construct($db_connection, $ID = 0)
   {
-    
+    parent::__construct($db_connection, $ID, "attendance");
   }
+
 }
 
 ?>

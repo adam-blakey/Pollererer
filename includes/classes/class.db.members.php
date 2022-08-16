@@ -14,10 +14,7 @@ class db_members extends db
 
   public function __construct($db_connection, $ID = 0)
   {
-    $this->table_name = "members";
-    $this->no_table_columns = 7;
-
-    parent::__construct($db_connection, $ID);
+    parent::__construct($db_connection, $ID, "members");
   }
 
 }

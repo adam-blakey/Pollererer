@@ -10,15 +10,18 @@ abstract class db
   protected bool   $loaded_from_database = false;
   protected int    $no_table_columns;
   protected array  $table_columns;
+  protected array  $abstract_properties;
 
-  public function __construct($db_connection, $ID = 0)
+  public function __construct($db_connection, $ID = 0, $table_name)
   {
     if ($ID > 0)
     {
       $this->ID            = $ID;
       $this->db_connection = $db_connection;
+      $this->table_name    = $table_name;
       
-      $this->loadColumnNames();
+      $this->loadChildColumnNames();
+      $this->loadAbstractColumnNames();
       $this->loadFromDatabase();
     }
   }
@@ -39,14 +42,7 @@ abstract class db
 
   public function __set($property, $value)
   {
-
-    if (property_exists($this, $property) &&
-      ($property != 'db_connection' &&
-       $property != 'table_name' &&
-       $property != 'ID' &&
-       $property != 'details_changed' &&
-       $property != 'loaded_from_database')
-    )
+    if (property_exists($this, $property) && !in_array($property, $this->abstract_properties))
     {
       $this->$property       = $value;
       $this->details_changed = true;
@@ -173,19 +169,38 @@ abstract class db
     return get_class($this);
   }
 
-  private function loadColumnNames()
+  private function loadChildColumnNames()
   {
     $derived_class = new ReflectionClass($this->nameOfClass());
 
     $table_columns = array_filter($derived_class->getProperties(), function($p) { return !($p->class == get_parent_class($this)); });
-
-    $this->no_table_columns = count($table_columns);
 
     $this->table_columns = array();
     foreach ($table_columns as $column)
     {
       $this->table_columns[$column->name] = $column->getType()->getName();
     }
+    $this->table_columns["ID"] = "int";
+
+    $this->no_table_columns = count($this->table_columns);
+
+    return true;
+  }
+
+  private function loadAbstractColumnNames()
+  {
+    $derived_class = new ReflectionClass($this->nameOfClass());
+
+    $abstract_properties = array_filter($derived_class->getProperties(), function($p) { return ($p->class == get_parent_class($this)); });
+
+    $this->abstract_properties = array();
+    foreach ($abstract_properties as $column)
+    {
+      $this->abstract_properties[$column->name] = $column->getType()->getName();
+    }
+    $this->abstract_properties["ID"] = "int";
+
+    $this->no_abstract_properties = count($this->abstract_properties);
 
     return true;
   }
