@@ -381,14 +381,17 @@
                 {
                   while($poll = $polls->fetch_assoc())
                   {
-                    $first_date_query = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` ASC LIMIT 1")->fetch_array()[0];
-                    $last_date_query  = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` DESC LIMIT 1")->fetch_array()[0];
+                    $first_date_query = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` ASC LIMIT 1");
+                    $last_date_query  = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `term_ID`='".$poll["term_ID"]."' ORDER BY `datetime` DESC LIMIT 1");
+
+                    $first_date_result = ($first_date_query->num_rows > 0)?intval($first_date_query->fetch_array()[0]):0;
+                    $last_date_result = ($last_date_query->num_rows > 0)?intval($last_date_query->fetch_array()[0]):0;
 
                     $first_date = new DateTime();
-                    $first_date ->setTimestamp($first_date_query);
+                    $first_date ->setTimestamp($first_date_result);
                     $first_date ->setTimeZone(new DateTimeZone('Europe/London'));
                     $last_date  = new DateTime();
-                    $last_date  ->setTimestamp($last_date_query);
+                    $last_date  ->setTimestamp($last_date_result);
                     $last_date  ->setTimeZone(new DateTimeZone('Europe/London'));
 
                     ?>
