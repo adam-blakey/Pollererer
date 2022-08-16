@@ -1,3 +1,5 @@
+<?php require_once($_SERVER['DOCUMENT_ROOT']."/config.php"); ?>
+
 <?php
 	$title = $config["software_name"];
 ?>
