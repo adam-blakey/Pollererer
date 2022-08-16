@@ -639,10 +639,20 @@
 
                                           if ($attendance=="1")
                                           {
+                                            if (!array_key_exists(strval($term_date[2]), $term_date_counter))
+                                            {
+                                              $term_date_counter[strval($term_date[2])] = 0;
+                                            }
+
                                             $term_date_counter[strval($term_date[2])]++;
                                           }
                                           elseif ($attendance == NULL)
                                           {
+                                            if (!array_key_exists(strval($term_date[2]), $term_date_counter_intederminate))
+                                            {
+                                              $term_date_counter_intederminate[strval($term_date[2])] = 0;
+                                            }
+
                                             $term_date_counter_intederminate[strval($term_date[2])]++; 
                                           }
 
