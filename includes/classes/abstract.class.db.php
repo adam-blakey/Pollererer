@@ -95,14 +95,19 @@ abstract class db
         $member   = $result->fetch_assoc();
         $statement->close();
 
-        $this->ID         = $member["ID"];
-        $this->first_name = $member["first_name"];
-        $this->last_name  = $member["last_name"];
-        $this->instrument = $member["instrument"];
-        $this->row        = $member["row"];
-        $this->seat       = $member["seat"];
-        $this->user_level = $member["user_level"];
-        $this->image      = $member["image"];
+        foreach ($this->table_columns as $column)
+        {
+          $this->$column = $member[$column];
+        }
+
+        // $this->ID         = $member["ID"];
+        // $this->first_name = $member["first_name"];
+        // $this->last_name  = $member["last_name"];
+        // $this->instrument = $member["instrument"];
+        // $this->row        = $member["row"];
+        // $this->seat       = $member["seat"];
+        // $this->user_level = $member["user_level"];
+        // $this->image      = $member["image"];
         
         $this->loaded_from_database = true;
         $this->details_changed      = false;
@@ -144,22 +149,24 @@ abstract class db
 
       $statement->close();
     }
+    else
+    {
+      $sql = "UPDATE `".$this->table_name."` SET " .
+        "`first_name` = ? , " .
+        "`last_name` = ? , " .
+        "`instrument` = ? , " .
+        "`row` = ? , " .
+        "`seat` = ? , " .
+        "`user_level` = ? , " .
+        "`image` = ? " .
+        "WHERE `ID` = ? LIMIT 1";
+      
+      $statement = $this->db_connection->prepare($sql);
+      $statement ->bind_param("sssiiisi", $this->first_name, $this->last_name, $this->instrument, $this->row, $this->seat, $this->user_level, $this->image, $this->ID);
+      $statement ->execute();
+      $statement ->close();
+    }
 
-    $sql = "UPDATE `".$this->table_name."` SET " .
-      "`first_name` = ? , " .
-      "`last_name` = ? , " .
-      "`instrument` = ? , " .
-      "`row` = ? , " .
-      "`seat` = ? , " .
-      "`user_level` = ? , " .
-      "`image` = ? " .
-      "WHERE `ID` = ? LIMIT 1";
-    
-    $statement = $this->db_connection->prepare($sql);
-    $statement ->bind_param("sssiiisi", $this->first_name, $this->last_name, $this->instrument, $this->row, $this->seat, $this->user_level, $this->image, $this->ID);
-    $statement ->execute();
-    $statement ->close();
-    
     $this->loadFromDatabase();
   }
 
