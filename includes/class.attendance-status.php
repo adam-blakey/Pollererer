@@ -1,6 +1,7 @@
 <?php
 	class attendanceStatus
 	{
+		public $ID;
 		public $member_ID;
 		public $ensemble_ID;
 		public $status;
