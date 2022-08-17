@@ -92,11 +92,6 @@ abstract class db
 
     $this->loadChildColumnNames();
     $this->loadAbstractColumnNames();
-
-    if ($ID > 0)
-    {      
-      $this->loadFromDatabase();
-    }
   }
 
   /**
@@ -111,8 +106,6 @@ abstract class db
     if (property_exists($this, $property))
     {
       return $this->$property;
-
-      return true;
     }
     else
     {
@@ -180,7 +173,7 @@ abstract class db
    */
   public function loadFromDatabase()
   {
-    if ($this->ID > 0 && $this->db_connection->ping())
+    if ($this->db_connection->ping())
     {
       $sql = "SELECT * FROM `".$this->table_name."` WHERE `ID` = ? LIMIT 1";
     
@@ -305,7 +298,9 @@ abstract class db
     $this->table_columns = array();
     foreach ($table_columns as $column)
     {
-      $this->table_columns[$column->name] = $column->getType()->getName();
+      //$this->table_columns[$column->name] = $column->getType()->getName();
+      $type = (is_int($column))?"i":"s";
+      $this->table_columns[$column->name] = $type;
     }
     $this->table_columns["ID"] = "int";
 
