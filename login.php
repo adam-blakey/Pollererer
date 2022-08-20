@@ -102,12 +102,11 @@
             }
           }
 
-          // document.getElementById("passwordField").addEventListener("keypress",
-          //   function onEvent(event) {
-          //     if (event.keyCode === 13) {
-          //       doLogin()
-          //     }
-          //   })
+          window.onkeypress = function(e) {
+            if(e.keyCode == 13) {
+              doLogin();
+            }
+          }
         </script>
       </head>
       <body  class=" border-top-wide border-primary d-flex flex-column">
@@ -116,7 +115,7 @@
             <div class="text-center mb-4">
               <a href="." class="navbar-brand navbar-brand-autodark"><img src="<?=$config["logo_url"];?>" height="36" alt=""></a>
             </div>
-            <form class="card card-md" autocomplete="off">
+            <form id="login-form" class="card card-md" autocomplete="off">
               <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login to your account</h2>
                 <div class="mb-3">
