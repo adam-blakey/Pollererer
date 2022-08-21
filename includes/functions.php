@@ -89,7 +89,7 @@ function output_restricted_page()
                     <div class="empty-header">403</div>
                     <p class="empty-title">You don't have access to that.</p>
                     <p class="empty-subtitle text-muted">
-                      If you think you should have access, then please logout and login again with another account.
+                      You may need to logout and login with a different account.
                     </p>
                     <hr />
                     <div class="col-md-6 col-lg-12">
@@ -130,9 +130,9 @@ function output_restricted_page()
                 ?>
                 <div class="empty">
                   <div class="empty-header">403</div>
-                  <p class="empty-title">You don't have access to that.</p>
+                  <p class="empty-title">You may need to login.</p>
                   <p class="empty-subtitle text-muted">
-                    If you think you should have access, then please login below.
+                    Click the button below to login.
                   </p>
                   <div class="empty-action">
                     <a href="<?=$config['base_url'];?>/login.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="btn btn-primary">
@@ -150,9 +150,9 @@ function output_restricted_page()
               ?>
               <div class="empty">
                 <div class="empty-header">403</div>
-                <p class="empty-title">You don't have access to that.</p>
+                <p class="empty-title">You may need to login.</p>
                 <p class="empty-subtitle text-muted">
-                  If you think you should have access, then please login below.
+                  Click the button below to login.
                 </p>
                 <div class="empty-action">
                   <a href="<?=$config['base_url'];?>/login.php?redirect_page=<?=urlencode($_SERVER["REQUEST_URI"]);?>" class="btn btn-primary">
