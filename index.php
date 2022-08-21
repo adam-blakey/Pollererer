@@ -72,7 +72,7 @@
 												?>
 												<div class="card-body">
 													<h3 class="card-title w-100"><?=$poll["ensemble_name"];?>: <?=$poll["term_name"];?></h3>
-													<a href="<?=$config["base_url"].$poll["ensemble_safe_name"]."/".$poll["term_safe_name"]."/";?>" class="btn btn-primary w-100 <?=($poll_ended)?"disabled":"";?>">
+													<a href="<?=$config["base_url"]."/".$poll["ensemble_safe_name"]."/".$poll["term_safe_name"]."/";?>" class="btn btn-primary w-100 <?=($poll_ended)?"disabled":"";?>">
 														Visit poll
 													</a>
 												</div>
