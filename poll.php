@@ -469,7 +469,7 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
-                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
+                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
 
                               if ($members->num_rows == 0)
                               {
