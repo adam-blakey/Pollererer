@@ -88,7 +88,7 @@
 
 			$rehearsal_date = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `ID`='".$term_date_ID."'")->fetch_array()[0];
 
-			$member_query = $db_connection->query("SELECT `members`.`ID`, `members`.`first_name`, `members`.`last_name`, `members`.`instrument` FROM `members` LEFT JOIN `members-ensembles` ON `members`.`ID` = `members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID` = '".$ensemble_ID."' ORDER BY `members`.`instrument`, `members`.`first_name`");
+			$member_query = $db_connection->query("SELECT `members`.`ID`, `members`.`first_name`, `members`.`last_name`, `members`.`instrument` FROM `members` LEFT JOIN `members-ensembles` ON `members`.`ID` = `members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID` = '".$ensemble_ID."' AND `members`.`deleted`='0' ORDER BY `members`.`instrument`, `members`.`first_name`");
 
 			$attendance_list  = array();
 			$absence_list     = array();
