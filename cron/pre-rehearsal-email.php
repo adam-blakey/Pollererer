@@ -56,7 +56,7 @@
 
 	$db_connection = db_connect();
 
-	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `datetime` > ".($time->format('U') + 60*60*0)." AND `datetime` <= ".($time->format('U') + 60*60*1));
+	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 60*60*0)." AND `datetime` <= ".($time->format('U') + 60*60*1));
 
 	while($rehearsal = $upcoming_rehearsals->fetch_assoc())
 	{
@@ -88,7 +88,7 @@
 
 			$rehearsal_date = $db_connection->query("SELECT `datetime` FROM `term_dates` WHERE `ID`='".$term_date_ID."'")->fetch_array()[0];
 
-			$member_query = $db_connection->query("SELECT `members`.`ID`, `members`.`first_name`, `members`.`last_name`, `members`.`instrument` FROM `members` LEFT JOIN `members-ensembles` ON `members`.`ID` = `members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID` = '".$ensemble_ID."' ORDER BY `members`.`instrument`, `members`.`first_name`");
+			$member_query = $db_connection->query("SELECT `members`.`ID`, `members`.`first_name`, `members`.`last_name`, `members`.`instrument` FROM `members` LEFT JOIN `members-ensembles` ON `members`.`ID` = `members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID` = '".$ensemble_ID."' AND `members`.`deleted`='0' ORDER BY `members`.`instrument`, `members`.`first_name`");
 
 			$attendance_list  = array();
 			$absence_list     = array();

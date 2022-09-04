@@ -53,6 +53,8 @@
 
   $ensemble_name = $db_connection->query("SELECT `name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_array()[0];
 
+  $ensemble_safe_name = $db_connection->query("SELECT `safe_name` FROM `ensembles` WHERE `ID`=".$ensemble_ID." LIMIT 1")->fetch_array()[0];
+
   if ($term_name == NULL)
   {
     $title = "Unknown term";
@@ -264,10 +266,55 @@
             table.insertBefore(rowToMove, rowToMoveTo);
           }
 
+          function checkPollEnded()
+          {
+            <?php
+              $poll_ended = $db_connection->query("SELECT `datetime` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `datetime` >= UNIX_TIMESTAMP()");
+
+              if ($poll_ended->num_rows == 0)
+              {
+                $new_poll_info = $db_connection->query("SELECT `name`, `safe_name` FROM terms WHERE `ID`>='".$term_ID."' ORDER BY `ID` DESC LIMIT 1");
+
+                if ($new_poll_info->num_rows == 1)
+                {
+                  $poll_info = $new_poll_info->fetch_assoc();
+                  ?>
+                  var poll_ended    = true;
+                  var link          = "<?=$config['base_url']."/".$ensemble_safe_name."/".$poll_info["safe_name"]."/";?>";
+                  var ensemble      = "<?=$ensemble_name;?>";
+                  var new_term_name = "<?=$poll_info["name"];?>";
+                  <?php
+                }
+                else
+                {
+                  ?>
+                  var poll_ended = false;
+                  <?php
+                }
+              }
+              else
+              {
+                ?>
+                var poll_ended = false;
+                <?php
+              }
+            ?>
+            
+            if (poll_ended)
+            {
+              $('#poll-ended-box')       .modal('show');
+              $('#poll-ended-box-icon')  .html('<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-yellow icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><circle cx="18" cy="18" r="4" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg>');
+              $('#poll-ended-box-title') .html("This poll has ended");
+              $('#poll-ended-box-text')  .html("Did you mean to go to " + ensemble + " " + new_term_name + "?");
+              $('#poll-ended-box-button').attr("href", link);
+            }
+          }
+
           function pageLoaded()
           {
             setIndeterminate();
             moveToTop();
+            checkPollEnded();
           }
           //window.onload = pageLoaded();
         </script>
@@ -279,13 +326,12 @@
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
-                <div class="row row-cards">              
+                <div class="row row-cards mb-3">              
                   <!--<div class="col-12">-->
-                  <div class="col-md-6 col-lg-3">
+                  <div class="col-md-3 col-lg-3">
                     <div class="card mb-3 bg-blue text-white">
                       <div class="card-stamp">
                         <div class="card-stamp-icon bg-white text-primary">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/star -->
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-mobile" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="7" y="4" width="10" height="16" rx="1" /><line x1="11" y1="5" x2="13" y2="5" /><line x1="12" y1="17" x2="12" y2="17.01" /></svg>
                         </div>
                       </div>
@@ -297,8 +343,23 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6 col-lg-9">
-                    <div class="card mb-3">
+                  <div class="col-md-3 col-lg-3">
+                    <div class="card mb-3 bg-blue text-white">
+                      <div class="card-stamp">
+                        <div class="card-stamp-icon bg-white text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-desktop" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="4" width="18" height="12" rx="1" /><line x1="7" y1="20" x2="17" y2="20" /><line x1="9" y1="16" x2="9" y2="20" /><line x1="15" y1="16" x2="15" y2="20" /></svg>
+                        </div>
+                      </div>
+                      <div class="card-header">
+                        <h3 class="card-title">On desktop?</h3>
+                      </div>
+                      <div class="card-body border-bottom py-3">
+                        <p>Scroll to bottom of page to reveal horizontal scrollbar, or use shift+scroll.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-lg-6">
+                    <div class="card mb-6">
                       <div class="ribbon ribbon-top bg-red">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-triangle" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
                       </div>
@@ -306,13 +367,12 @@
                         <h3 class="card-title">GDPR warning</h3>
                       </div>
                       <div class="card-body border-bottom py-3">
-                        <p>Please be aware that anyone else in the group can see what you select in the options below.</p>
-                        <p>If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
+                        <p>Please be aware that anyone else in the group can see what you select in the options below. If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                  <div class="col-12">
+                <div class="col-12">
                     <div class="card">
                       <div class="card-header">
                         <h3 class="card-title"><?=$title;?></h3>
@@ -374,7 +434,7 @@
                                 </select>
                               </div>
                               <div class="ms-2 d-inline-block">
-                                <button type="submit" class="btn btn-primary ms-auto my-2">Update sort</button>
+                                <button type="submit" class="btn btn-warning ms-auto my-2">Change sort</button>
                               </div>
                             </form>
                           </div>
@@ -387,7 +447,7 @@
                         </div>
 
                         <?php
-                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') ORDER BY `datetime` ASC");
+                          $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
 
                           while ($result = $term_dates_query->fetch_array())
                           {
@@ -409,7 +469,7 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
-                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
+                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
 
                               if ($members->num_rows == 0)
                               {
@@ -689,6 +749,38 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal modal-blur fade" id="poll-ended-box" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div id="poll-ended-box-status" class="modal-status bg-yellow"></div>
+              <div class="modal-body text-center py-4">
+                <div id="poll-ended-box-icon">
+                  Result icon
+                </div>
+                <h3 id="poll-ended-box-title">Result title</h3>
+                <div class="text-muted" id="poll-ended-box-text">Result text</div>
+              </div>
+              <div class="modal-footer">
+                <div class="w-100">
+                  <div class="row">
+                    <div class="col">
+                      <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                        No, stay here.
+                      </a>
+                    </div>
+                    <div class="col">
+                      <a id="poll-ended-box-button" href="#" class="btn btn-yellow w-100">
+                        Yes, take me there!
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

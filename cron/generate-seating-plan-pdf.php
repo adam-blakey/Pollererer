@@ -146,7 +146,7 @@
 		// ---------------------------------------------------------
 
 		// set font
-		$pdf->SetFont('helvetica', '', 12);
+		$pdf->SetFont('helvetica', '', 11);
 
 		// add a page
 		$pdf->AddPage();
@@ -199,6 +199,15 @@
 		}
 
 		// HTML content
+		// $html = '
+		// <strong>Date:</strong> '.$term_date_date->format("j/m/y").' <br />
+		// <strong>Ensemble:</strong> '.$ensemble_name.' <br />
+		// <strong>Confirmed attendees:</strong> '.$total_attendance.' <br />
+
+		// <h1>Rehearsal Seating for '.$ensemble_name.' on '.$term_date_date->format("jS F Y @ H:i:s").'</h1>
+		// <br />
+		// ';
+
 		$html = '
 		<strong>Date:</strong> '.$term_date_date->format("j/m/y").' <br />
 		<strong>Ensemble:</strong> '.$ensemble_name.' <br />
