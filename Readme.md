@@ -32,15 +32,16 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-* [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [License](#license)
-* [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+- [Table of Contents](#table-of-contents)
+- [About The Project](#about-the-project)
+	- [Built With](#built-with)
+- [Documentation](#documentation)
+- [Getting Started](#getting-started)
+	- [Prerequisites](#prerequisites)
+	- [Installation](#installation)
+- [Main features and usage](#main-features-and-usage)
+- [License](#license)
+- [Contact](#contact)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -62,6 +63,11 @@ These are the main pieces of software that this project uses.
 * [Tabler](https://tabler.io)
 * [Bootstrap](https://getbootstrap.com)
 * [JQuery](https://jquery.com)
+
+<!-- DOCUMENTATION -->
+## Documentation
+
+Ha! I wish there was documentation. This project is still in its infancy, and is for a very specific use case. If you think you'd benefit from this project, then feel free to get in touch.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -131,7 +137,7 @@ Distributed under the GNU GPLv3 License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Adam Blakey - [@HereAdamJust](https://twitter.com/HereAdamJust)
+Adam Blakey - [@amblakey](https://twitter.com/amblakey)
 
 Project Link: [https://gitlab.com/adam.blakey/Pollererer](https://gitlab.com/adam.blakey/Pollererer)
 
@@ -141,7 +147,7 @@ Project Link: [https://gitlab.com/adam.blakey/Pollererer](https://gitlab.com/ada
 [license-url]: https://gitlab.com/adam.blakey/Pollererer/-/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/adammatthewblakey/
-[twitter-url]: https://twitter.com/HereAdamJust
-[twitter-shield]: https://img.shields.io/twitter/follow/HereAdamJust?style=flat-square
+[twitter-url]: https://twitter.com/amblakey
+[twitter-shield]: https://img.shields.io/twitter/follow/amblakey?style=flat-square
 
 [product-screenshot]: images/screenshot.png
