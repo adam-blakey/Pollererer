@@ -792,9 +792,13 @@
     </html>
     <?php
   }
-  else
+  else if(login_valid())
   {
     output_restricted_page();
+  }
+  else
+  {
+    header("Location: ".$config['base_url']."/login.php?redirect_page=".urlencode($_SERVER['REQUEST_URI'])); 
   }
   ?>
 
