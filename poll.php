@@ -230,6 +230,9 @@
                 document.getElementById("update-attendance-result-status").classList.remove("bg-danger");
                 document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
                 document.getElementById("update-attendance-result-status").classList.add("bg-success");
+
+                memberCounter = 0;
+                attendanceCounter = 0;
               }
               else {
                 document.getElementById("update-attendance-result-title").innerHTML = "Oops! An error occured.";
@@ -310,11 +313,23 @@
             }
           }
 
+          function warnLeaving()
+          {
+            window.onbeforeunload = function (e) {
+              if (attendanceCounter > 0 || memberCounter > 0) {
+                return 1;
+              } else {
+                
+              }
+            };
+          }
+
           function pageLoaded()
           {
             setIndeterminate();
             moveToTop();
             checkPollEnded();
+            warnLeaving();
           }
           //window.onload = pageLoaded();
         </script>
