@@ -56,7 +56,7 @@
 
 	$db_connection = db_connect();
 
-	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 60*60*0)." AND `datetime` <= ".($time->format('U') + 60*60*1));
+	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 60*60*0)." AND `datetime` <= ".($time->format('U') + 60*60*1)." AND ((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))");
 
 	while($rehearsal = $upcoming_rehearsals->fetch_assoc())
 	{
