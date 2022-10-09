@@ -88,9 +88,18 @@ function output_restricted_page()
                   <div class="empty">
                     <div class="empty-header">403</div>
                     <p class="empty-title">You don't have access to that.</p>
-                    <p class="empty-subtitle text-muted">
+                    <p class="empty-subtitle text-muted pb-3">
                       You may need to logout and login with a different account.
                     </p>
+                    <a href="<?=$config["base_url"];?>" class="btn btn-outline-primary w-100">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <line x1="5" y1="12" x2="11" y2="18"></line>
+                        <line x1="5" y1="12" x2="11" y2="6"></line>
+                      </svg>
+                      View all polls
+                    </a>
                     <hr />
                     <div class="col-md-6 col-lg-12">
                       <div class="card">
@@ -247,6 +256,10 @@ function login_restricted($user_level_required)
   }
 
   if (login_valid() && $current_user_level == $user_level_required)
+  {
+    return true;
+  }
+  else if (login_valid() && $current_user_level > 0 && $current_user_level > $user_level_required)
   {
     return true;
   }

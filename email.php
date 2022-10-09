@@ -11,18 +11,25 @@
 	else
 	{
 
-		$db_connection = db_connect();
-
-		$email_query = $db_connection->query("SELECT `message_content` FROM `pre-rehearsal-email` WHERE `ensemble_ID`='".$ensemble_ID."' AND `term_date_ID`='".$term_date_ID."'");
-
-		if ($email_query->num_rows == 0)
+		if (login_valid())
 		{
-			echo "No email found.";
+			$db_connection = db_connect();
+
+			$email_query = $db_connection->query("SELECT `message_content` FROM `pre-rehearsal-email` WHERE `ensemble_ID`='".$ensemble_ID."' AND `term_date_ID`='".$term_date_ID."'");
+
+			if ($email_query->num_rows == 0)
+			{
+				echo "No email found.";
+			}
+			else
+			{
+				echo base64_decode($email_query->fetch_assoc()["message_content"]);
+			}
+
+			db_disconnect($db_connection);
 		}
 		else
 		{
-			echo base64_decode($email_query->fetch_assoc()["message_content"]);
+			header("Location: ".$config['base_url']."/login.php?redirect_page=".urlencode($_SERVER['REQUEST_URI'])); 
 		}
-
-		db_disconnect($db_connection);
 	}
