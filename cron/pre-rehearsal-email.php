@@ -63,7 +63,7 @@
 		$term_date_ID = $rehearsal["term_dates_ID"];
 		$ensemble_ID  = $rehearsal["ensemble_ID"];
 
-		if (in_array($ensemble_ID, $config["email_pdf"]))
+		if (in_array($ensemble_ID, $config["send_emails"]))
 		{
 			$been_sent_check = $db_connection->query("SELECT `been_sent` FROM `pre-rehearsal-email` WHERE `ensemble_ID`='".$ensemble_ID."' AND `term_date_ID`='".$term_date_ID."' LIMIT 1");
 
