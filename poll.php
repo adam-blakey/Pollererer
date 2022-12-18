@@ -61,11 +61,12 @@
   }
   else if ($ensemble_name == NULL)
   {
-    $title = "Unknown ensemble";
+    $title = "Unknown ".$config["taxonomy_ensemble"];
   }
   else
   {
-    $title = $ensemble_name." Rehearsals: ".$term_name;
+    //$title = $ensemble_name." Rehearsals: ".$term_name;
+    $title = $ensemble_name." ".ucfirst($config["taxonomy_rehearsals"]).": ".$term_name;
   }
 
   $term_date_counter = [];
@@ -421,7 +422,14 @@
                               <div class="ms-2 d-inline-block">
                                 <select class="form-select" name="sortby" form="form-sort">
                                   <?php
-                                    $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                    if ($config["hide_instrument"])
+                                    {
+                                      $options = array("first_name" => "First name", "last_name" => "Last name");
+                                    }
+                                    else
+                                    {
+                                      $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                    }
 
                                     foreach ($options as $value => $option)
                                     {
@@ -613,7 +621,11 @@
                                         <div class="d-flex py-1 align-items-center">
                                           <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                           <div class="flex-fill">
-                                            <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
+                                            <?php if ($config["hide_instrument"]) { ?>
+                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?></div>
+                                            <?php } else { ?>
+                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
+                                            <?php } ?>
                                             <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>, <?=$ensemble_ID;?>, <?=$term_ID;?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
                                               <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>

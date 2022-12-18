@@ -164,7 +164,7 @@
 				$total_count       = $attendance_count + $absence_count + $no_response_count;
 
 				$to       = $rehearsal["admin_email"];
-				$subject  = "Rehearsal Attendance for ".$rehearsal["ensemble_name"]." on ".date("jS M", $rehearsal_date);;
+				$subject  = ucfirst($config["taxonomy_rehearsal"])." Attendance for ".$rehearsal["ensemble_name"]." on ".date("jS M", $rehearsal_date);;
 				$headers  = "MIME-Version: 1.0\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8\r\n";
 				$headers .= "From: ".$config["software_name"]." <".$config["software_name"].">\r\n";
@@ -411,7 +411,7 @@
 																					$message .= '</td>';
 																					$message .= '<td class="col-spacer col-spacer-sm" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; width: 16px;" valign="top"></td>';
 																					$message .= '<td class="col text-mobile-center text-right font-sm pl-md" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 13px; padding-left: 16px;" align="right" valign="top">';
-																						$message .= '<span class="font-strong" style="font-weight: 600;">Rehearsal Attendance Update</span><br />';
+																						$message .= '<span class="font-strong" style="font-weight: 600;">'.ucfirst($config["taxonomy_rehearsal"]).' Attendance Update</span><br />';
 																						$message .= $ensemble_name.': '.date("jS M Y @ H:i", $rehearsal_date);
 																					$message .= '</td>';
 																				$message .= '</tr>';
