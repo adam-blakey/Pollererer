@@ -383,7 +383,7 @@
                         <h3 class="card-title">GDPR warning</h3>
                       </div>
                       <div class="card-body border-bottom py-3">
-                        <p>Please be aware that anyone else in the group can see what you select in the options below. If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:nsworep@nsw.org.uk" target="_blank">contact Adam</a>.</p>
+                        <p>Please be aware that anyone else in the group can see what you select in the options below. If you want either your name to be changed or your attendance hidden from others, then please <a href="mailto:<?=$config["admin_email"];?>" target="_blank">contact <?=$config["admin_name"];?></a>.</p>
                       </div>
                     </div>
                   </div>
