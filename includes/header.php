@@ -14,7 +14,7 @@
       }
     ?>
     <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-      <a href="<?=$config['home_url'];?>" target="_blank">
+      <a href="<?=$config['base_url'];?>">
         <img src="<?=$config['logo_url'];?>" width="110" height="32" alt="<?=$config['software_name'];?>" class="navbar-brand-image">
       </a>
     </h1>
