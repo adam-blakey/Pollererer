@@ -761,4 +761,120 @@
 
   	db_disconnect($db_connection);
 	}
+
+  function output_term_dates($term_id, $max_height = 30)
+	{
+		$db_connection = db_connect();
+
+		?>
+			<div class="card">
+	      <div class="card-header">
+	        <h3 class="card-title">
+	          <p><a href="./term-dates.php">Term dates</a></p>
+	        </h3>
+	        <div class="ms-auto">
+	          <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-term">
+	            Add new
+	          </a>
+	        </div>
+	      </div>
+	      <div class="list-group list-group-flush overflow-auto" style="max-height: <?=$max_height;?>rem">
+	        <?php
+            $term_dates_query = $db_connection->prepare("SELECT `ID`, `datetime`, `datetime_end`, `is_featured`, `deleted` FROM `term_dates` WHERE `term_ID`=? ORDER BY `datetime` ASC");
+            $term_dates_query ->bind_param("s", $term_id);
+            $term_dates_query ->execute();
+
+            $term_dates_result = $term_dates_query->get_result();
+
+	          if ($term_dates_result->num_rows == 0)
+	          {
+	            ?>
+	            <div class="list-group-item">
+	              <div class="row">
+	                <div class="col">
+	                  <div class="text-body">No term dates to display.</div>
+	                </div>
+	              </div>
+	            </div>
+	            <?php
+	          }
+	          else
+	          {
+	            while($term_date = $term_dates_result->fetch_assoc())
+	            {
+	              ?>
+	                <div class="list-group-item">
+	                  <div class="row">
+	                    <div class="col-auto">
+	                      <a href="#">
+                          
+	                      </a>
+	                    </div>
+	                    <div class="col text-truncate">
+	                      <span class="text-body d-block"><?=$term_date["datetime"];?></span>
+	                    </div>
+	                  </div>
+	                </div>
+	              <?php
+	            }
+	          }
+	        ?>
+	        
+	      </div>
+	    </div>
+
+	    <div class="modal modal-blur fade" id="add-new-term" tabindex="-1" role="dialog" aria-hidden="true">
+	      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <h5 class="modal-title">New term date</h5>
+	            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	          </div>
+	          <div class="modal-body">
+	            <div class="row">
+	              <div class="col-lg-6">
+	                <div class="mb-3">
+	                  <label class="form-label">Term name</label>
+	                  <div class="input-group input-group-flat">
+	                    <input type="text" class="form-control" value="" placeholder="Summer 2022" autocomplete="off">
+	                  </div>
+	                </div>
+	              </div>
+	              <div class="col-lg-6">
+	                <div class="mb-3">
+	                  <label class="form-label">Safe name</label>
+	                  <div class="input-group input-group-flat">
+	                    <input type="text" class="form-control" value="" placeholder="summer-2022" autocomplete="off">
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	            <div class="row">
+	              <div class="col-lg-12">
+	                <div class="mb-3">
+	                  <label class="form-label">Image</label>
+	                  <div class="input-group input-group-flat">
+	                    <input type="text" class="form-control" value="" placeholder="https://ensemble.com/summer-logo.jpg" autocomplete="off">
+	                  </div>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="modal-footer">
+	            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+	              Cancel
+	            </a>
+	            <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+	              <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+	              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+	              Add member
+	            </a>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+  	<?php
+
+  	db_disconnect($db_connection);
+	}
 ?>
