@@ -208,9 +208,10 @@ function output_members($max_height = 30)
             $ensemble_list = "no ensembles";
           } else {
             $first_loop = true;
+            $ensemble_list = "";
             while ($ensemble = $ensembles->fetch_assoc()) {
               if ($first_loop) {
-                $ensemble_list = "";
+                $ensemble_list .= "";
                 $first_loop = false;
               } else {
                 $ensemble_list .= ", ";
@@ -815,29 +816,29 @@ function output_term_dates($term_id, $max_height = 30)
 
               ?>
                 <tr>
-                  <td id="modified-<?=$id;?>" class="col-auto align-self-center sort-modified" data-modified="0">
+                  <td id="modified-<?=$id;?>" class="col-auto align-self-center sort-modified" data-modified="0" style="text-align: center; vertical-align: middle;">
                     
                   </td>
                   <td class="col-auto sort-date" data-date="<?= $data_date; ?>">
                     <div class="input-icon">
-                      <input name="date-<?=$id;?>" class="form-control" placeholder="Select a date" id="datepicker-<?=$id;?>" value="<?=$date;?>" onclick="changedField(this, <?=$id;?>)">
+                      <input type="text" name="date-<?=$id;?>" class="form-control" placeholder="Select a date" id="datepicker-<?=$id;?>" value="<?=$date;?>">
                     </div>
                   </td>
                   <td class="col-auto sort-start-time" data-start-time="<?= $data_start_time; ?>">
-                    <input type="text" name="start-time-<?=$id;?>" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$start_time;?>" onchange="changedField(this, <?=$id;?>)">
+                    <input type="time" name="start-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$start_time;?>" onchange="changedField(this, <?=$id;?>, 'start-time')">
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
-                    <input type="text" name="end-time-<?=$id;?>" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, <?=$id;?>)">
+                    <input type="time" name="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, <?=$id;?>, 'end-time')">
                   </td>
                   <td class="sort-featured" data-featured="<?= $data_featured; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, <?=$id;?>)" />
+                      <input name="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, <?=$id;?>, 'featured')" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
                   <td class="sort-deleted" data-deleted="<?= $data_deleted; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="deleted-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, <?=$id;?>)" />
+                      <input name="deleted-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, <?=$id;?>, 'deleted')" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
@@ -930,42 +931,8 @@ function output_term_dates($term_id, $max_height = 30)
       </div>
     </div>
   </div>
-  <script src="./dist/libs/list.js/dist/list.min.js" defer=""></script>
-  <script src="./dist/libs/litepicker/dist/litepicker.js" defer=""></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const list = new List('table-default', {
-        sortClass: 'table-sort',
-        listClass: 'table-tbody',
-        valueNames: [
-          {
-            attr: 'data-modified',
-            name: 'sort-modified'
-          },
-          {
-            attr: 'data-date',
-            name: 'sort-date'
-          },
-          {
-            attr: 'data-start-time',
-            name: 'sort-start-time'
-          },
-          {
-            attr: 'data-end-time',
-            name: 'sort-end-time'
-          },
-          {
-            attr: 'data-featured',
-            name: 'sort-featured'
-          },
-          {
-            attr: 'data-deleted',
-            name: 'sort-deleted'
-          }
-        ]
-      });
-    })
-  </script>
+  <script src="./dist/libs/list.js/dist/list.min.js"></script>
+  <script src="./dist/libs/litepicker/dist/litepicker.js"></script>
   <?php
     foreach ($id_array as $id) {
       ?>
@@ -980,6 +947,12 @@ function output_term_dates($term_id, $max_height = 30)
                 nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
               },
+              setup: (picker) => {
+                picker.on('selected', (date1) => {
+                  var field = document.getElementById('datepicker-<?=$id;?>');
+                  changedField(field, <?=$id;?>, 'date');
+                });
+              },
             }));
           });
           // @formatter:on
@@ -988,22 +961,73 @@ function output_term_dates($term_id, $max_height = 30)
     }
   ?>
   <script type="text/javascript">
-    var attendanceCounter = 0;
-    var memberCounter     = 0;
+    const list = new List('table-default', {
+      sortClass: 'table-sort',
+      listClass: 'table-tbody',
+      valueNames: [
+        {
+          attr: 'data-modified',
+          name: 'sort-modified'
+        },
+        {
+          attr: 'data-date',
+          name: 'sort-date'
+        },
+        {
+          attr: 'data-start-time',
+          name: 'sort-start-time'
+        },
+        {
+          attr: 'data-end-time',
+          name: 'sort-end-time'
+        },
+        {
+          attr: 'data-featured',
+          name: 'sort-featured'
+        },
+        {
+          attr: 'data-deleted',
+          name: 'sort-deleted'
+        }
+      ]
+    });
 
-    function changedField(element, id)
+    document.addEventListener("DOMContentLoaded", function() { list.reIndex(); });
+
+    function changedField(element, id, name)
     {
       if (!element.classList.contains('value-changed'))
       {
-        attendanceCounter++;
         element.classList.add('value-changed');
+      }
+
+      if (name == "date")
+      {
+        var timestamp = Date.parse(element.value + " 00:00:00")/1000;
+        element.parentElement.parentElement.setAttribute("data-" + name, timestamp);
+      }
+      else if (name == "start-time")
+      {
+        var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
+        element.parentElement.setAttribute("data-" + name, timestamp);
+      }
+      else if (name == "end-time")
+      {
+        var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
+        element.parentElement.setAttribute("data-" + name, timestamp);
+      }
+      else if (name == "deleted" || name == "featured")
+      {
+        element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
       }
 
       modifiedField = document.getElementById("modified-" + id);
 
       modifiedField.innerHTML = '<div class="badge bg-primary"></div>';
       modifiedField.setAttribute("data-modified", "1");
-    }
+
+      list.reIndex();
+    }      
   </script>
 <?php
 
