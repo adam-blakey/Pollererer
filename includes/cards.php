@@ -766,11 +766,18 @@
 	{
 		$db_connection = db_connect();
 
+    $term_name_query = $db_connection->prepare("SELECT `name` FROM `terms` WHERE `ID` = ?");
+    $term_name_query ->bind_param("s", $term_id);
+    $term_name_query ->execute();
+    $term_name_query ->bind_result($term_name);
+    $term_name_query ->fetch();
+    $term_name_query ->close();
+
 		?>
-			<div class="card">
+      <div class="card">
 	      <div class="card-header">
 	        <h3 class="card-title">
-	          <p><a href="./term-dates.php">Term dates</a></p>
+	          <p><a href="./term-dates.php">Term dates for <?=$term_name;?></a></p>
 	        </h3>
 	        <div class="ms-auto">
 	          <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-term">
@@ -800,24 +807,78 @@
 	          }
 	          else
 	          {
-	            while($term_date = $term_dates_result->fetch_assoc())
-	            {
-	              ?>
-	                <div class="list-group-item">
+              ?>
+
+                <div id="table-default" class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th><button class="table-sort" data-sort="sort-day">Day</button></th>
+                        <th><button class="table-sort" data-sort="sort-date">Date</button></th>
+                        <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
+                        <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                        <th><button class="table-sort" data-sort="sort-featured">Featured?</button></th>
+                        <th><button class="table-sort" data-sort="sort-deleted">Deleted?</button></th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-tbody">
+                      
+                      <?php
+             
+                        while($term_date = $term_dates_result->fetch_assoc())
+                        {
+
+                          $day        = date("l", $term_date['datetime']);
+                          $date       = date("jS F Y", $term_date['datetime']);
+                          $start_time = date("H:i", $term_date['datetime']);
+                          $end_time   = date("H:i", $term_date['datetime_end']);
+                          $featured   = $term_date['is_featured'];
+                          $deleted    = $term_date['deleted'];
+
+                          $data_day        = date("N", $term_date['datetime']); 
+                          $data_date       = strtotime(date("Y-m-d", $term_date['datetime']));
+                          $data_start_time = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
+                          $data_end_time   = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
+                          $data_featured   = $term_date['is_featured'];
+                          $data_deleted    = $term_date['deleted'];
+	                        
+                          ?>
+                            <tr>
+                              <td class="sort-day" data-day="<?=$data_day;?>"><?=$day;?></td>
+                              <td class="sort-date" data-date="<?=$data_date;?>"><?=$date;?></td>
+                              <td class="sort-start-time" data-start-time="<?=$data_start_time;?>"><?=$start_time;?></td>
+                              <td class="sort-end-time" data-end-time="<?=$data_end_time;?>"><?=$end_time;?></td>
+                              <td class="sort-featured" data-featured="<?=$data_featured;?>"><?=$featured;?></td>
+                              <td class="sort-deleted" data-deleted="<?=$data_deleted;?>"><?=$deleted;?></td>
+                            </tr>
+
+	                <!-- <div class="list-group-item">
 	                  <div class="row">
-	                    <div class="col-auto">
-	                      <a href="#">
-                          
-	                      </a>
-	                    </div>
 	                    <div class="col text-truncate">
-	                      <span class="text-body d-block"><?=$term_date["datetime"];?></span>
+	                      <span class="text-body d-block"><?=timestamp_range($term_date["datetime"], $term_date["datetime_end"]);?></span>
+	                    </div>
+                      <div class="col-auto">
+                      <label class="form-colorinput">
+                        <input id="featured" type="checkbox" class="form-colorinput-input" <?=($term_date["is_featured"])?"checked":"";?>>
+                        <span class="form-colorinput-color bg-blue"></span>
+                      </label>
+                      <label class="form-colorinput">
+                        <input id="deleted" type="checkbox" class="form-colorinput-input" <?=($term_date["deleted"])?"checked":"";?>>
+                        <span class="form-colorinput-color bg-red"></span>
+                      </label>
 	                    </div>
 	                  </div>
-	                </div>
+	                </div> -->
+                        <?php
+                        }
+                      ?>
+                    </tbody>
+                  </table>
+                </div>
 	              <?php
 	            }
-	          }
+
+            $term_dates_query->close();
 	        ?>
 	        
 	      </div>
@@ -873,6 +934,23 @@
 	        </div>
 	      </div>
 	    </div>
+      <script src="./dist/libs/list.js/dist/list.min.js" defer=""></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const list = new List('table-default', {
+          sortClass: 'table-sort',
+          listClass: 'table-tbody',
+          valueNames: [ 
+            { attr: 'data-day',        name: 'sort-day' },
+            { attr: 'data-date',       name: 'sort-date' },
+            { attr: 'data-start-time', name: 'sort-start-time' },
+            { attr: 'data-end-time',   name: 'sort-end-time' },
+            { attr: 'data-featured',   name: 'sort-featured' },
+            { attr: 'data-deleted',    name: 'sort-deleted' }
+          ]
+        });
+        })
+      </script>
   	<?php
 
   	db_disconnect($db_connection);

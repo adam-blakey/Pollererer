@@ -274,165 +274,200 @@ function login_restricted($user_level_required)
 // Courtesy of: https://www.idiotinside.com/2015/03/29/convert-timestamp-to-relative-time-in-php/
 // Accessed: 2022-04-06 16:52:42
 function findTimeAgo($past, $now = "now") {
-// sets the default timezone if required 
-// list of supported timezone identifiers 
-// http://php.net/manual/en/timezones.php
-// date_default_timezone_set("Asia/Calcutta"); 
-$secondsPerMinute = 60;
-$secondsPerHour = 3600;
-$secondsPerDay = 86400;
-$secondsPerMonth = 2592000;
-$secondsPerYear = 31104000;
-// finds the past in datetime
-//$past = strtotime($past);
-// finds the current datetime
-if ($now == "now")
-{
-  $now = strtotime($now);
-}
-else
-{
-  $now = time();
-}
-
-// creates the "time ago" string. This always starts with an "about..."
-$timeAgo = "";
-
-// finds the time difference
-$timeDifference = $now - $past;
-
-// less than 29secs
-if($timeDifference <= 29) {
-  $timeAgo = "less than a minute ago";
-}
-// more than 29secs and less than 1min29secss
-else if($timeDifference > 29 && $timeDifference <= 89) {
-  $timeAgo = "1 minute ago";
-}
-// between 1min30secs and 44mins29secs
-else if($timeDifference > 89 &&
-  $timeDifference <= (($secondsPerMinute * 44) + 29)
-) {
-  $minutes = floor($timeDifference / $secondsPerMinute);
-  $timeAgo = $minutes." minutes ago";
-}
-// between 44mins30secs and 1hour29mins29secs
-else if(
-  $timeDifference > (($secondsPerMinute * 44) + 29)
-  &&
-  $timeDifference < (($secondsPerMinute * 89) + 29)
-) {
-  $timeAgo = "about 1 hour ago";
-}
-// between 1hour29mins30secs and 23hours59mins29secs
-else if(
-  $timeDifference > (
-    ($secondsPerMinute * 89) +
-    29
-  )
-  &&
-  $timeDifference <= (
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-) {
-  $hours = floor($timeDifference / $secondsPerHour);
-  $timeAgo = $hours." hours ago";
-}
-// between 23hours59mins30secs and 47hours59mins29secs
-else if(
-  $timeDifference > (
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-  &&
-  $timeDifference <= (
-    ($secondsPerHour * 47) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-) {
-  $timeAgo = "1 day ago";
-}
-// between 47hours59mins30secs and 29days23hours59mins29secs
-else if(
-  $timeDifference > (
-    ($secondsPerHour * 47) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-  &&
-  $timeDifference <= (
-    ($secondsPerDay * 29) +
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-) {
-  $days = floor($timeDifference / $secondsPerDay);
-  $timeAgo = $days." days ago";
-}
-// between 29days23hours59mins30secs and 59days23hours59mins29secs
-else if(
-  $timeDifference > (
-    ($secondsPerDay * 29) +
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-  &&
-  $timeDifference <= (
-    ($secondsPerDay * 59) +
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-) {
-  $timeAgo = "about 1 month ago";
-}
-// between 59days23hours59mins30secs and 1year (minus 1sec)
-else if(
-  $timeDifference > (
-    ($secondsPerDay * 59) + 
-    ($secondsPerHour * 23) +
-    ($secondsPerMinute * 59) +
-    29
-  )
-  &&
-  $timeDifference < $secondsPerYear
-) {
-  $months = round($timeDifference / $secondsPerMonth);
-  // if months is 1, then set it to 2, because we are "past" 1 month
-  if($months == 1) {
-    $months = 2;
+  // sets the default timezone if required 
+  // list of supported timezone identifiers 
+  // http://php.net/manual/en/timezones.php
+  // date_default_timezone_set("Asia/Calcutta"); 
+  $secondsPerMinute = 60;
+  $secondsPerHour = 3600;
+  $secondsPerDay = 86400;
+  $secondsPerMonth = 2592000;
+  $secondsPerYear = 31104000;
+  // finds the past in datetime
+  //$past = strtotime($past);
+  // finds the current datetime
+  if ($now == "now")
+  {
+    $now = strtotime($now);
   }
-  
-  $timeAgo = $months." months ago";
-}
-// between 1year and 2years (minus 1sec)
-else if(
-  $timeDifference >= $secondsPerYear
-  &&
-  $timeDifference < ($secondsPerYear * 2)
-) {
-  $timeAgo = "about 1 year ago";
-}
-// Assuming time of 0 to be never
-else if(
-  $past == 0
-)
-{
-  $timeAgo = "never";
-}
-// 2years or more
-else {
-  $years = floor($timeDifference / $secondsPerYear);
-  $timeAgo = "over ".$years." years ago";
+  else
+  {
+    $now = time();
+  }
+
+  // creates the "time ago" string. This always starts with an "about..."
+  $timeAgo = "";
+
+  // finds the time difference
+  $timeDifference = $now - $past;
+
+  // less than 29secs
+  if($timeDifference <= 29) {
+    $timeAgo = "less than a minute ago";
+  }
+  // more than 29secs and less than 1min29secss
+  else if($timeDifference > 29 && $timeDifference <= 89) {
+    $timeAgo = "1 minute ago";
+  }
+  // between 1min30secs and 44mins29secs
+  else if($timeDifference > 89 &&
+    $timeDifference <= (($secondsPerMinute * 44) + 29)
+  ) {
+    $minutes = floor($timeDifference / $secondsPerMinute);
+    $timeAgo = $minutes." minutes ago";
+  }
+  // between 44mins30secs and 1hour29mins29secs
+  else if(
+    $timeDifference > (($secondsPerMinute * 44) + 29)
+    &&
+    $timeDifference < (($secondsPerMinute * 89) + 29)
+  ) {
+    $timeAgo = "about 1 hour ago";
+  }
+  // between 1hour29mins30secs and 23hours59mins29secs
+  else if(
+    $timeDifference > (
+      ($secondsPerMinute * 89) +
+      29
+    )
+    &&
+    $timeDifference <= (
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+  ) {
+    $hours = floor($timeDifference / $secondsPerHour);
+    $timeAgo = $hours." hours ago";
+  }
+  // between 23hours59mins30secs and 47hours59mins29secs
+  else if(
+    $timeDifference > (
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+    &&
+    $timeDifference <= (
+      ($secondsPerHour * 47) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+  ) {
+    $timeAgo = "1 day ago";
+  }
+  // between 47hours59mins30secs and 29days23hours59mins29secs
+  else if(
+    $timeDifference > (
+      ($secondsPerHour * 47) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+    &&
+    $timeDifference <= (
+      ($secondsPerDay * 29) +
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+  ) {
+    $days = floor($timeDifference / $secondsPerDay);
+    $timeAgo = $days." days ago";
+  }
+  // between 29days23hours59mins30secs and 59days23hours59mins29secs
+  else if(
+    $timeDifference > (
+      ($secondsPerDay * 29) +
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+    &&
+    $timeDifference <= (
+      ($secondsPerDay * 59) +
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+  ) {
+    $timeAgo = "about 1 month ago";
+  }
+  // between 59days23hours59mins30secs and 1year (minus 1sec)
+  else if(
+    $timeDifference > (
+      ($secondsPerDay * 59) + 
+      ($secondsPerHour * 23) +
+      ($secondsPerMinute * 59) +
+      29
+    )
+    &&
+    $timeDifference < $secondsPerYear
+  ) {
+    $months = round($timeDifference / $secondsPerMonth);
+    // if months is 1, then set it to 2, because we are "past" 1 month
+    if($months == 1) {
+      $months = 2;
+    }
+    
+    $timeAgo = $months." months ago";
+  }
+  // between 1year and 2years (minus 1sec)
+  else if(
+    $timeDifference >= $secondsPerYear
+    &&
+    $timeDifference < ($secondsPerYear * 2)
+  ) {
+    $timeAgo = "about 1 year ago";
+  }
+  // Assuming time of 0 to be never
+  else if(
+    $past == 0
+  )
+  {
+    $timeAgo = "never";
+  }
+  // 2years or more
+  else {
+    $years = floor($timeDifference / $secondsPerYear);
+    $timeAgo = "over ".$years." years ago";
+  }
+
+  return $timeAgo;
 }
 
-return $timeAgo;
+function on_same_day($timestamp_start, $timestamp_end)
+{
+  $start_date = date("Y-m-d", $timestamp_start);
+  $end_date = date("Y-m-d", $timestamp_end);
+
+  return ($start_date == $end_date);
+}
+
+function timestamp_range($timestamp_start, $timestamp_end)
+{
+  $on_same_day = on_same_day($timestamp_start, $timestamp_end);
+
+  if ($on_same_day)
+  {
+    $day        = date("D", $timestamp_start);
+    $date       = date("jS F Y", $timestamp_start);
+    $time_start = date("G:i", $timestamp_start);
+    $time_end   = date("G:i", $timestamp_end);
+
+    return "$day, $date $time_start — $time_end";
+  }
+  else
+  {
+    $day_start  = date("D", $timestamp_start);
+    $date_start = date("jS F Y", $timestamp_start);
+    $time_start = date("G:i", $timestamp_start);
+
+    $day_end  = date("D", $timestamp_end);
+    $date_end = date("jS F Y", $timestamp_end);
+    $time_end = date("G:i", $timestamp_end);
+
+    return "$day_start, $date_start $time_start — $day_end, $date_end $time_end";
+  }
 }
 
 ?>
