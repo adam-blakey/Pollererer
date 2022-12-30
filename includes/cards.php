@@ -816,40 +816,28 @@ function output_term_dates($term_id, $max_height = 30)
               ?>
                 <tr>
                   <td id="modified-<?=$id;?>" class="col-auto align-self-center sort-modified" data-modified="0">
-                    <div class="badge bg-primary"></div>
+                    
                   </td>
                   <td class="col-auto sort-date" data-date="<?= $data_date; ?>">
                     <div class="input-icon">
-                      <span class="input-icon-addon">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <rect x="4" y="5" width="16" height="16" rx="2"></rect>
-                          <line x1="16" y1="3" x2="16" y2="7"></line>
-                          <line x1="8" y1="3" x2="8" y2="7"></line>
-                          <line x1="4" y1="11" x2="20" y2="11"></line>
-                          <line x1="11" y1="15" x2="12" y2="15"></line>
-                          <line x1="12" y1="15" x2="12" y2="18"></line>
-                        </svg>
-                      </span>
-                      <input class="form-control" placeholder="Select a date" id="datepicker-<?=$id;?>" value="<?=$date;?>">
+                      <input name="date-<?=$id;?>" class="form-control" placeholder="Select a date" id="datepicker-<?=$id;?>" value="<?=$date;?>" onclick="changedField(this, <?=$id;?>)">
                     </div>
                   </td>
                   <td class="col-auto sort-start-time" data-start-time="<?= $data_start_time; ?>">
-                    <input type="text" name="input-mask" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$start_time;?>">
+                    <input type="text" name="start-time-<?=$id;?>" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$start_time;?>" onchange="changedField(this, <?=$id;?>)">
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
-                    <input type="text" name="input-mask" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$end_time;?>">
+                    <input type="text" name="end-time-<?=$id;?>" class="form-control" data-mask="00:00" data-mask-visible="true" placeholder="00:00" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, <?=$id;?>)">
                   </td>
                   <td class="sort-featured" data-featured="<?= $data_featured; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="updateTotalChanged(this)" />
+                      <input name="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, <?=$id;?>)" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
                   <td class="sort-deleted" data-deleted="<?= $data_deleted; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="updateTotalChanged(this)" />
+                      <input name="deleted-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, <?=$id;?>)" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
@@ -999,6 +987,24 @@ function output_term_dates($term_id, $max_height = 30)
       <?php
     }
   ?>
+  <script type="text/javascript">
+    var attendanceCounter = 0;
+    var memberCounter     = 0;
+
+    function changedField(element, id)
+    {
+      if (!element.classList.contains('value-changed'))
+      {
+        attendanceCounter++;
+        element.classList.add('value-changed');
+      }
+
+      modifiedField = document.getElementById("modified-" + id);
+
+      modifiedField.innerHTML = '<div class="badge bg-primary"></div>';
+      modifiedField.setAttribute("data-modified", "1");
+    }
+  </script>
 <?php
 
   db_disconnect($db_connection);
