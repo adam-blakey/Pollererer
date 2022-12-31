@@ -822,32 +822,32 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-date" data-date="<?= $data_date; ?>">
                     <div class="input-icon">
-                      <input type="text" name="date-<?=$id;?>" class="form-control" placeholder="Select a date" id="datepicker-<?=$id;?>" value="<?=$date;?>">
+                      <input type="text" name="date-<?=$id;?>" id="date-<?=$id;?>" class="form-control" placeholder="Select a date" value="<?=$date;?>">
                       <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
                       </span>
                     </div>
                   </td>
                   <td class="col-auto sort-start-time" data-start-time="<?= $data_start_time; ?>">
-                    <input type="time" name="start-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$start_time;?>" onchange="changedField(this, '<?=$id;?>', 'start-time')">
+                    <input type="time" name="start-time-<?=$id;?>" id="start-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$start_time;?>" onchange="changedField(this, '<?=$id;?>', 'start-time')">
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
-                    <input type="time" name="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
+                    <input type="time" name="end-time-<?=$id;?>" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
                   </td>
                   <td class="sort-featured" data-featured="<?= $data_featured; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, '<?=$id;?>', 'featured')" />
+                      <input name="featured-<?=$id;?>" id="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, '<?=$id;?>', 'featured')" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
                   <td class="sort-deleted" data-deleted="<?= $data_deleted; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="deleted-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, '<?=$id;?>', 'deleted')" />
+                      <input name="deleted-<?=$id;?>" id="deleted-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, '<?=$id;?>', 'deleted')" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
                   <td class="col-auto align-self-center sort-modified" style="text-align: center; vertical-align: middle;">
-                    <button type="button" name="duplicate-<?=$id;?>" class="btn btn-sm btn-outline-secondary" onclick="duplicateDate('<?=$id;?>')">
+                    <button type="button" name="duplicate-<?=$id;?>" id="duplicate-<?=$id;?>" class="btn btn-sm btn-outline-secondary" onclick="duplicateDate('<?=$id;?>')">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                         <rect x="8" y="8" width="12" height="12" rx="2" />
@@ -899,7 +899,7 @@ function output_term_dates($term_id, $max_height = 30)
           // @formatter:off
           document.addEventListener("DOMContentLoaded", function() {
             window.Litepicker && (new Litepicker({
-              element: document.getElementById('datepicker-<?=$id;?>'),
+              element: document.getElementById('date-<?=$id;?>'),
               buttonText: {
                 previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
@@ -908,7 +908,7 @@ function output_term_dates($term_id, $max_height = 30)
               },
               setup: (picker) => {
                 picker.on('selected', (date1) => {
-                  var field = document.getElementById('datepicker-<?=$id;?>');
+                  var field = document.getElementById('date-<?=$id;?>');
                   changedField(field, '<?=$id;?>', 'date');
                 });
               },
@@ -1034,48 +1034,47 @@ function output_term_dates($term_id, $max_height = 30)
 
       // Update date cell.
       dateCell.setAttribute("data-date", "0");
-      dateCell.getElementsByTagName('input')[0].id       = "datepicker-new" + newCounter;
-      dateCell.getElementsByTagName('input')[0].name     = "datepicker-new" + newCounter;
+      dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
+      dateCell.getElementsByTagName('input')[0].name     = "date-new" + newCounter;
       dateCell.getElementsByTagName('input')[0].value    = "";
-      dateCell.getElementsByTagName('input')[0].onchange = changedField(dateCell, "new" + newCounter, "date");
+      dateCell.getElementsByTagName('input')[0].onchange = function() { changedField(dateCell, "new" + newCounter, "date"); };
 
       // Update start time cell.
       startTimeCell.setAttribute("data-start-time", "0");
       startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].name     = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].value    = "";
-      startTimeCell.getElementsByTagName('input')[0].onchange = changedField(startTimeCell, "new" + newCounter, "start-time");
+      startTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(startTimeCell, "new" + newCounter, "start-time"); };
 
       // Update end time cell.
       endTimeCell.setAttribute("data-end-time", "0");
       endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].name     = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].value    = "";
-      endTimeCell.getElementsByTagName('input')[0].onchange = changedField(endTimeCell, "new" + newCounter, "end-time");
+      endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell, "new" + newCounter, "end-time"); };
 
       // Update featured cell.
       featuredCell.setAttribute("data-featured", "-1");
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "featured-new" + newCounter;
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "featured-new" + newCounter;
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = changedField(featuredCell, "new" + newCounter, "featured");
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell, "new" + newCounter, "featured"); };
 
       // Update deleted cell.
       deletedCell.setAttribute("data-deleted", "-1");
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted-new" + newCounter;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = changedField(deletedCell, "new" + newCounter, "deleted");
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell, "new" + newCounter, "deleted"); };
 
       // Update duplicate cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].name    = "duplicate-new" + newCounter;
-      duplicateCell.getElementsByTagName('button')[0].onclick = duplicateDate('new' + newCounter);
-
+      duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + newCounter); };
 
       // Add event listener for the date cell.
       window.Litepicker && (new Litepicker({
-        element: document.getElementById('datepicker-new'+newCounter),
+        element: document.getElementById('date-new'+newCounter),
         buttonText: {
           previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
@@ -1084,7 +1083,7 @@ function output_term_dates($term_id, $max_height = 30)
         },
         setup: (picker) => {
           picker.on('selected', (date1) => {
-            var field = document.getElementById('datepicker-new'+newCounter);
+            var field = document.getElementById('date-new'+newCounter);
             changedField(field, 'new'+newCounter, 'date');
           });
         },
@@ -1093,96 +1092,102 @@ function output_term_dates($term_id, $max_height = 30)
       list.reIndex();
     }
 
-    // function duplicateDate(duplicateId)
-    // {
-    //   list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
+    function duplicateDate(duplicateId)
+    {
+      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
 
-    //   newCounter += 1;
+      newCounter += 1;
 
-    //   var table   = document.getElementById("table-default");
-    //   var tbody   = table.getElementsByTagName("tbody")[0];
-    //   var lastRow = tbody.rows[tbody.rows.length - 1];
+      var table   = document.getElementById("table-default");
+      var tbody   = table.getElementsByTagName("tbody")[0];
+      var lastRow = tbody.rows[tbody.rows.length - 1];
 
-    //   var modifiedCell  = lastRow.cells[0];
-    //   var dateCell      = lastRow.cells[1];
-    //   var startTimeCell = lastRow.cells[2];
-    //   var endTimeCell   = lastRow.cells[3];
-    //   var featuredCell  = lastRow.cells[4];
-    //   var deletedCell   = lastRow.cells[5];
+      var modifiedCell  = lastRow.cells[0];
+      var dateCell      = lastRow.cells[1];
+      var startTimeCell = lastRow.cells[2];
+      var endTimeCell   = lastRow.cells[3];
+      var featuredCell  = lastRow.cells[4];
+      var deletedCell   = lastRow.cells[5];
+      var duplicateCell = lastRow.cells[6];
 
-    //   // // Update IDs.
-    //   // modifiedCell.id  = "modified-new"   + newCounter;
-    //   // dateCell.id      = "date-new"       + newCounter;
-    //   // startTimeCell.id = "start-time-new" + newCounter;
-    //   // endTimeCell.id   = "end-time-new"   + newCounter;
-    //   // featuredCell.id  = "featured-new"   + newCounter;
-    //   // deletedCell.id   = "deleted-new"    + newCounter;
+      // // Update IDs.
+      // modifiedCell.id  = "modified-new"   + newCounter;
+      // dateCell.id      = "date-new"       + newCounter;
+      // startTimeCell.id = "start-time-new" + newCounter;
+      // endTimeCell.id   = "end-time-new"   + newCounter;
+      // featuredCell.id  = "featured-new"   + newCounter;
+      // deletedCell.id   = "deleted-new"    + newCounter;
       
-    //   // // Update names.
-    //   // modifiedCell.name  = "modified-new"   + newCounter;
-    //   // dateCell.name      = "date-new"       + newCounter;
-    //   // startTimeCell.name = "start-time-new" + newCounter;
-    //   // endTimeCell.name   = "end-time-new"   + newCounter;
-    //   // featuredCell.name  = "featured-new"   + newCounter;
-    //   // deletedCell.name   = "deleted-new"    + newCounter;
+      // // Update names.
+      // modifiedCell.name  = "modified-new"   + newCounter;
+      // dateCell.name      = "date-new"       + newCounter;
+      // startTimeCell.name = "start-time-new" + newCounter;
+      // endTimeCell.name   = "end-time-new"   + newCounter;
+      // featuredCell.name  = "featured-new"   + newCounter;
+      // deletedCell.name   = "deleted-new"    + newCounter;
 
-    //   // Update modified cell.
-    //   modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
+      // Update modified cell.
+      modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
 
-    //   // Update date cell.
-    //   dateCell.setAttribute("data-date", document.getElementById('date-' + duplicateId).getAttribute("data-date"));
-    //   dateCell.getElementsByTagName('input')[0].id       = "datepicker-new" + newCounter;
-    //   dateCell.getElementsByTagName('input')[0].name     = "datepicker-new" + newCounter;
-    //   dateCell.getElementsByTagName('input')[0].value    = document.getElementById('date-' + duplicateId).value;
-    //   dateCell.getElementsByTagName('input')[0].onchange = changedField(dateCell, "new" + newCounter, "date");
+      // Update date cell.
+      dateCell.setAttribute("data-date", document.getElementById('date-' + duplicateId).parentElement.parentElement.getAttribute("data-date"));
+      dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
+      dateCell.getElementsByTagName('input')[0].name     = "date-new" + newCounter;
+      dateCell.getElementsByTagName('input')[0].value    = document.getElementById('date-' + duplicateId).value;
+      dateCell.getElementsByTagName('input')[0].onchange = function () { changedField(dateCell, "new" + newCounter, "date"); };
 
-    //   // Update start time cell.
-    //   startTimeCell.setAttribute("data-start-time", "0");
-    //   startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
-    //   startTimeCell.getElementsByTagName('input')[0].name     = "start-time-new" + newCounter;
-    //   startTimeCell.getElementsByTagName('input')[0].value    = "";
-    //   startTimeCell.getElementsByTagName('input')[0].onchange = changedField(startTimeCell, "new" + newCounter, "start-time");
+      // Update start time cell.
+      startTimeCell.setAttribute("data-start-time", document.getElementById('start-time-' + duplicateId).parentElement.getAttribute("data-start-time"));
+      startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
+      startTimeCell.getElementsByTagName('input')[0].name     = "start-time-new" + newCounter;
+      startTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('start-time-' + duplicateId).value;
+      startTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(startTimeCell, "new" + newCounter, "start-time"); };
 
-    //   // Update end time cell.
-    //   endTimeCell.setAttribute("data-end-time", "0");
-    //   endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
-    //   endTimeCell.getElementsByTagName('input')[0].name     = "end-time-new" + newCounter;
-    //   endTimeCell.getElementsByTagName('input')[0].value    = "";
-    //   endTimeCell.getElementsByTagName('input')[0].onchange = changedField(endTimeCell, "new" + newCounter, "end-time");
+      // Update end time cell.
+      endTimeCell.setAttribute("data-end-time", document.getElementById('end-time-' + duplicateId).parentElement.getAttribute("data-end-time"));
+      endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
+      endTimeCell.getElementsByTagName('input')[0].name     = "end-time-new" + newCounter;
+      endTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('end-time-' + duplicateId).value;
+      endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell, "new" + newCounter, "end-time"); };
 
-    //   // Update featured cell.
-    //   featuredCell.setAttribute("data-featured", "-1");
-    //   featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "featured-new" + newCounter;
-    //   featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "featured-new" + newCounter;
-    //   featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-    //   featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = changedField(featuredCell, "new" + newCounter, "featured");
+      // Update featured cell.
+      featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.getAttribute("data-featured"));
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id       = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name     = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('featured-' + duplicateId).checked;
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange = function () { changedField(featuredCell, "new" + newCounter, "featured"); };
 
-    //   // Update deleted cell.
-    //   deletedCell.setAttribute("data-deleted", "-1");
-    //   deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
-    //   deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted-new" + newCounter;
-    //   deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-    //   deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = changedField(deletedCell, "new" + newCounter, "deleted");
+      // Update deleted cell.
+      deletedCell.setAttribute("data-deleted", document.getElementById('deleted-' + duplicateId).parentElement.getAttribute("data-deleted"));
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id       = "deleted-new" + newCounter;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name     = "deleted-new" + newCounter;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('deleted-' + duplicateId).checked;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange = function () { changedField(deletedCell, "new" + newCounter, "deleted"); };
 
-    //   // Add event listener for the date cell.
-    //   window.Litepicker && (new Litepicker({
-    //     element: document.getElementById('datepicker-new'+newCounter),
-    //     buttonText: {
-    //       previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-    //     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
-    //       nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-    //     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
-    //     },
-    //     setup: (picker) => {
-    //       picker.on('selected', (date1) => {
-    //         var field = document.getElementById('datepicker-new'+newCounter);
-    //         changedField(field, 'new'+newCounter, 'date');
-    //       });
-    //     },
-    //   }));
+      // Update duplicate cell.
+      duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
+      duplicateCell.getElementsByTagName('button')[0].name    = "duplicate-new" + newCounter;
+      duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + newCounter); };
 
-    //   list.reIndex();
-    // }
+      // Add event listener for the date cell.
+      window.Litepicker && (new Litepicker({
+        element: document.getElementById('date-new'+newCounter),
+        buttonText: {
+          previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
+          nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
+        },
+        setup: (picker) => {
+          picker.on('selected', (date1) => {
+            var field = document.getElementById('date-new'+newCounter);
+            changedField(field, 'new'+newCounter, 'date');
+          });
+        },
+      }));
+
+      list.reIndex();
+    }
   </script>
 <?php
 
