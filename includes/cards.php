@@ -794,8 +794,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
-                <th><?=$config["taxonomy_ensembles"];?></th>
-                <th><button class="table-sort" data-sort="sort-featured">Feat.</button></th>
+                <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-deleted">Del.</button></th>
                 <th></th>
               </tr>
@@ -823,10 +822,6 @@ function output_term_dates($term_id, $max_height = 30)
 
                 $id_array[] = $id;
 
-                $featured_indeterminate = "";
-                $featured_checked       = ($featured == 1)?"checked":"";
-                $featured_disabled      = "";
-
                 $deleted_indeterminate = "";
                 $deleted_checked       = ($deleted == 1)?"checked":"";
                 $deleted_disabled      = "";
@@ -838,7 +833,7 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-date" data-date="<?= $data_date; ?>">
                     <div class="input-icon">
-                      <input type="text" name="date-<?=$id;?>" id="date-<?=$id;?>" class="form-control" placeholder="Select a date" value="<?=$date;?>" size="5">
+                      <input type="text" name="date-<?=$id;?>" id="date-<?=$id;?>" class="form-control" placeholder="Select a date" value="<?=$date;?>">
                       <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
                       </span>
@@ -850,25 +845,25 @@ function output_term_dates($term_id, $max_height = 30)
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
                     <input type="time" name="end-time-<?=$id;?>" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
                   </td>
-                  <td>
-                    <select name="ensembles-<?=$id;?>" id="ensembles-<?=$id;?>" class="form-select" multiple="" size="1" onchange="changedField(this, '<?=$id;?>', 'ensembles')">
-                      <?php
-                        // TODO: GET ASSOCIATED ENSEMBLES AND MARK AS SELECTED.
-
-                        for ($i = 0; $i < count($ensemble_ids); $i++)
-                        {
-                          ?>
-                          <option value="<?=$ensemble_ids[$i];?>"><?=$ensemble_names[$i];?></option>
-                          <?php
-                        }
-                      ?>
+                  <td class="col-auto sort-featured" data-featured="<?=$featured;?>">
+                    <select name="featured-<?=$id;?>" id="featured-<?=$id;?>" class="form-select" onchange="changedField(this, '<?=$id;?>', 'featured')">
+                      <option value="0" <?=($featured==0)?"selected":"";?>>None</option>
+                      <option value="1" <?=($featured==1)?"selected":"";?>>All</option>
+                      <optgroup label="<?=ucfirst($config["taxonomy_ensembles"]);?>">
+                        <?php
+                          // TODO: GET ASSOCIATED ENSEMBLES AND MARK AS SELECTED.
+                          
+                          for ($i = 0; $i < count($ensemble_ids); $i++)
+                          {
+                            $options[strval(-$ensemble_ids[$i])] = $ensemble_names[$i];
+                            ?>
+                              <option value="-<?=$ensemble_ids[$i];?>" <?=(-$ensemble_ids[$i]==$featured)?"selected":"";?>><?=$ensemble_names[$i];?></option>
+                            <?php
+                          }
+                          
+                        ?>
+                      </optgroup>
                     </select>
-                  </td>
-                  <td class="sort-featured" data-featured="<?= $data_featured; ?>">
-                    <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="featured-<?=$id;?>" id="featured-<?=$id;?>" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$featured_indeterminate;?>" <?=$featured_checked;?> <?=$featured_disabled;?> onchange="changedField(this, '<?=$id;?>', 'featured')" />
-                      <span class="form-colorcheckbox-color "></span>
-                    </label>
                   </td>
                   <td class="sort-deleted" data-deleted="<?= $data_deleted; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
@@ -1065,9 +1060,9 @@ function output_term_dates($term_id, $max_height = 30)
       {
         element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
       }
-      else if (name == "ensembles")
+      else if (name == "featured")
       {
-        // Do nothing.
+        element.parentElement.setAttribute("data-" + name, element.value);
       }
 
       list.reIndex();
@@ -1096,9 +1091,9 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[5];
-      var deletedCell   = lastRow.cells[6];
-      var duplicateCell = lastRow.cells[7];
+      var featuredCell  = lastRow.cells[4];
+      var deletedCell   = lastRow.cells[5];
+      var duplicateCell = lastRow.cells[6];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1145,12 +1140,11 @@ function output_term_dates($term_id, $max_height = 30)
       endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
 
       // Update featured cell.
-      featuredCell.setAttribute("data-featured", "-1");
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "featured"); };
+      featuredCell.setAttribute("data-featured", "0");
+      featuredCell.getElementsByTagName('selected')[0].id       = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('selected')[0].name     = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('selected')[0].value    = "0";
+      featuredCell.getElementsByTagName('selected')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
 
       // Update deleted cell.
       deletedCell.setAttribute("data-deleted", "-1");
@@ -1160,9 +1154,7 @@ function output_term_dates($term_id, $max_height = 30)
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
 
-      console.log(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked);
-
-      // Update duplicate cell.
+      // Update duplicate button cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].name    = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + newCounter); };
@@ -1208,9 +1200,9 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[5];
-      var deletedCell   = lastRow.cells[6];
-      var duplicateCell = lastRow.cells[7];
+      var featuredCell  = lastRow.cells[4];
+      var deletedCell   = lastRow.cells[5];
+      var duplicateCell = lastRow.cells[6];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1255,19 +1247,11 @@ function output_term_dates($term_id, $max_height = 30)
       endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
 
       // Update featured cell.
-      if (document.getElementById('featured-' + duplicateId).parentElement.parentElement.getAttribute("data-featured") == -1)
-      {
-        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false; 
-      }
-      else
-      {
-        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('featured-' + duplicateId).checked;
-      }
-      featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.parentElement.getAttribute("data-featured"));
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id       = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name     = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "featured"); };
+      featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.getAttribute("data-featured"));
+      featuredCell.getElementsByTagName('select')[0].id       = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('select')[0].name     = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('select')[0].value    = document.getElementById('featured-' + duplicateId).value;
+      featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('select')[0], "new" + newCounter, "featured"); };
 
       // Update deleted cell.
       if (document.getElementById('deleted-' + duplicateId).parentElement.parentElement.getAttribute("data-deleted") == -1)
@@ -1284,7 +1268,7 @@ function output_term_dates($term_id, $max_height = 30)
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted-new" + newCounter;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
 
-      // Update duplicate cell.
+      // Update duplicate button cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].name    = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + newCounter); };
