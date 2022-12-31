@@ -880,6 +880,13 @@ function output_term_dates($term_id, $max_height = 30)
               ?>
             </tbody>
           </table>
+          <div class="p-2 my-0 d-flex">
+            <p class="ms-auto m-0 text-muted">
+              <span style="padding-right: 10px;">You've changed or added <span class="fieldsCounter fw-bold">0</span> fields over <span class="termDatesCounter fw-bold">0</span> term dates.</span>
+              <a class="updateTermDates btn btn-primary ms-auto disabled my-2" onclick="updateTermDates()" data-bs-toggle="modal" data-bs-target="#update-term-dates-result">Update</a>
+              <a class="btn my-2" onclick="location.reload()">Reset</a>
+            </p>
+          </div>
         </div>
       <?php
       }
@@ -982,7 +989,7 @@ function output_term_dates($term_id, $max_height = 30)
 
       modifiedField = document.getElementById("modified-" + id);
 
-      if (id.substring(0, 3) != "new")
+      if (id.substring(0, 3) != "new" && modifiedField.getAttribute("data-modified") != "1")
       {
         modifiedField.innerHTML = '<div class="badge bg-primary"></div>';
         modifiedField.setAttribute("data-modified", "1");
@@ -1037,35 +1044,39 @@ function output_term_dates($term_id, $max_height = 30)
       dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
       dateCell.getElementsByTagName('input')[0].name     = "date-new" + newCounter;
       dateCell.getElementsByTagName('input')[0].value    = "";
-      dateCell.getElementsByTagName('input')[0].onchange = function() { changedField(dateCell, "new" + newCounter, "date"); };
+      dateCell.getElementsByTagName('input')[0].onchange = function() { changedField(dateCell.getElementsByTagName('input')[0], "new" + newCounter, "date"); };
 
       // Update start time cell.
       startTimeCell.setAttribute("data-start-time", "0");
       startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].name     = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].value    = "";
-      startTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(startTimeCell, "new" + newCounter, "start-time"); };
+      startTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(startTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "start-time"); };
 
       // Update end time cell.
       endTimeCell.setAttribute("data-end-time", "0");
       endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].name     = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].value    = "";
-      endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell, "new" + newCounter, "end-time"); };
+      endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
 
       // Update featured cell.
       featuredCell.setAttribute("data-featured", "-1");
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "featured-new" + newCounter;
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "featured-new" + newCounter;
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell, "new" + newCounter, "featured"); };
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "featured"); };
 
       // Update deleted cell.
       deletedCell.setAttribute("data-deleted", "-1");
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted-new" + newCounter;
       deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell, "new" + newCounter, "deleted"); };
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
+
+      console.log(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked);
 
       // Update duplicate cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
@@ -1134,35 +1145,51 @@ function output_term_dates($term_id, $max_height = 30)
       dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
       dateCell.getElementsByTagName('input')[0].name     = "date-new" + newCounter;
       dateCell.getElementsByTagName('input')[0].value    = document.getElementById('date-' + duplicateId).value;
-      dateCell.getElementsByTagName('input')[0].onchange = function () { changedField(dateCell, "new" + newCounter, "date"); };
+      dateCell.getElementsByTagName('input')[0].onchange = function () { changedField(dateCell.getElementsByTagName('input')[0], "new" + newCounter, "date"); };
 
       // Update start time cell.
       startTimeCell.setAttribute("data-start-time", document.getElementById('start-time-' + duplicateId).parentElement.getAttribute("data-start-time"));
       startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].name     = "start-time-new" + newCounter;
       startTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('start-time-' + duplicateId).value;
-      startTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(startTimeCell, "new" + newCounter, "start-time"); };
+      startTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(startTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "start-time"); };
 
       // Update end time cell.
       endTimeCell.setAttribute("data-end-time", document.getElementById('end-time-' + duplicateId).parentElement.getAttribute("data-end-time"));
       endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].name     = "end-time-new" + newCounter;
       endTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('end-time-' + duplicateId).value;
-      endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell, "new" + newCounter, "end-time"); };
+      endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
 
       // Update featured cell.
-      featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.getAttribute("data-featured"));
+      if (document.getElementById('featured-' + duplicateId).parentElement.parentElement.getAttribute("data-featured") == -1)
+      {
+        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
+        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false; 
+      }
+      else
+      {
+        featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('featured-' + duplicateId).checked;
+      }
+      featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.parentElement.getAttribute("data-featured"));
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id       = "featured-new" + newCounter;
       featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name     = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('featured-' + duplicateId).checked;
-      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange = function () { changedField(featuredCell, "new" + newCounter, "featured"); };
+      featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(featuredCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "featured"); };
 
       // Update deleted cell.
-      deletedCell.setAttribute("data-deleted", document.getElementById('deleted-' + duplicateId).parentElement.getAttribute("data-deleted"));
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id       = "deleted-new" + newCounter;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name     = "deleted-new" + newCounter;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('deleted-' + duplicateId).checked;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange = function () { changedField(deletedCell, "new" + newCounter, "deleted"); };
+      if (document.getElementById('deleted-' + duplicateId).parentElement.parentElement.getAttribute("data-deleted") == -1)
+      {
+        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
+        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+      }
+      else
+      {
+        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('deleted-' + duplicateId).checked;
+      }
+      deletedCell.setAttribute("data-deleted", document.getElementById('deleted-' + duplicateId).parentElement.parentElement.getAttribute("data-deleted"));
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted-new" + newCounter;
+      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
 
       // Update duplicate cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
@@ -1187,6 +1214,11 @@ function output_term_dates($term_id, $max_height = 30)
       }));
 
       list.reIndex();
+    }
+
+    function updateTermDates()
+    {
+
     }
   </script>
 <?php
