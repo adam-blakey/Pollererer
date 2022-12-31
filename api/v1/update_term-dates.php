@@ -37,9 +37,72 @@
 
 			$JSON_response->status        = "error";
 			$JSON_response->error_message = "";
+
+			// Maps the IDs numbered from the term-dates.php page to the globally inserted IDs, once they've been inserted.
+			$inserted_new_ids = array();
+
 			foreach ($term_dates_data as $data)
 			{
-				$JSON_response->error_message .= json_encode($data);
+				$id 	 = strip_tags($data["id"]);
+				$type  = strip_tags($data["type"]);
+				$value = strip_tags($data["value"]);
+
+				// A new ID and hasn't already been just inserted.
+				if (substr($id, 0, 3) == "new" && !array_key_exists(substr($id, 3), $inserted_new_ids))
+				{
+					$new_id = substr($id, 3);
+
+					$JSON_response->error_message .= $new_id . " ";
+
+					// TODO: INSERT NEW RECORDS BELOW.
+					if ($type == "date")
+					{
+						
+					}
+					else if ($type == "start-time")
+					{
+						
+					}
+					else if ($type == "end-time")
+					{
+						
+					}
+					else if ($type == "featured")
+					{
+						
+					}
+					else if ($type == "deleted")
+					{
+						
+					}
+
+					$inserted_new_ids[$new_id] = "some brilliant new id";
+				}
+				// Existing record; will update.
+				else
+				{
+					// TODO: UPDATE EXISTING RECORDS BELOW.
+					if ($type == "date")
+					{
+						
+					}
+					else if ($type == "start-time")
+					{
+						
+					}
+					else if ($type == "end-time")
+					{
+						
+					}
+					else if ($type == "featured")
+					{
+						
+					}
+					else if ($type == "deleted")
+					{
+						
+					}
+				}
 			}
 		}
 		else

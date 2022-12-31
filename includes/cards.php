@@ -1141,10 +1141,10 @@ function output_term_dates($term_id, $max_height = 30)
 
       // Update featured cell.
       featuredCell.setAttribute("data-featured", "0");
-      featuredCell.getElementsByTagName('selected')[0].id       = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('selected')[0].name     = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('selected')[0].value    = "0";
-      featuredCell.getElementsByTagName('selected')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
+      featuredCell.getElementsByTagName('select')[0].id       = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('select')[0].name     = "featured-new" + newCounter;
+      featuredCell.getElementsByTagName('select')[0].value    = "0";
+      featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
 
       // Update deleted cell.
       deletedCell.setAttribute("data-deleted", "-1");
