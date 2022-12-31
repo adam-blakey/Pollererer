@@ -1,5 +1,6 @@
 <?php
 	$term_dates_data = json_decode($_POST["term_dates_data"], true);
+	$term_ID         = htmlspecialchars($_POST["term_ID"]);
 	$session_ID      = htmlspecialchars($_POST["session_ID"]);
 
 	$JSON_response = new stdClass();
@@ -9,14 +10,10 @@
 		include($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 		$db_connection = db_connect();
 
-		$JSON_response->status = "success";
-
-		$session_query = $db_connection->query("SELECT `login_sessions`.`member_ID`, `members`.`user_level` FROM `logins_sessions` INNER JOIN `members` ON `login_session`.`member_ID`=`members`.`ID` WHERE `login_sessions`.`ID`='".$session_ID."'");
+		$session_query = $db_connection->query("SELECT `logins_sessions`.`member_ID`, `members`.`user_level` FROM `logins_sessions` INNER JOIN `members` ON `logins_sessions`.`member_ID`=`members`.`ID` WHERE `logins_sessions`.`ID`='".$session_ID."'");
 
 		if ($session_query)
-		{
-      $JSON_response->status = "User level: ".$session_query->fetch_assoc()["user_level"];
-      
+		{      
 			// $edit_member_ID = $session_query->fetch_array()[0];
 
 			// foreach ($attendance_data as $data)
@@ -37,11 +34,18 @@
 			// 		break;
 			// 	}
 			// }
+
+			$JSON_response->status        = "error";
+			$JSON_response->error_message = "";
+			foreach ($term_dates_data as $data)
+			{
+				$JSON_response->error_message .= json_encode($data);
+			}
 		}
 		else
 		{
 			$JSON_response->status        = "error";
-			$JSON_response->error_message = "invalid edit_member_ID";
+			$JSON_response->error_message = "invalid session_ID; either login is invalid or you do not have permission to edit term dates";
 		}
 
 		db_disconnect($db_connection);

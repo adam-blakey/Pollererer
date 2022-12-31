@@ -1056,7 +1056,7 @@ function output_term_dates($term_id, $max_height = 30)
         var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
         element.parentElement.setAttribute("data-" + name, timestamp);
       }
-      else if (name == "deleted" || name == "featured")
+      else if (name == "deleted")
       {
         element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
       }
@@ -1306,6 +1306,83 @@ function output_term_dates($term_id, $max_height = 30)
       document.getElementById("update-term-dates-result-status").classList.remove("bg-danger");
       document.getElementById("update-term-dates-result-status").classList.remove("bg-success");
       document.getElementById("update-term-dates-result-status").classList.add("bg-primary");
+
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_term-dates.php", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      var term_dates_data = document.getElementsByClassName("value-changed");
+      var extracted_term_dates_data = [];
+      for (let i = 0; i < term_dates_data.length; i++)
+      {
+        var last_hyphen = term_dates_data[i].name.lastIndexOf("-");
+        var type        = term_dates_data[i].name.slice(0, last_hyphen);
+        var id          = term_dates_data[i].name.slice(last_hyphen+1);
+
+        var currentEntry = {};
+        currentEntry["id"]   = id;
+        currentEntry["type"] = type;
+
+        if (type == "date")
+        {
+          currentEntry["value"] = document.getElementById("date-" + id).value;
+        }
+        else if (type == "start-time")
+        {
+          currentEntry["value"] = document.getElementById("start-time-" + id).value;
+        }
+        else if (type == "end-time")
+        {
+          currentEntry["value"] = document.getElementById("end-time-" + id).value;
+        }
+        else if (type == "featured")
+        {
+          currentEntry["value"] = document.getElementById("featured-" + id).value;
+        }
+        else if (type == "deleted")
+        {
+          currentEntry["value"] = document.getElementById("deleted-" + id).checked;
+        }
+
+        currentEntry["value"] 
+
+        extracted_term_dates_data.push(currentEntry);
+      }
+
+      xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>");
+
+      xhttp.onload = function()
+      {
+        const JSON_response = JSON.parse(this.responseText);
+
+        if (JSON_response.status == "success") {
+          document.getElementById("update-term-dates-result-title").innerHTML = "Success!";
+          document.getElementById("update-term-dates-result-text").innerHTML = "You changed or added " + fieldsCounter + " fields over " + termDatesCounter + " term dates.";
+          document.getElementById("update-term-dates-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M9 12l2 2l4 -4" /></svg>';
+          document.getElementById("update-term-dates-result-button").innerHTML = "Great!";
+          document.getElementById("update-term-dates-result-button").classList.remove("disabled");
+          document.getElementById("update-term-dates-result-button").classList.remove("btn-danger");
+          document.getElementById("update-term-dates-result-button").classList.remove("btn-primary");
+          document.getElementById("update-term-dates-result-button").classList.add("btn-success");
+          document.getElementById("update-term-dates-result-status").classList.remove("bg-danger");
+          document.getElementById("update-term-dates-result-status").classList.remove("bg-primary");
+          document.getElementById("update-term-dates-result-status").classList.add("bg-success");
+        }
+        else {
+          document.getElementById("update-term-dates-result-title").innerHTML = "Oops! An error occured.";
+          document.getElementById("update-term-dates-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-red icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+          document.getElementById("update-term-dates-result-text").innerHTML = "Error message: " + JSON_response.error_message;
+          document.getElementById("update-term-dates-result-button").innerHTML = "Understood.";
+          document.getElementById("update-term-dates-result-button").classList.remove("disabled");
+          document.getElementById("update-term-dates-result-button").classList.remove("btn-success");
+          document.getElementById("update-term-dates-result-button").classList.remove("btn-primary");
+          document.getElementById("update-term-dates-result-button").classList.add("btn-danger");
+          document.getElementById("update-term-dates-result-status").classList.remove("bg-success");
+          document.getElementById("update-term-dates-result-status").classList.remove("bg-primary");
+          document.getElementById("update-term-dates-result-status").classList.add("bg-danger");
+        }
+      }
     }
   </script>
 <?php
