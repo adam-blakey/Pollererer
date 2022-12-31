@@ -732,12 +732,27 @@ function output_term_dates($term_id, $max_height = 30)
 {
   $db_connection = db_connect();
 
+  require("./config.php");
+
   $term_name_query = $db_connection->prepare("SELECT `name` FROM `terms` WHERE `ID` = ?");
   $term_name_query->bind_param("s", $term_id);
   $term_name_query->execute();
   $term_name_query->bind_result($term_name);
   $term_name_query->fetch();
   $term_name_query->close();
+
+  $ensembles_query = $db_connection->prepare("SELECT `ID`, `name` FROM `ensembles`");
+  $ensembles_query->execute();
+  $ensembles_result = $ensembles_query->get_result();
+  $ensembles_query->fetch();
+  $ensembles_query->close();
+
+  $ensemble_ids   = array();
+  $ensemble_names = array();
+  while($ensemble = $ensembles_result->fetch_assoc()) {
+    array_push($ensemble_ids, $ensemble["ID"]);
+    array_push($ensemble_names, $ensemble["name"]);
+  }
 
 ?>
   <div class="card">
@@ -779,6 +794,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><?=$config["taxonomy_ensembles"];?></th>
                 <th><button class="table-sort" data-sort="sort-featured">Feat.</button></th>
                 <th><button class="table-sort" data-sort="sort-deleted">Del.</button></th>
                 <th></th>
@@ -822,7 +838,7 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-date" data-date="<?= $data_date; ?>">
                     <div class="input-icon">
-                      <input type="text" name="date-<?=$id;?>" id="date-<?=$id;?>" class="form-control" placeholder="Select a date" value="<?=$date;?>">
+                      <input type="text" name="date-<?=$id;?>" id="date-<?=$id;?>" class="form-control" placeholder="Select a date" value="<?=$date;?>" size="5">
                       <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
                       </span>
@@ -833,6 +849,20 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
                     <input type="time" name="end-time-<?=$id;?>" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
+                  </td>
+                  <td>
+                    <select name="ensembles-<?=$id;?>" id="ensembles-<?=$id;?>" class="form-select" multiple="" size="1" onchange="changedField(this, '<?=$id;?>', 'ensembles')">
+                      <?php
+                        // TODO: GET ASSOCIATED ENSEMBLES AND MARK AS SELECTED.
+
+                        for ($i = 0; $i < count($ensemble_ids); $i++)
+                        {
+                          ?>
+                          <option value="<?=$ensemble_ids[$i];?>"><?=$ensemble_names[$i];?></option>
+                          <?php
+                        }
+                      ?>
+                    </select>
                   </td>
                   <td class="sort-featured" data-featured="<?= $data_featured; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
@@ -894,6 +924,31 @@ function output_term_dates($term_id, $max_height = 30)
       $term_dates_query->close();
       ?>
 
+    </div>
+  </div>
+
+  <div class="modal modal-blur fade" id="update-term-dates-result" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        <div id="update-term-dates-result-status" class="modal-status bg-success"></div>
+        <div class="modal-body text-center py-4">
+          <div id="update-term-dates-result-icon">
+            Result icon
+          </div>
+          <h3 id="update-term-dates-result-title">Result title</h3>
+          <div class="text-muted" id="update-term-dates-result-text">Result text</div>
+        </div>
+        <div class="modal-footer">
+          <div class="w-100">
+            <div class="row">
+              <div class="col"><a id="update-term-dates-result-button" href="#" class="btn btn-success disabled w-100" data-bs-dismiss="modal" onclick="javascript:window.location.reload()">
+                  Result button text
+                </a></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -960,13 +1015,37 @@ function output_term_dates($term_id, $max_height = 30)
 
     document.addEventListener("DOMContentLoaded", function() { list.reIndex(); });
 
+    fieldsCounter    = 0;
+    termDatesCounter = 0;
+
     function changedField(element, id, name)
     {
+      // Update counters.
       if (!element.classList.contains('value-changed'))
       {
         element.classList.add('value-changed');
+        fieldsCounter += 1
       }
 
+      modifiedField = document.getElementById("modified-" + id);
+
+      if (id.substring(0, 3) != "new" && modifiedField.getAttribute("data-modified") != "1")
+      {
+        modifiedField.innerHTML = '<div class="badge bg-primary"></div>';
+        modifiedField.setAttribute("data-modified", "1");
+        termDatesCounter += 1;
+      }
+
+      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+      fieldsCounterElement.innerHTML = fieldsCounter;
+
+      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+      termDatesCounterElement.innerHTML = termDatesCounter;
+
+      updateTermDatesElement = document.getElementsByClassName("updateTermDates")[0];
+      updateTermDatesElement.classList.remove("disabled");
+
+      // Updates table sorting values.
       if (name == "date")
       {
         var timestamp = Date.parse(element.value + " 00:00:00")/1000;
@@ -986,13 +1065,9 @@ function output_term_dates($term_id, $max_height = 30)
       {
         element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
       }
-
-      modifiedField = document.getElementById("modified-" + id);
-
-      if (id.substring(0, 3) != "new" && modifiedField.getAttribute("data-modified") != "1")
+      else if (name == "ensembles")
       {
-        modifiedField.innerHTML = '<div class="badge bg-primary"></div>';
-        modifiedField.setAttribute("data-modified", "1");
+        // Do nothing.
       }
 
       list.reIndex();
@@ -1005,6 +1080,13 @@ function output_term_dates($term_id, $max_height = 30)
       list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
 
       newCounter += 1;
+      termDatesCounter += 1;
+
+      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+      fieldsCounterElement.innerHTML = fieldsCounter;
+
+      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+      termDatesCounterElement.innerHTML = termDatesCounter;
 
       var table   = document.getElementById("table-default");
       var tbody   = table.getElementsByTagName("tbody")[0];
@@ -1014,9 +1096,9 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[4];
-      var deletedCell   = lastRow.cells[5];
-      var duplicateCell = lastRow.cells[6];
+      var featuredCell  = lastRow.cells[5];
+      var deletedCell   = lastRow.cells[6];
+      var duplicateCell = lastRow.cells[7];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1035,6 +1117,8 @@ function output_term_dates($term_id, $max_height = 30)
       // featuredCell.name  = "featured-new"   + newCounter;
       // deletedCell.name   = "deleted-new"    + newCounter;
       // duplicateCell.name = "duplicate-new"  + newCounter;
+
+      // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
 
       // Update modified cell.
       modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
@@ -1108,6 +1192,13 @@ function output_term_dates($term_id, $max_height = 30)
       list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
 
       newCounter += 1;
+      termDatesCounter += 1;
+
+      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+      fieldsCounterElement.innerHTML = fieldsCounter;
+
+      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+      termDatesCounterElement.innerHTML = termDatesCounter;
 
       var table   = document.getElementById("table-default");
       var tbody   = table.getElementsByTagName("tbody")[0];
@@ -1117,9 +1208,9 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[4];
-      var deletedCell   = lastRow.cells[5];
-      var duplicateCell = lastRow.cells[6];
+      var featuredCell  = lastRow.cells[5];
+      var deletedCell   = lastRow.cells[6];
+      var duplicateCell = lastRow.cells[7];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1136,6 +1227,8 @@ function output_term_dates($term_id, $max_height = 30)
       // endTimeCell.name   = "end-time-new"   + newCounter;
       // featuredCell.name  = "featured-new"   + newCounter;
       // deletedCell.name   = "deleted-new"    + newCounter;
+
+      // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
 
       // Update modified cell.
       modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
@@ -1218,7 +1311,17 @@ function output_term_dates($term_id, $max_height = 30)
 
     function updateTermDates()
     {
-
+      document.getElementById("update-term-dates-result-title").innerHTML = "Updating...";
+      document.getElementById("update-term-dates-result-text").innerHTML = "Please wait.";
+      document.getElementById("update-term-dates-result-icon").innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>';
+      document.getElementById("update-term-dates-result-button").innerHTML = "Loading...";
+      document.getElementById("update-term-dates-result-button").classList.add("disabled");
+      document.getElementById("update-term-dates-result-button").classList.remove("btn-danger");
+      document.getElementById("update-term-dates-result-button").classList.remove("btn-success");
+      document.getElementById("update-term-dates-result-button").classList.add("btn-primary");
+      document.getElementById("update-term-dates-result-status").classList.remove("bg-danger");
+      document.getElementById("update-term-dates-result-status").classList.remove("bg-success");
+      document.getElementById("update-term-dates-result-status").classList.add("bg-primary");
     }
   </script>
 <?php
