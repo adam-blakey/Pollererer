@@ -20,6 +20,8 @@
 			{
 				$JSON_response->status = "success";
 
+				$total_successfully_inserted = 0;
+
 				foreach ($term_dates_data as $data)
 				{
 					$id 	      = strip_tags($data["id"]);
@@ -28,6 +30,14 @@
 					$end_time   = strip_tags($data["end-time"]);
 					$featured   = strip_tags($data["featured"]);
 					$deleted    = strip_tags($data["hidden"]);
+
+					if ($deleted == -1)
+					{
+						$JSON_response->status        = "error";
+						$JSON_response->error_message = "failed after ".$total_successfully_inserted." successful insertions, you must check the hidden box with term_ID=".$term_ID;
+
+						break;
+					}
 
 					$start_datetime = strtotime($date."T".$start_time.":00");
 					$end_datetime   = strtotime($date."T".$end_time.":00");
@@ -46,9 +56,13 @@
 					if (!$term_dates_query)
 					{
 						$JSON_response->status        = "error";
-						$JSON_response->error_message = "failed to insert into database with term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
+						$JSON_response->error_message = "failed to insert into database after ".$total_successfully_inserted." successful insertions, failed on term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
 
 						break;
+					}
+					else
+					{
+						$total_successfully_inserted++;
 					}
 				}
 			}
