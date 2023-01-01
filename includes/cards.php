@@ -884,7 +884,7 @@ function output_term_dates($term_id, $max_height = 30)
                     $attendance_uses = $db_connection->query("SELECT COUNT(*) FROM `attendance` WHERE `term_dates_ID` = ".$id)->fetch_row()[0];
                   ?>
                   <td class="col-auto" style="text-align: left; vertical-align: middle;">
-                    <button type="button" name="permanently-delete" id="permanently-delete-<?=$id;?>" class="btn btn-sm btn-danger <?=($attendance_uses==0)?"":"disabled";?>" onclick="deleteDate('<?=$id;?>')" data-bs-toggle="modal" data-bs-target="#delete-term-date-result">
+                    <button type="button" name="permanently-delete" id="permanently-delete-<?=$id;?>" class="btn btn-sm btn-danger <?=($attendance_uses==0)?"":"disabled";?>" data-bs-toggle="modal" data-bs-target="#delete-term-date-result" onclick="loadDeleteDateModal('<?=$id;?>')">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />';</svg>
                       Delete (<?=$attendance_uses;?> uses)
                     </button>
@@ -967,20 +967,21 @@ function output_term_dates($term_id, $max_height = 30)
           <div class="text-muted">Do you really want to permanently delete this term date? What you've done cannot be undone.</div>
         </div>
         <div class="modal-body py-4" id="delete-term-date-result-info">
-          <strong>ID:</strong> <br />
-          <strong>Date:</strong> <br />
+          <strong>ID</strong>: <br />
+          <strong>Date</strong>: <br />
           <strong>Start time</strong>: <br />
           <strong>End time</strong>: <br />
           <strong>Concert</strong>: <br />
-          <strong>Hidden:</strong> <br />
+          <strong>Hidden</strong>: <br />
+          <strong>Term ID</strong>: <br />
         </div>
         <div class="modal-footer">
           <div class="w-100">
             <div class="row">
-              <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">
+              <div class="col"><a class="btn w-100" data-bs-dismiss="modal">
                   Cancel
                 </a></div>
-              <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+              <div class="col"><a id="delete-term-date-result-button" name="0" class="btn btn-danger w-100" onclick="">
                   Delete term
                 </a></div>
             </div>
@@ -1205,8 +1206,6 @@ function output_term_dates($term_id, $max_height = 30)
       // Mark as new field.
       lastRow.classList.add('row-modified');
 
-      // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
-
       // Update modified cell.
       modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
 
@@ -1255,7 +1254,7 @@ function output_term_dates($term_id, $max_height = 30)
       // Update delete button cell.
       deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
       deleteCell.getElementsByTagName('button')[0].name       = "delete";
-      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { loadDeleteDateModal('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
       deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
       deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
       deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
@@ -1384,7 +1383,7 @@ function output_term_dates($term_id, $max_height = 30)
       // Update delete button cell.
       deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
       deleteCell.getElementsByTagName('button')[0].name       = "delete";
-      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { loadDeleteDateModal('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
       deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
       deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
       deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
@@ -1521,6 +1520,67 @@ function output_term_dates($term_id, $max_height = 30)
           document.getElementById("update-term-dates-result-status").classList.remove("bg-success");
           document.getElementById("update-term-dates-result-status").classList.remove("bg-primary");
           document.getElementById("update-term-dates-result-status").classList.add("bg-danger");
+        }
+      }
+    }
+
+    function loadDeleteDateModal(id)
+    {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/get_term-date-details.php", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      xhttp.send("term_date_ID=" + id + "&session_ID=<?=$_COOKIE["session_ID"];?>");
+
+      xhttp.onload = function() {
+        const JSON_response = JSON.parse(this.responseText);
+
+        if (JSON_response.status == "success")
+        {
+          var start_datetime = new Date(JSON_response.datetime     * 1000);
+          var end_datetime   = new Date(JSON_response.datetime_end * 1000);
+
+          var start_datetime_formatted = start_datetime.getFullYear() + "-" + ('0' + start_datetime.getMonth() + 1).substr(-2) + "-" + ('0' + start_datetime.getDate()).substr(-2) + " " + ('0' + start_datetime.getHours()).substr(-2) + ":" + ('0' + start_datetime.getMinutes()).substr(-2)
+          var end_datetime_formatted   = end_datetime.getFullYear()   + "-" + ('0' + end_datetime.getMonth()   + 1).substr(-2) + "-" + ('0' + end_datetime.getDate())  .substr(-2)   + " " + ('0' + end_datetime.getHours()).substr(-2)   + ":" + ('0' + end_datetime.getMinutes()).substr(-2)
+
+          document.getElementById("delete-term-date-result-info").innerHTML  = "";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>ID</strong>: "                                         + JSON_response.id           + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Start datetime</strong>: "                             + start_datetime_formatted   + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>End datetime</strong>: "                               + end_datetime_formatted     + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong><?=ucfirst($config["taxonomy_concert"]);?></strong>: " + JSON_response.is_featured  + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Hidden</strong>: "                                     + JSON_response.deleted      + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Term ID</strong>: "                                    + JSON_response.term_id      + "<br />";
+        }
+        else
+        {
+          document.getElementById("delete-term-date-result-info").innerHTML = "Error loading term date data: " + JSON_response.error_message;
+        }
+      }
+
+      document.getElementById("delete-term-date-result-button").name    = id;
+      document.getElementById("delete-term-date-result-button").onclick = function() { deleteDate(document.getElementById("delete-term-date-result-button").name); };
+    }
+
+    function deleteDate(id)
+    {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/remove_term-date.php", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      xhttp.send("term_date_ID=" + id + "&session_ID=<?=$_COOKIE["session_ID"];?>");
+
+      xhttp.onload = function() {
+        const JSON_response = JSON.parse(this.responseText);
+
+        if (JSON_response.status == "success")
+        {
+          location.reload();
+        }
+        else
+        {
+          document.getElementById("delete-term-date-result-info").innerHTML = "Oops! An error occured: " + JSON_response.error_message;
         }
       }
     }

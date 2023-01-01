@@ -14,38 +14,48 @@
 
 		if ($session_query)
 		{      
-			$JSON_response->status        = "success";
+			$user_level = $session_query->fetch_assoc()["user_level"];
 
-			foreach ($term_dates_data as $data)
+			if ($user_level >= 1)
 			{
-				$id 	      = strip_tags($data["id"]);
-				$date       = strip_tags($data["date"]);
-				$start_time = strip_tags($data["start-time"]);
-				$end_time   = strip_tags($data["end-time"]);
-				$featured   = strip_tags($data["featured"]);
-				$deleted    = strip_tags($data["hidden"]);
+				$JSON_response->status = "success";
 
-				$start_datetime = strtotime($date."T".$start_time.":00");
-				$end_datetime   = strtotime($date."T".$end_time.":00");
-
-				// A new ID and hasn't already been just inserted.
-				if (substr($id, 0, 3) == "new")
+				foreach ($term_dates_data as $data)
 				{
-					$term_dates_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`) VALUES ('".$term_ID."', '".$start_datetime."', '".$end_datetime."', '".$featured."', '".$deleted."')");
-				}
-				// Existing record; will update.
-				else
-				{
-					$term_dates_query = $db_connection->query("UPDATE `term_dates` SET `datetime`='".$start_datetime."', `datetime_end`='".$end_datetime."', `is_featured`='".$featured."', `deleted`='".$deleted."' WHERE `ID`='".$id."'");
-				}
+					$id 	      = strip_tags($data["id"]);
+					$date       = strip_tags($data["date"]);
+					$start_time = strip_tags($data["start-time"]);
+					$end_time   = strip_tags($data["end-time"]);
+					$featured   = strip_tags($data["featured"]);
+					$deleted    = strip_tags($data["hidden"]);
 
-				if (!$term_dates_query)
-				{
-					$JSON_response->status        = "error";
-					$JSON_response->error_message = "failed to insert into database with term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
+					$start_datetime = strtotime($date."T".$start_time.":00");
+					$end_datetime   = strtotime($date."T".$end_time.":00");
 
-					break;
+					// A new ID and hasn't already been just inserted.
+					if (substr($id, 0, 3) == "new")
+					{
+						$term_dates_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`) VALUES ('".$term_ID."', '".$start_datetime."', '".$end_datetime."', '".$featured."', '".$deleted."')");
+					}
+					// Existing record; will update.
+					else
+					{
+						$term_dates_query = $db_connection->query("UPDATE `term_dates` SET `datetime`='".$start_datetime."', `datetime_end`='".$end_datetime."', `is_featured`='".$featured."', `deleted`='".$deleted."' WHERE `ID`='".$id."'");
+					}
+
+					if (!$term_dates_query)
+					{
+						$JSON_response->status        = "error";
+						$JSON_response->error_message = "failed to insert into database with term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
+
+						break;
+					}
 				}
+			}
+			else
+			{
+				$JSON_response->status        = "error";
+				$JSON_response->error_message = "you do not have permission to edit term dates";
 			}
 		}
 		else
