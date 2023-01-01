@@ -14,94 +14,37 @@
 
 		if ($session_query)
 		{      
-			// $edit_member_ID = $session_query->fetch_array()[0];
-
-			// foreach ($attendance_data as $data)
-			// {
-			// 	$member_ID     = strip_tags($data["member_ID"]);
-			// 	$ensemble_ID   = strip_tags($data["ensemble_ID"]);
-			// 	$term_dates_ID = strip_tags($data["term_dates_ID"]);
-			// 	$status        = ($data["status"])?1:0;
-			// 	$IP            = $_SERVER['REMOTE_ADDR'];
-
-			// 	$insert_query = $db_connection->query("INSERT INTO `attendance` (`member_ID`, `edit_datetime`, `edit_member_ID`, `term_dates_ID`, `ensemble_ID`, `IP`, `status`) VALUES ('".$member_ID."', '".time()."', '".$edit_member_ID."', '".$term_dates_ID."', '".$ensemble_ID."', '".$IP."', '".$status."')");
-
-			// 	if (!$insert_query)
-			// 	{
-			// 		$JSON_response->status        = "error";	
-			// 		$JSON_response->error_message = "failed to insert into database with member_ID=".$member_ID.", ensemble_ID=".$ensemble_ID.", term_dates_ID=".$term_dates_ID.", status=".$status."; ".$db_connection->error;
-
-			// 		break;
-			// 	}
-			// }
-
-			$JSON_response->status        = "error";
-			$JSON_response->error_message = "";
-
-			// Maps the IDs numbered from the term-dates.php page to the globally inserted IDs, once they've been inserted.
-			$inserted_new_ids = array();
+			$JSON_response->status        = "success";
 
 			foreach ($term_dates_data as $data)
 			{
-				$id 	 = strip_tags($data["id"]);
-				$type  = strip_tags($data["type"]);
-				$value = strip_tags($data["value"]);
+				$id 	      = strip_tags($data["id"]);
+				$date       = strip_tags($data["date"]);
+				$start_time = strip_tags($data["start-time"]);
+				$end_time   = strip_tags($data["end-time"]);
+				$featured   = strip_tags($data["featured"]);
+				$deleted    = strip_tags($data["deleted"]);
+
+				$start_datetime = strtotime($date."T".$start_time.":00");
+				$end_datetime   = strtotime($date."T".$end_time.":00");
 
 				// A new ID and hasn't already been just inserted.
-				if (substr($id, 0, 3) == "new" && !array_key_exists(substr($id, 3), $inserted_new_ids))
+				if (substr($id, 0, 3) == "new")
 				{
-					$new_id = substr($id, 3);
-
-					$JSON_response->error_message .= $new_id . " ";
-
-					// TODO: INSERT NEW RECORDS BELOW.
-					if ($type == "date")
-					{
-						// $date_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `date`) VALUES ('".$term_ID."', '".$value."')");
-					}
-					else if ($type == "start-time")
-					{
-						
-					}
-					else if ($type == "end-time")
-					{
-						
-					}
-					else if ($type == "featured")
-					{
-						
-					}
-					else if ($type == "deleted")
-					{
-						
-					}
-
-					$inserted_new_ids[$new_id] = "some brilliant new id";
+					$term_dates_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`) VALUES ('".$term_ID."', '".$start_datetime."', '".$end_datetime."', '".$featured."', '".$deleted."')");
 				}
 				// Existing record; will update.
 				else
 				{
-					// TODO: UPDATE EXISTING RECORDS BELOW.
-					if ($type == "date")
-					{
-						
-					}
-					else if ($type == "start-time")
-					{
-						
-					}
-					else if ($type == "end-time")
-					{
-						
-					}
-					else if ($type == "featured")
-					{
-						
-					}
-					else if ($type == "deleted")
-					{
-						
-					}
+					$term_dates_query = $db_connection->query("UPDATE `term_dates` SET `datetime`='".$start_datetime."', `datetime_end`='".$end_datetime."', `is_featured`='".$featured."', `deleted`='".$deleted."' WHERE `ID`='".$id."'");
+				}
+
+				if (!$term_dates_query)
+				{
+					$JSON_response->status        = "error";
+					$JSON_response->error_message = "failed to insert into database with term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
+
+					break;
 				}
 			}
 		}

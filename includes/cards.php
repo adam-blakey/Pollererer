@@ -1018,35 +1018,35 @@ function output_term_dates($term_id, $max_height = 30)
       // Mark rows as modified.
       if (name == "date")
       {
-        if (!element.parentElement.parentElement.parentElement.classList.contains('row-modified') && !element.parentElement.parentElement.parentElement.classList.contains('row-new'))
+        if (!element.parentElement.parentElement.parentElement.classList.contains('row-modified'))
         {
           element.parentElement.parentElement.parentElement.classList.add('row-modified');
         }
       }
       else if (name == "start-time")
       {
-        if (!element.parentElement.parentElement.classList.contains('row-modified') && !element.parentElement.parentElement.classList.contains('row-new'))
+        if (!element.parentElement.parentElement.classList.contains('row-modified'))
         {
           element.parentElement.parentElement.classList.add('row-modified');
         }
       }
       else if (name == "end-time")
       {
-        if (!element.parentElement.parentElement.classList.contains('row-modified') && !element.parentElement.parentElement.classList.contains('row-new'))
+        if (!element.parentElement.parentElement.classList.contains('row-modified'))
         {
           element.parentElement.parentElement.classList.add('row-modified');
         }
       }
       else if (name == "deleted")
       {
-        if (!element.parentElement.parentElement.parentElement.classList.contains('row-modified') && !element.parentElement.parentElement.parentElement.classList.contains('row-new'))
+        if (!element.parentElement.parentElement.parentElement.classList.contains('row-modified'))
         {
           element.parentElement.parentElement.parentElement.classList.add('row-modified');
         }
       }
       else if (name == "featured")
       {
-        if (!element.parentElement.parentElement.classList.contains('row-modified') && !element.parentElement.parentElement.classList.contains('row-new'))
+        if (!element.parentElement.parentElement.classList.contains('row-modified'))
         {
           element.parentElement.parentElement.classList.add('row-modified');
         }
@@ -1159,7 +1159,7 @@ function output_term_dates($term_id, $max_height = 30)
       // duplicateCell.name = "duplicate-new"  + newCounter;
 
       // Mark as new field.
-      lastRow.classList.add('row-new');
+      lastRow.classList.add('row-modified');
 
       // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
 
@@ -1272,7 +1272,7 @@ function output_term_dates($term_id, $max_height = 30)
       // deletedCell.name   = "deleted-new"    + newCounter;
 
       // Mark as new field.
-      lastRow.classList.add('row-new');
+      lastRow.classList.add('row-modified');
 
       // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
 
@@ -1406,12 +1406,15 @@ function output_term_dates($term_id, $max_height = 30)
       // }
 
       var modified_term_dates_rows = document.getElementsByClassName("row-modified");
+      var extracted_term_dates_data = [];
       for (let i = 0; i < modified_term_dates_rows.length; i++) {
         const row = modified_term_dates_rows[i];
 
-        var id = row.id;
+        var id = row.id.substr(4);
 
-        var extracted_row_data = [];
+        var extracted_row_data = {};
+        extracted_row_data["id"] = id;
+
         var modified_term_dates_data = row.getElementsByTagName("input");
         for (let j = 0; j < modified_term_dates_data.length; j++) {
           const inputElement = modified_term_dates_data[j];
@@ -1419,19 +1422,12 @@ function output_term_dates($term_id, $max_height = 30)
           var name  = inputElement.name;
           var value = inputElement.value;
 
-          //extracted_row_data.push({name: value});
           extracted_row_data[name] = value;
         }
+        extracted_row_data["featured"] = document.getElementById("featured-" + id).value;
 
-        console.log(extracted_row_data);
+        extracted_term_dates_data.push(extracted_row_data);
       }
-      var extracted_term_dates_data = [];
-
-      
-      
-      
-      // var new_term_dates_data      = document.getElementsByClassName("row-new");
-      
 
       xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>");
 
