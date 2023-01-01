@@ -1254,10 +1254,12 @@ function output_term_dates($term_id, $max_height = 30)
       // Update delete button cell.
       deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
       deleteCell.getElementsByTagName('button')[0].name       = "delete";
-      deleteCell.getElementsByTagName('button')[0].onclick    = function() { loadDeleteDateModal('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteLocalDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
       deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
       deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
       deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
+      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-target');
+      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-toggle');
 
       // Add event listener for the date cell.
       window.Litepicker && (new Litepicker({
@@ -1326,8 +1328,6 @@ function output_term_dates($term_id, $max_height = 30)
       // Mark as new field.
       lastRow.classList.add('row-modified');
 
-      // TODO: ADD FIELD FOR ENSEMBLE SELECTION.
-
       // Update modified cell.
       modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
 
@@ -1383,10 +1383,12 @@ function output_term_dates($term_id, $max_height = 30)
       // Update delete button cell.
       deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
       deleteCell.getElementsByTagName('button')[0].name       = "delete";
-      deleteCell.getElementsByTagName('button')[0].onclick    = function() { loadDeleteDateModal('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteLocalDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
       deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
       deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
       deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
+      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-target');
+      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-toggle');
 
       // Add event listener for the date cell.
       window.Litepicker && (new Litepicker({
@@ -1583,6 +1585,12 @@ function output_term_dates($term_id, $max_height = 30)
           document.getElementById("delete-term-date-result-info").innerHTML = "Oops! An error occured: " + JSON_response.error_message;
         }
       }
+    }
+
+    function deleteLocalDate(id)
+    {
+      document.getElementById("row-" + id).remove();
+      list.reIndex();
     }
   </script>
 <?php
