@@ -775,14 +775,39 @@ function output_term_dates($term_id, $max_height = 30)
       $term_dates_query->execute();
 
       $term_dates_result = $term_dates_query->get_result();
+      $number_of_dates = $term_dates_result->num_rows;
 
-      if ($term_dates_result->num_rows == 0) {
+      if ($number_of_dates == 0) {
       ?>
-        <div class="list-group-item">
-          <div class="row">
-            <div class="col">
-              <div class="text-body">No term dates to display.</div>
-            </div>
+        <div id="table-default" class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><button class="table-sort" data-sort="sort-modified"></button></th>
+                <th><button class="table-sort" data-sort="sort-date">Date</button></th>
+                <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
+                <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
+                <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
+                <th>Duplicate</th>
+                <th>Permanently delete</th>
+              </tr>
+            </thead>
+            <tbody class="table-tbody">
+              <tr>
+                <td></td>
+                <td colspan="7">
+                  No dates to display.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="p-2 my-0 d-flex">
+            <p class="ms-auto m-0 text-muted">
+              <span style="padding-right: 10px;">You've changed or added <span class="fieldsCounter fw-bold">0</span> fields over <span class="termDatesCounter fw-bold">0</span> term dates.</span>
+              <a class="updateTermDates btn btn-primary ms-auto disabled my-2" onclick="updateTermDates()" data-bs-toggle="modal" data-bs-target="#update-term-dates-result">Update</a>
+              <a class="btn my-2" onclick="location.reload()">Reset</a>
+            </p>
           </div>
         </div>
       <?php
@@ -935,7 +960,7 @@ function output_term_dates($term_id, $max_height = 30)
   <div class="modal modal-blur fade" id="update-term-dates-result" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="javascript:window.location.reload()"></button>
+        <button type="button" id="update-term-dates-result-close-button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div id="update-term-dates-result-status" class="modal-status bg-success"></div>
         <div class="modal-body text-center py-4">
           <div id="update-term-dates-result-icon">
@@ -947,7 +972,7 @@ function output_term_dates($term_id, $max_height = 30)
         <div class="modal-footer">
           <div class="w-100">
             <div class="row">
-              <div class="col"><a id="update-term-dates-result-button" href="#" class="btn btn-success disabled w-100" data-bs-dismiss="modal" onclick="javascript:window.location.reload()">
+              <div class="col"><a id="update-term-dates-result-button" href="#" class="btn btn-success disabled w-100" data-bs-dismiss="modal">
                   Result button text
                 </a></div>
             </div>
@@ -1023,7 +1048,7 @@ function output_term_dates($term_id, $max_height = 30)
     }
   ?>
   <script type="text/javascript">
-    const list = new List('table-default', {
+    list = new List('table-default', {
       sortClass: 'table-sort',
       listClass: 'table-tbody',
       valueNames: [
@@ -1158,129 +1183,254 @@ function output_term_dates($term_id, $max_height = 30)
     }
 
     var newCounter = 0;
+    var oldCounter = <?=$number_of_dates;?>;
 
     function addNewDate()
     {
-      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_hidden: 0});
+      if (oldCounter == 0 && newCounter == 0)
+      {
+        newCounter += 1;
 
-      newCounter += 1;
-      termDatesCounter += 1;
+        rowInsert  = '<tr id="row-new'+newCounter+'" class="row-modified">';
+        rowInsert += '  <td id="modified-new'+newCounter+'" class="col-auto align-self-center sort-modified" data-modified="0" style="text-align: center; vertical-align: middle;">';
+        rowInsert += '    <div class="badge bg-green"></div>';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-date" data-date="0">';
+        rowInsert += '    <div class="input-icon">';
+        rowInsert += '      <input type="text" name="date" id="date-new'+newCounter+'" class="form-control" placeholder="Select a date" value="" style="min-width: 150px;">';
+        rowInsert += '      <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->';
+        rowInsert += '        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>';
+        rowInsert += '      </span>';
+        rowInsert += '    </div>';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-start-time" data-start-time="0">';
+        rowInsert += '    <input type="time" name="start-time" id="start-time-new'+newCounter+'" class="form-control" autocomplete="off" value="" onchange="changedField(this, \'new'+newCounter+'\', \'start-time\')">';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-end-time" data-end-time="0">';
+        rowInsert += '    <input type="time" name="end-time" id="end-time-new'+newCounter+'" class="form-control" autocomplete="off" value="" onchange="changedField(this, \'new'+newCounter+'\', \'end-time\')">';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-featured" data-featured="0">';
+        rowInsert += '    <select name="featured" id="featured-new'+newCounter+'" class="form-select" onchange="changedField(this, new'+newCounter+', featured)" style="width: 100px;">';
+        rowInsert += '      <option value="0" selected>None</option>';
+        rowInsert += '      <option value="1">All</option>';
+        rowInsert += '      <optgroup label="<?=ucfirst($config["taxonomy_ensembles"]);?>">';
+                          <?php
+                            for ($i = 0; $i < count($ensemble_ids); $i++)
+                            {
+                              $options[strval(-$ensemble_ids[$i])] = $ensemble_names[$i];
+                              ?>
+        rowInsert += '           <option value="-<?=$ensemble_ids[$i];?>" ><?=$ensemble_names[$i];?></option>';
+                              <?php
+                            }
+                          ?>
+        rowInsert += '      </optgroup>';
+        rowInsert += '    </select>';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="sort-hidden" data-hidden="-1">';
+        rowInsert += '    <label class="form-colorcheckbox bigger" style="margin: 0px;">';
+        rowInsert += '      <input name="hidden" id="hidden-new'+newCounter+'" type="checkbox" value="-1" class="form-colorcheckbox-input" onchange="changedField(this, \'new'+newCounter+'\', \'hidden\')" />';
+        rowInsert += '      <span class="form-colorcheckbox-color "></span>';
+        rowInsert += '    </label>';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto align-self-center" style="text-align: center; vertical-align: middle;">';
+        rowInsert += '    <button type="button" name="duplicate" id="duplicate-new'+newCounter+'" class="btn btn-sm btn-outline-secondary" onclick="duplicateDate(\'new'+newCounter+'\')">';
+        rowInsert += '      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">';
+        rowInsert += '        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>';
+        rowInsert += '        <rect x="8" y="8" width="12" height="12" rx="2" />';
+        rowInsert += '        <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />';
+        rowInsert += '      </svg>';
+        rowInsert += '      Duplicate';
+        rowInsert += '    </button>';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto" style="text-align: left; vertical-align: middle;">';
+        rowInsert += '    <button type="button" name="permanently-delete" id="permanently-delete-new'+newCounter+'" class="btn btn-sm btn-danger " onclick="deleteLocalDate(\'new'+newCounter+'\')">';
+        rowInsert += '      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+        rowInsert += '      Delete';
+        rowInsert += '    </button>';
+        rowInsert += '  </td>';
+        rowInsert += '</tr>';
 
-      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
-      fieldsCounterElement.innerHTML = fieldsCounter;
+        var table          = document.getElementById("table-default");
+        var tbody          = table.getElementsByTagName("tbody")[0];
+        var placeholderRow = tbody.rows[0];
+        
+        placeholderRow.remove();
 
-      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
-      termDatesCounterElement.innerHTML = termDatesCounter;
+        tbody.innerHTML = rowInsert;
 
-      var table   = document.getElementById("table-default");
-      var tbody   = table.getElementsByTagName("tbody")[0];
-      var lastRow = tbody.rows[tbody.rows.length - 1];
+        document.getElementById("hidden-new"+newCounter).indeterminate = true;
 
-      lastRow.id = "row-new" + newCounter;
+        // Add event listener for the date cell.
+        window.Litepicker && (new Litepicker({
+          element: document.getElementById('date-new'+newCounter),
+          buttonText: {
+            previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
+            nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
+          },
+          setup: (picker) => {
+            picker.on('selected', (date1) => {
+              var field = document.getElementById('date-new'+newCounter);
+              changedField(field, 'new'+newCounter, 'date');
+            });
+          },
+        }));
 
-      var modifiedCell  = lastRow.cells[0];
-      var dateCell      = lastRow.cells[1];
-      var startTimeCell = lastRow.cells[2];
-      var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[4];
-      var hiddenCell    = lastRow.cells[5];
-      var duplicateCell = lastRow.cells[6];
-      var deleteCell    = lastRow.cells[7];
+        list = new List('table-default', {
+          sortClass: 'table-sort',
+          listClass: 'table-tbody',
+          valueNames: [
+            {
+              attr: 'data-modified',
+              name: 'sort-modified'
+            },
+            {
+              attr: 'data-date',
+              name: 'sort-date'
+            },
+            {
+              attr: 'data-start-time',
+              name: 'sort-start-time'
+            },
+            {
+              attr: 'data-end-time',
+              name: 'sort-end-time'
+            },
+            {
+              attr: 'data-featured',
+              name: 'sort-featured'
+            },
+            {
+              attr: 'data-hidden',
+              name: 'sort-hidden'
+            }
+          ]
+        });
+      }
+      else
+      {
+        list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_hidden: 0});
 
-      // // Update IDs.
-      // modifiedCell.id  = "modified-new"   + newCounter;
-      // dateCell.id      = "date-new"       + newCounter;
-      // startTimeCell.id = "start-time-new" + newCounter;
-      // endTimeCell.id   = "end-time-new"   + newCounter;
-      // featuredCell.id  = "featured-new"   + newCounter;
-      // hiddenCell.id   = "hidden-new"    + newCounter;
-      // duplicateCell.id = "duplicate-new"  + newCounter;
-      
-      // // Update names.
-      // modifiedCell.name  = "modified-new"   + newCounter;
-      // dateCell.name      = "date-new"       + newCounter;
-      // startTimeCell.name = "start-time-new" + newCounter;
-      // endTimeCell.name   = "end-time-new"   + newCounter;
-      // featuredCell.name  = "featured-new"   + newCounter;
-      // hiddenCell.name   = "hidden-new"    + newCounter;
-      // duplicateCell.name = "duplicate-new"  + newCounter;
+        newCounter += 1;
+        termDatesCounter += 1;
 
-      // Mark as new field.
-      lastRow.classList.add('row-modified');
+        fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+        fieldsCounterElement.innerHTML = fieldsCounter;
 
-      // Update modified cell.
-      modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
+        termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+        termDatesCounterElement.innerHTML = termDatesCounter;
 
-      // Update date cell.
-      dateCell.setAttribute("data-date", "0");
-      dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
-      dateCell.getElementsByTagName('input')[0].name     = "date";
-      dateCell.getElementsByTagName('input')[0].value    = "";
-      dateCell.getElementsByTagName('input')[0].onchange = function() { changedField(dateCell.getElementsByTagName('input')[0], "new" + newCounter, "date"); };
+        var table   = document.getElementById("table-default");
+        var tbody   = table.getElementsByTagName("tbody")[0];
+        var lastRow = tbody.rows[tbody.rows.length - 1];
 
-      // Update start time cell.
-      startTimeCell.setAttribute("data-start-time", "0");
-      startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
-      startTimeCell.getElementsByTagName('input')[0].name     = "start-time";
-      startTimeCell.getElementsByTagName('input')[0].value    = "";
-      startTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(startTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "start-time"); };
+        lastRow.id = "row-new" + newCounter;
 
-      // Update end time cell.
-      endTimeCell.setAttribute("data-end-time", "0");
-      endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
-      endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
-      endTimeCell.getElementsByTagName('input')[0].value    = "";
-      endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+        var modifiedCell  = lastRow.cells[0];
+        var dateCell      = lastRow.cells[1];
+        var startTimeCell = lastRow.cells[2];
+        var endTimeCell   = lastRow.cells[3];
+        var featuredCell  = lastRow.cells[4];
+        var hiddenCell    = lastRow.cells[5];
+        var duplicateCell = lastRow.cells[6];
+        var deleteCell    = lastRow.cells[7];
 
-      // Update featured cell.
-      featuredCell.setAttribute("data-featured", "0");
-      featuredCell.getElementsByTagName('select')[0].id       = "featured-new" + newCounter;
-      featuredCell.getElementsByTagName('select')[0].name     = "featured";
-      featuredCell.getElementsByTagName('select')[0].value    = "0";
-      featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
+        // // Update IDs.
+        // modifiedCell.id  = "modified-new"   + newCounter;
+        // dateCell.id      = "date-new"       + newCounter;
+        // startTimeCell.id = "start-time-new" + newCounter;
+        // endTimeCell.id   = "end-time-new"   + newCounter;
+        // featuredCell.id  = "featured-new"   + newCounter;
+        // hiddenCell.id   = "hidden-new"    + newCounter;
+        // duplicateCell.id = "duplicate-new"  + newCounter;
+        
+        // // Update names.
+        // modifiedCell.name  = "modified-new"   + newCounter;
+        // dateCell.name      = "date-new"       + newCounter;
+        // startTimeCell.name = "start-time-new" + newCounter;
+        // endTimeCell.name   = "end-time-new"   + newCounter;
+        // featuredCell.name  = "featured-new"   + newCounter;
+        // hiddenCell.name   = "hidden-new"    + newCounter;
+        // duplicateCell.name = "duplicate-new"  + newCounter;
 
-      // Update hidden cell.
-      hiddenCell.setAttribute("data-hidden", "-1");
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "hidden-new" + newCounter;
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "hidden";
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = -1;
-      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "hidden"); };
+        // Mark as new field.
+        lastRow.classList.add('row-modified');
 
-      // Update duplicate button cell.
-      duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
-      duplicateCell.getElementsByTagName('button')[0].name    = "duplicate";
-      duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + duplicateCell.getElementsByTagName('button')[0].id.substr(13)); };
+        // Update modified cell.
+        modifiedCell.innerHTML = '<div class="badge bg-green"></div>';
 
-      // Update delete button cell.
-      deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
-      deleteCell.getElementsByTagName('button')[0].name       = "delete";
-      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteLocalDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
-      deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
-      deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
-      deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
-      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-target');
-      deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-toggle');
+        // Update date cell.
+        dateCell.setAttribute("data-date", "0");
+        dateCell.getElementsByTagName('input')[0].id       = "date-new" + newCounter;
+        dateCell.getElementsByTagName('input')[0].name     = "date";
+        dateCell.getElementsByTagName('input')[0].value    = "";
+        dateCell.getElementsByTagName('input')[0].onchange = function() { changedField(dateCell.getElementsByTagName('input')[0], "new" + newCounter, "date"); };
 
-      // Add event listener for the date cell.
-      window.Litepicker && (new Litepicker({
-        element: document.getElementById('date-new'+newCounter),
-        buttonText: {
-          previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
-          nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
-        },
-        setup: (picker) => {
-          picker.on('selected', (date1) => {
-            var field = document.getElementById('date-new'+newCounter);
-            changedField(field, 'new'+newCounter, 'date');
-          });
-        },
-      }));
+        // Update start time cell.
+        startTimeCell.setAttribute("data-start-time", "0");
+        startTimeCell.getElementsByTagName('input')[0].id       = "start-time-new" + newCounter;
+        startTimeCell.getElementsByTagName('input')[0].name     = "start-time";
+        startTimeCell.getElementsByTagName('input')[0].value    = "";
+        startTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(startTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "start-time"); };
 
-      list.reIndex();
+        // Update end time cell.
+        endTimeCell.setAttribute("data-end-time", "0");
+        endTimeCell.getElementsByTagName('input')[0].id       = "end-time-new" + newCounter;
+        endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
+        endTimeCell.getElementsByTagName('input')[0].value    = "";
+        endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+
+        // Update featured cell.
+        featuredCell.setAttribute("data-featured", "0");
+        featuredCell.getElementsByTagName('select')[0].id       = "featured-new" + newCounter;
+        featuredCell.getElementsByTagName('select')[0].name     = "featured";
+        featuredCell.getElementsByTagName('select')[0].value    = "0";
+        featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
+
+        // Update hidden cell.
+        hiddenCell.setAttribute("data-hidden", "-1");
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "hidden-new" + newCounter;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "hidden";
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = -1;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "hidden"); };
+
+        // Update duplicate button cell.
+        duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
+        duplicateCell.getElementsByTagName('button')[0].name    = "duplicate";
+        duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + duplicateCell.getElementsByTagName('button')[0].id.substr(13)); };
+
+        // Update delete button cell.
+        deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
+        deleteCell.getElementsByTagName('button')[0].name       = "delete";
+        deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteLocalDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+        deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+        deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
+        deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
+        deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-target');
+        deleteCell.getElementsByTagName('button')[0].removeAttribute('data-bs-toggle');
+
+        // Add event listener for the date cell.
+        window.Litepicker && (new Litepicker({
+          element: document.getElementById('date-new'+newCounter),
+          buttonText: {
+            previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>`,
+            nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>`,
+          },
+          setup: (picker) => {
+            picker.on('selected', (date1) => {
+              var field = document.getElementById('date-new'+newCounter);
+              changedField(field, 'new'+newCounter, 'date');
+            });
+          },
+        }));
+
+        list.reIndex();
+      }
     }
 
     function duplicateDate(duplicateId)
@@ -1431,44 +1581,6 @@ function output_term_dates($term_id, $max_height = 30)
       xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_term-dates.php", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-      // var term_dates_data = document.getElementsByClassName("value-changed");
-      // var extracted_term_dates_data = [];
-      // for (let i = 0; i < term_dates_data.length; i++)
-      // {
-      //   var last_hyphen = term_dates_data[i].name.lastIndexOf("-");
-      //   var type        = term_dates_data[i].name.slice(0, last_hyphen);
-      //   var id          = term_dates_data[i].name.slice(last_hyphen+1);
-
-      //   var currentEntry = {};
-      //   currentEntry["id"]   = id;
-      //   currentEntry["type"] = type;
-
-      //   if (type == "date")
-      //   {
-      //     currentEntry["value"] = document.getElementById("date-" + id).value;
-      //   }
-      //   else if (type == "start-time")
-      //   {
-      //     currentEntry["value"] = document.getElementById("start-time-" + id).value;
-      //   }
-      //   else if (type == "end-time")
-      //   {
-      //     currentEntry["value"] = document.getElementById("end-time-" + id).value;
-      //   }
-      //   else if (type == "featured")
-      //   {
-      //     currentEntry["value"] = document.getElementById("featured-" + id).value;
-      //   }
-      //   else if (type == "hidden")
-      //   {
-      //     currentEntry["value"] = document.getElementById("hidden-" + id).checked;
-      //   }
-
-      //   currentEntry["value"] 
-
-      //   extracted_term_dates_data.push(currentEntry);
-      // }
-
       var modified_term_dates_rows = document.getElementsByClassName("row-modified");
       var extracted_term_dates_data = [];
       for (let i = 0; i < modified_term_dates_rows.length; i++) {
@@ -1488,6 +1600,7 @@ function output_term_dates($term_id, $max_height = 30)
 
           extracted_row_data[name] = value;
         }
+        console.log(extracted_row_data);
         extracted_row_data["featured"] = document.getElementById("featured-" + id).value;
 
         extracted_term_dates_data.push(extracted_row_data);
@@ -1511,11 +1624,14 @@ function output_term_dates($term_id, $max_height = 30)
           document.getElementById("update-term-dates-result-status").classList.remove("bg-danger");
           document.getElementById("update-term-dates-result-status").classList.remove("bg-primary");
           document.getElementById("update-term-dates-result-status").classList.add("bg-success");
+
+          document.getElementById("update-term-dates-result-close-button").onclick = function() { window.location.reload(); };
+          document.getElementById("update-term-dates-result-button").onclick = function() { window.location.reload(); };
         }
         else {
           document.getElementById("update-term-dates-result-title").innerHTML = "Oops! An error occured.";
           document.getElementById("update-term-dates-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-red icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-          document.getElementById("update-term-dates-result-text").innerHTML = "Error message: " + JSON_response.error_message;
+          document.getElementById("update-term-dates-result-text").innerHTML = "Are you sure all of the fields have valid values?<br/><br/>Error message: " + JSON_response.error_message;
           document.getElementById("update-term-dates-result-button").innerHTML = "Understood.";
           document.getElementById("update-term-dates-result-button").classList.remove("disabled");
           document.getElementById("update-term-dates-result-button").classList.remove("btn-success");
@@ -1593,6 +1709,16 @@ function output_term_dates($term_id, $max_height = 30)
     {
       document.getElementById("row-" + id).remove();
       list.reIndex();
+
+      var rows   = document.getElementById("table-default").getElementsByTagName("tr");
+      var noRows = rows.length - 1; // Minus headings.
+
+      console.log(noRows);
+
+      if (noRows == 0)
+      {
+        document.getElementById("table-default").getElementsByTagName("tbody")[0].innerHTML = "<tr><td></td><td colspan=\"7\">No term dates found.</td></tr>";
+      }
     }
   </script>
 <?php
