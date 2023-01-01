@@ -4,3 +4,4 @@
 /uploads/*
 /config.php
 .vscode/*
+*.code-workspace
