@@ -610,6 +610,8 @@ function output_terms($max_height = 30)
 {
   $db_connection = db_connect();
 
+  require("./config.php");
+
 ?>
   <div class="card">
     <div class="card-header">
@@ -642,7 +644,7 @@ function output_terms($max_height = 30)
           <div class="list-group-item">
             <div class="row">
               <div class="col-auto">
-                <a href="#">
+                <a href="<?=$config["base_url"]."/term-dates.php?term_id=".$term["ID"];?>">
                   <?php
                   if ($term["image"] != "") {
                   ?>
@@ -657,7 +659,7 @@ function output_terms($max_height = 30)
                 </a>
               </div>
               <div class="col text-truncate">
-                <a href="#" class="text-body d-block"><?= $term["name"]; ?></a>
+                <a href="<?=$config["base_url"]."/term-dates.php?term_id=".$term["ID"];?>" class="text-body d-block"><?= $term["name"]; ?></a>
               </div>
             </div>
           </div>
