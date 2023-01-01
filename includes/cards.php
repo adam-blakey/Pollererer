@@ -795,8 +795,9 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
-                <th><button class="table-sort" data-sort="sort-deleted">Del.</button></th>
-                <th></th>
+                <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
+                <th>Duplicate</th>
+                <th>Permanently delete</th>
               </tr>
             </thead>
             <tbody class="table-tbody">
@@ -812,19 +813,19 @@ function output_term_dates($term_id, $max_height = 30)
                 $start_time = date("H:i", $term_date['datetime']);
                 $end_time   = date("H:i", $term_date['datetime_end']);
                 $featured   = $term_date['is_featured'];
-                $deleted    = $term_date['deleted'];
+                $hidden     = $term_date['deleted'];
 
                 $data_date       = strtotime(date("Y-m-d", $term_date['datetime']));
                 $data_start_time = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
                 $data_end_time   = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
                 $data_featured   = $term_date['is_featured'];
-                $data_deleted    = $term_date['deleted'];
+                $data_hidden    = $term_date['deleted'];
 
                 $id_array[] = $id;
 
-                $deleted_indeterminate = "";
-                $deleted_checked       = ($deleted == 1)?"checked":"";
-                $deleted_disabled      = "";
+                $hidden_indeterminate = "";
+                $hidden_checked       = ($hidden == 1)?"checked":"";
+                $hidden_disabled      = "";
 
               ?>
                 <tr id="row-<?=$id;?>">
@@ -850,9 +851,7 @@ function output_term_dates($term_id, $max_height = 30)
                       <option value="0" <?=($featured==0)?"selected":"";?>>None</option>
                       <option value="1" <?=($featured==1)?"selected":"";?>>All</option>
                       <optgroup label="<?=ucfirst($config["taxonomy_ensembles"]);?>">
-                        <?php
-                          // TODO: GET ASSOCIATED ENSEMBLES AND MARK AS SELECTED.
-                          
+                        <?php                          
                           for ($i = 0; $i < count($ensemble_ids); $i++)
                           {
                             $options[strval(-$ensemble_ids[$i])] = $ensemble_names[$i];
@@ -865,13 +864,13 @@ function output_term_dates($term_id, $max_height = 30)
                       </optgroup>
                     </select>
                   </td>
-                  <td class="sort-deleted" data-deleted="<?= $data_deleted; ?>">
+                  <td class="sort-hidden" data-hidden="<?= $data_hidden; ?>">
                     <label class="form-colorcheckbox bigger" style="margin: 0px;">
-                      <input name="deleted" id="deleted-<?=$id;?>" type="checkbox" value="<?=$deleted;?>" class="form-colorcheckbox-input <?=$deleted_indeterminate;?>" <?=$deleted_checked;?> <?=$deleted_disabled;?> onchange="changedField(this, '<?=$id;?>', 'deleted')" />
+                      <input name="hidden" id="hidden-<?=$id;?>" type="checkbox" value="<?=$hidden;?>" class="form-colorcheckbox-input <?=$hidden_indeterminate;?>" <?=$hidden_checked;?> <?=$hidden_disabled;?> onchange="changedField(this, '<?=$id;?>', 'hidden')" />
                       <span class="form-colorcheckbox-color "></span>
                     </label>
                   </td>
-                  <td class="col-auto align-self-center sort-modified" style="text-align: center; vertical-align: middle;">
+                  <td class="col-auto align-self-center" style="text-align: center; vertical-align: middle;">
                     <button type="button" name="duplicate" id="duplicate-<?=$id;?>" class="btn btn-sm btn-outline-secondary" onclick="duplicateDate('<?=$id;?>')">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -879,6 +878,15 @@ function output_term_dates($term_id, $max_height = 30)
                         <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
                       </svg>
                       Duplicate
+                    </button>
+                  </td>
+                  <?php
+                    $attendance_uses = $db_connection->query("SELECT COUNT(*) FROM `attendance` WHERE `term_dates_ID` = ".$id)->fetch_row()[0];
+                  ?>
+                  <td class="col-auto" style="text-align: left; vertical-align: middle;">
+                    <button type="button" name="permanently-delete" id="permanently-delete-<?=$id;?>" class="btn btn-sm btn-danger <?=($attendance_uses==0)?"":"disabled";?>" onclick="deleteDate('<?=$id;?>')" data-bs-toggle="modal" data-bs-target="#delete-term-date-result">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />';</svg>
+                      Delete (<?=$attendance_uses;?> uses)
                     </button>
                   </td>
                 </tr>
@@ -894,7 +902,7 @@ function output_term_dates($term_id, $max_height = 30)
                         <span class="form-colorinput-color bg-blue"></span>
                       </label>
                       <label class="form-colorinput">
-                        <input id="deleted" type="checkbox" class="form-colorinput-input" <?= ($term_date["deleted"]) ? "checked" : ""; ?>>
+                        <input id="hidden" type="checkbox" class="form-colorinput-input" <?= ($term_date["hidden"]) ? "checked" : ""; ?>>
                         <span class="form-colorinput-color bg-red"></span>
                       </label>
                       </div>
@@ -939,6 +947,41 @@ function output_term_dates($term_id, $max_height = 30)
             <div class="row">
               <div class="col"><a id="update-term-dates-result-button" href="#" class="btn btn-success disabled w-100" data-bs-dismiss="modal" onclick="javascript:window.location.reload()">
                   Result button text
+                </a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal modal-blur fade" id="delete-term-date-result" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-status bg-danger"></div>
+        <div class="modal-body text-center py-4">
+          <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg>
+          <h3>Are you sure?</h3>
+          <div class="text-muted">Do you really want to permanently delete this term date? What you've done cannot be undone.</div>
+        </div>
+        <div class="modal-body py-4" id="delete-term-date-result-info">
+          <strong>ID:</strong> <br />
+          <strong>Date:</strong> <br />
+          <strong>Start time</strong>: <br />
+          <strong>End time</strong>: <br />
+          <strong>Concert</strong>: <br />
+          <strong>Hidden:</strong> <br />
+        </div>
+        <div class="modal-footer">
+          <div class="w-100">
+            <div class="row">
+              <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">
+                  Cancel
+                </a></div>
+              <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                  Delete term
                 </a></div>
             </div>
           </div>
@@ -1002,8 +1045,8 @@ function output_term_dates($term_id, $max_height = 30)
           name: 'sort-featured'
         },
         {
-          attr: 'data-deleted',
-          name: 'sort-deleted'
+          attr: 'data-hidden',
+          name: 'sort-hidden'
         }
       ]
     });
@@ -1037,7 +1080,7 @@ function output_term_dates($term_id, $max_height = 30)
           element.parentElement.parentElement.classList.add('row-modified');
         }
       }
-      else if (name == "deleted")
+      else if (name == "hidden")
       {
         if (!element.parentElement.parentElement.parentElement.classList.contains('row-modified'))
         {
@@ -1078,7 +1121,7 @@ function output_term_dates($term_id, $max_height = 30)
       updateTermDatesElement.classList.remove("disabled");
 
       // Changes value of checkbox.
-      if (name == "deleted")
+      if (name == "hidden")
       {
         element.value = (element.checked) ? "1" : "0";
       }
@@ -1099,7 +1142,7 @@ function output_term_dates($term_id, $max_height = 30)
         var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
         element.parentElement.setAttribute("data-" + name, timestamp);
       }
-      else if (name == "deleted")
+      else if (name == "hidden")
       {
         element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
       }
@@ -1115,7 +1158,7 @@ function output_term_dates($term_id, $max_height = 30)
 
     function addNewDate()
     {
-      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
+      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_hidden: 0});
 
       newCounter += 1;
       termDatesCounter += 1;
@@ -1137,8 +1180,9 @@ function output_term_dates($term_id, $max_height = 30)
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
       var featuredCell  = lastRow.cells[4];
-      var deletedCell   = lastRow.cells[5];
+      var hiddenCell    = lastRow.cells[5];
       var duplicateCell = lastRow.cells[6];
+      var deleteCell    = lastRow.cells[7];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1146,7 +1190,7 @@ function output_term_dates($term_id, $max_height = 30)
       // startTimeCell.id = "start-time-new" + newCounter;
       // endTimeCell.id   = "end-time-new"   + newCounter;
       // featuredCell.id  = "featured-new"   + newCounter;
-      // deletedCell.id   = "deleted-new"    + newCounter;
+      // hiddenCell.id   = "hidden-new"    + newCounter;
       // duplicateCell.id = "duplicate-new"  + newCounter;
       
       // // Update names.
@@ -1155,7 +1199,7 @@ function output_term_dates($term_id, $max_height = 30)
       // startTimeCell.name = "start-time-new" + newCounter;
       // endTimeCell.name   = "end-time-new"   + newCounter;
       // featuredCell.name  = "featured-new"   + newCounter;
-      // deletedCell.name   = "deleted-new"    + newCounter;
+      // hiddenCell.name   = "hidden-new"    + newCounter;
       // duplicateCell.name = "duplicate-new"  + newCounter;
 
       // Mark as new field.
@@ -1194,19 +1238,27 @@ function output_term_dates($term_id, $max_height = 30)
       featuredCell.getElementsByTagName('select')[0].value    = "0";
       featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('selected')[0], "new" + newCounter, "featured"); };
 
-      // Update deleted cell.
-      deletedCell.setAttribute("data-deleted", "-1");
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted";
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = -1;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
+      // Update hidden cell.
+      hiddenCell.setAttribute("data-hidden", "-1");
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "hidden-new" + newCounter;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "hidden";
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = -1;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "hidden"); };
 
       // Update duplicate button cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].name    = "duplicate";
       duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + duplicateCell.getElementsByTagName('button')[0].id.substr(13)); };
+
+      // Update delete button cell.
+      deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
+      deleteCell.getElementsByTagName('button')[0].name       = "delete";
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+      deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
+      deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
 
       // Add event listener for the date cell.
       window.Litepicker && (new Litepicker({
@@ -1230,7 +1282,7 @@ function output_term_dates($term_id, $max_height = 30)
 
     function duplicateDate(duplicateId)
     {
-      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_deleted: 0});
+      list.add({sort_modified: 0, sort_date: 0, sort_start_time: 0, sort_end_time: 0, sort_featured: 0, sort_hidden: 0});
 
       newCounter += 1;
       termDatesCounter += 1;
@@ -1252,8 +1304,9 @@ function output_term_dates($term_id, $max_height = 30)
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
       var featuredCell  = lastRow.cells[4];
-      var deletedCell   = lastRow.cells[5];
+      var hiddenCell    = lastRow.cells[5];
       var duplicateCell = lastRow.cells[6];
+      var deleteCell    = lastRow.cells[7];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1261,7 +1314,7 @@ function output_term_dates($term_id, $max_height = 30)
       // startTimeCell.id = "start-time-new" + newCounter;
       // endTimeCell.id   = "end-time-new"   + newCounter;
       // featuredCell.id  = "featured-new"   + newCounter;
-      // deletedCell.id   = "deleted-new"    + newCounter;
+      // hiddenCell.id   = "hidden-new"    + newCounter;
       
       // // Update names.
       // modifiedCell.name  = "modified-new"   + newCounter;
@@ -1269,7 +1322,7 @@ function output_term_dates($term_id, $max_height = 30)
       // startTimeCell.name = "start-time-new" + newCounter;
       // endTimeCell.name   = "end-time-new"   + newCounter;
       // featuredCell.name  = "featured-new"   + newCounter;
-      // deletedCell.name   = "deleted-new"    + newCounter;
+      // hiddenCell.name   = "hidden-new"    + newCounter;
 
       // Mark as new field.
       lastRow.classList.add('row-modified');
@@ -1307,26 +1360,34 @@ function output_term_dates($term_id, $max_height = 30)
       featuredCell.getElementsByTagName('select')[0].value    = document.getElementById('featured-' + duplicateId).value;
       featuredCell.getElementsByTagName('select')[0].onchange = function () { changedField(featuredCell.getElementsByTagName('select')[0], "new" + newCounter, "featured"); };
 
-      // Update deleted cell.
-      if (document.getElementById('deleted-' + duplicateId).parentElement.parentElement.getAttribute("data-deleted") == -1)
+      // Update hidden cell.
+      if (document.getElementById('hidden-' + duplicateId).parentElement.parentElement.getAttribute("data-hidden") == -1)
       {
-        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
-        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].indeterminate = true;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked       = false;
       }
       else
       {
-        deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('deleted-' + duplicateId).checked;
+        hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].checked  = document.getElementById('hidden-' + duplicateId).checked;
       }
-      deletedCell.setAttribute("data-deleted", document.getElementById('deleted-' + duplicateId).parentElement.parentElement.getAttribute("data-deleted"));
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "deleted-new" + newCounter;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "deleted";
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = document.getElementById('deleted-' + duplicateId).value;
-      deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(deletedCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "deleted"); };
+      hiddenCell.setAttribute("data-hidden", document.getElementById('hidden-' + duplicateId).parentElement.parentElement.getAttribute("data-hidden"));
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].id            = "hidden-new" + newCounter;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].name          = "hidden";
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].value         = document.getElementById('hidden-' + duplicateId).value;
+      hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0].onchange      = function () { changedField(hiddenCell.getElementsByTagName('label')[0].getElementsByTagName('input')[0], "new" + newCounter, "hidden"); };
 
       // Update duplicate button cell.
       duplicateCell.getElementsByTagName('button')[0].id      = "duplicate-new" + newCounter;
       duplicateCell.getElementsByTagName('button')[0].name    = "duplicate";
       duplicateCell.getElementsByTagName('button')[0].onclick = function() { duplicateDate('new' + duplicateCell.getElementsByTagName('button')[0].id.substr(13)); };
+
+      // Update delete button cell.
+      deleteCell.getElementsByTagName('button')[0].id         = "delete-new" + newCounter;
+      deleteCell.getElementsByTagName('button')[0].name       = "delete";
+      deleteCell.getElementsByTagName('button')[0].onclick    = function() { deleteDate('new' + deleteCell.getElementsByTagName('button')[0].id.substr(10)); };
+      deleteCell.getElementsByTagName('button')[0].innerHTML  = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="4" y1="7" x2="20" y2="7" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+      deleteCell.getElementsByTagName('button')[0].innerHTML += 'Delete';
+      deleteCell.getElementsByTagName('button')[0].classList.remove('disabled');
 
       // Add event listener for the date cell.
       window.Litepicker && (new Litepicker({
@@ -1395,9 +1456,9 @@ function output_term_dates($term_id, $max_height = 30)
       //   {
       //     currentEntry["value"] = document.getElementById("featured-" + id).value;
       //   }
-      //   else if (type == "deleted")
+      //   else if (type == "hidden")
       //   {
-      //     currentEntry["value"] = document.getElementById("deleted-" + id).checked;
+      //     currentEntry["value"] = document.getElementById("hidden-" + id).checked;
       //   }
 
       //   currentEntry["value"] 

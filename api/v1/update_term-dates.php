@@ -23,7 +23,7 @@
 				$start_time = strip_tags($data["start-time"]);
 				$end_time   = strip_tags($data["end-time"]);
 				$featured   = strip_tags($data["featured"]);
-				$deleted    = strip_tags($data["deleted"]);
+				$deleted    = strip_tags($data["hidden"]);
 
 				$start_datetime = strtotime($date."T".$start_time.":00");
 				$end_datetime   = strtotime($date."T".$end_time.":00");
