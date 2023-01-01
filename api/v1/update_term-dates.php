@@ -57,7 +57,7 @@
 					// TODO: INSERT NEW RECORDS BELOW.
 					if ($type == "date")
 					{
-						
+						// $date_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `date`) VALUES ('".$term_ID."', '".$value."')");
 					}
 					else if ($type == "start-time")
 					{
