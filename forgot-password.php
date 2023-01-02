@@ -14,6 +14,12 @@
     <?php include($_SERVER['DOCUMENT_ROOT']."/includes/head.php"); ?>
     <title>Forgot password - NSW Attendance</title>
     <script type="text/javascript">
+      window.onkeypress = function(e) {
+        if(e.keyCode == 13) {
+          sendNewPassword();
+        }
+      }
+
       function sendNewPassword()
       {
         document.getElementById("send-new-password-button").innerHTML = "Checking details...";
@@ -29,10 +35,13 @@
 
         xhttp.onload = function() {
           if (xhttp.status == 200) {
+            console.log(this.responseText);
+
             const JSON_response = JSON.parse(this.responseText);
 
             if (JSON_response.status == "success") {
-              document.getElementById("send-new-password-button").innerHTML = "Success!";
+              document.getElementById("send-new-password-button").innerHTML = "Success! Check your email.";
+              document.getElementById("send-new-password-button").classList.add("disabled");
               document.getElementById("send-new-password-error").innerHTML = "";
             } 
             else {
@@ -50,7 +59,7 @@
         <div class="text-center mb-4">
           <a href="." class="navbar-brand navbar-brand-autodark"><img src="<?=$config["logo_url"];?>" height="36" alt=""></a>
         </div>
-        <form class="card card-md" action="." method="get" autocomplete="off">
+        <div class="card card-md" autocomplete="off">
           <div class="card-body">
             <h2 class="card-title text-center mb-4">Forgot password</h2>
             <p class="text-muted mb-4">Enter your email address and your password will be reset and emailed to you.</p>
@@ -69,7 +78,7 @@
               </button>
             </div>
           </div>
-        </form>
+        </div>
         <div class="text-center text-muted mt-3">
           Forget it, <a class="btn btn-link" onclick="history.back()">send me back</a> to the sign in screen.
         </div>
