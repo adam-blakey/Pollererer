@@ -325,17 +325,24 @@
             };
           }
 
+          function hidePlaceholder()
+          {
+            document.getElementById("placeholder-loading").style.display = "none";
+            document.getElementById("main-content")       .style.display = "block";
+          }
+
           function pageLoaded()
           {
             setIndeterminate();
             moveToTop();
             checkPollEnded();
             warnLeaving();
+            hidePlaceholder();
           }
           //window.onload = pageLoaded();
         </script>
       </head>
-      <body onload="pageLoaded();">
+      <body onload="pageLoaded();" >
         <div class="wrapper">
           <?php include($_SERVER['DOCUMENT_ROOT']."/includes/header.php"); ?>
           <?php include($_SERVER['DOCUMENT_ROOT']."/includes/navigation.php"); ?>
@@ -487,7 +494,7 @@
                           $no_term_dates = count($term_dates);
                         ?>
 
-                        <div class="table-responsive">
+                        <div class="table-responsive" id="main-content" style="display:none">
                           <form id="update_attendance">
                             <table id="attendance-table" class="table card-table table-vcenter text-nowrap datatable">
                               <div class="p-2 my-0 d-flex">
@@ -725,6 +732,86 @@
                               </tbody>
                             </table>
                           </form>
+                        </div>
+
+                        <div class="card" id="placeholder-loading">
+                          <ul class="list-group list-group-flush placeholder-glow">
+                            <li class="list-group-item opacity-100">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-80">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-60">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-40">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-20">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
                         </div>
 
                         <div class="card-footer d-flex">
