@@ -1,12 +1,13 @@
 <?php
-	function send_token_email($token)
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+
+	function send_token_email($token, $email)
 	{
 		require($_SERVER['DOCUMENT_ROOT']."/config.php");
 
-		$email = "adam@blakey.family";
-
 		$to       = $email;
-		$subject  = "Password Reset for Blackwood Attendance";
+		$subject  = "Password Reset for ".$config["software_name"];
 		$headers  = "MIME-Version: 1.0\r\n";
 		$headers .= "Content-type:text/html;charset=UTF-8\r\n";
 		$headers .= "From: Blackwood Attendance <attendance@blackwoodclarinets.co.uk>\r\n";
@@ -259,16 +260,16 @@
 		                                                                $message .= '<table class="icon icon-lg bg-blue" cellspacing="0" cellpadding="0" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding: 0; border-collapse: separate; width: 72px; border-radius: 50%; line-height: 100%; font-weight: 300; height: 72px; font-size: 48px; text-align: center; color: #ffffff;" bgcolor="#467fcf">';
 		                                                                    $message .= '<tr>';
 		                                                                        $message .= '<td valign="middle" align="center" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;">';
-		                                                                            $message .= '<img src="./assets/icons-white-unlock.png" class=" va-middle" width="40" height="40" alt="unlock" style="line-height: 100%; border: 0 none; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; display: block; width: 40px; height: 40px;" />';
+		                                                                            $message .= '<img src="'.$config["base_url"].'//emails/example/assets/icons-white-unlock.png" class=" va-middle" width="40" height="40" alt="unlock" style="line-height: 100%; border: 0 none; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; display: block; width: 40px; height: 40px;" />';
 		                                                                        $message .= '</td>';
 		                                                                    $message .= '</tr>';
 		                                                                $message .= '</table>';
-		                                                                $message .= '<h1 class="text-center m-0 mt-md" style="font-weight: 300; font-size: 28px; line-height: 130%; margin: 16px 0 0;" align="center">Reset Password Instruction</h1>';
+		                                                                $message .= '<h1 class="text-center m-0 mt-md" style="font-weight: 300; font-size: 28px; line-height: 130%; margin: 16px 0 0;" align="center">Reset password request</h1>';
 		                                                            $message .= '</td>';
 		                                                        $message .= '</tr>';
 		                                                        $message .= '<tr>';
 		                                                            $message .= '<td class="content text-center" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding: 40px 48px;" align="center">';
-		                                                                $message .= '<p style="margin: 0 0 1em;">You recently requested to reset a password for your Blackwood Attendance account. Use the button below to reset it. This message will expire in 24 hours.</p>';
+		                                                                $message .= '<p style="margin: 0 0 1em;">You recently requested to reset a password for your '.$config["software_name"].' account. Use the button below to reset it. This message will expire in 24 hours.</p>';
 		                                                            $message .= '</td>';
 		                                                        $message .= '</tr>';
 		                                                        $message .= '<tr>';
@@ -315,15 +316,61 @@
 		    $message .= '</body>';
 		$message .= '</html>';
 
-		$mail = mail($to, $subject, $message, $headers);
+		// $mail = mail($to, $subject, $message, $headers);
 
-		if ($mail)
+		// if ($mail)
+		// {
+		// 	return true;
+		// }
+		// else
+		// {
+		// 	return false;
+		// }
+
+		require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/Exception.php");
+		require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/PHPMailer.php");
+		require_once($_SERVER['DOCUMENT_ROOT']."/dist/libs/phpmailer/src/SMTP.php");
+
+		$mail = new PHPMailer(true);
+
+		try
 		{
-			return true;
+			$mail->isSMTP();
+			$mail->Host       = $config["smtp_host"];
+			$mail->SMTPAuth   = true;
+			$mail->Username   = $config["smtp_username"];
+			$mail->Password   = $config["smtp_password"];
+			$mail->SMTPSecure = $config["smtp_encryption"];
+			$mail->Port       = $config["smtp_port"];
+
+			$mail->SMTPDebug = 0;
+
+			$mail->setFrom($config["email_from"], $config["software_name"]);
+			foreach (explode(", ", $to) as $address)
+			{
+				$mail->addAddress($address);
+			}
+
+			$mail->isHTML(true);
+			$mail->Subject = $subject;
+			$mail->Body    = $message;
+
+			$send_email_result = $mail->send();
+
+			$mail->smtpClose();
+
+			if (!$send_email_result)
+			{
+				return "An error occurred while sending the email: ".$mail->ErrorInfo;
+			}
+			else
+			{
+				return true;
+			}
 		}
-		else
+		catch (Exception $e)
 		{
-			return false;
+			return "An error occurred while sending the email: ".$mail->ErrorInfo;
 		}
 	}
 
@@ -348,16 +395,30 @@
 			$member_ID = $email_query->fetch_assoc()["ID"];
 			$token = $db_connection->query("SELECT UUID()")->fetch_array()[0];
 
-			$token_query = $db_connection->query("INSERT INTO `password_reset_tokens` (`member_ID`, `token`, `expiry`) VALUES ('".$member_ID."', '".$token."', 'DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)')");
+			$current_timestamp = time();
+			$expiry_timestamp  = $current_timestamp + 60*60*24;
 
-			if(send_token_email($token))
+			//$token_query = $db_connection->query("INSERT INTO `password_reset_tokens` (`member_ID`, `token`, `expiry`) VALUES ('".$member_ID."', '".$token."', DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY))");
+			$token_query = $db_connection->query("INSERT INTO `password_reset_tokens` (`member_ID`, `token`, `expiry`) VALUES ('".$member_ID."', '".$token."', '".$expiry_timestamp."')");
+
+			if ($token_query)
 			{
-				$JSON_response->status = "success";
+				$send_email_result = send_token_email($token, $email);
+
+				if($send_email_result === true)
+				{
+					$JSON_response->status = "success";
+				}
+				else
+				{
+					$JSON_response->status        = "error";
+					$JSON_response->error_message = "failed to send token email: ".$send_email_result;
+				}
 			}
 			else
 			{
 				$JSON_response->status        = "error";
-				$JSON_response->error_message = "failed to send token email";
+				$JSON_response->error_message = "failed to insert token into database: ".$db_connection->error;
 			}
 		}
 

@@ -15,7 +15,8 @@
 		<title><?=$title;?></title>
 	</head>
   <body class=" border-top-wide border-primary d-flex flex-column">
-    <script src="./dist/js/demo-theme.min.js?1660132725"></script>
+		<?php include($_SERVER['DOCUMENT_ROOT']."/includes/header.php"); ?>
+    <?php include($_SERVER['DOCUMENT_ROOT']."/includes/navigation.php"); ?>
     <div class="page page-center">
       <div class="container-narrow py-4">
         <div class="text-center mb-4">

@@ -193,6 +193,7 @@
             var xhttp = new XMLHttpRequest();
 
             xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_attendance.php", true);
+            xhttp.timeout = 10000;
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             var attendance_data = document.getElementsByClassName("attendance-changed");
@@ -248,6 +249,20 @@
                 document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
                 document.getElementById("update-attendance-result-status").classList.add("bg-danger");
               }
+            }
+
+            xhttp.ontimeout = function() {
+              document.getElementById("update-attendance-result-title").innerHTML = "Oops! An error occured.";
+              document.getElementById("update-attendance-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-red icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+              document.getElementById("update-attendance-result-text").innerHTML = "Error message: " + "Request to API timed out. <strong>Your attendance has not been saved.</strong>";
+              document.getElementById("update-attendance-result-button").innerHTML = "Understood.";
+              document.getElementById("update-attendance-result-button").classList.remove("disabled");
+              document.getElementById("update-attendance-result-button").classList.remove("btn-success");
+              document.getElementById("update-attendance-result-button").classList.remove("btn-primary");
+              document.getElementById("update-attendance-result-button").classList.add("btn-danger");
+              document.getElementById("update-attendance-result-status").classList.remove("bg-success");
+              document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
+              document.getElementById("update-attendance-result-status").classList.add("bg-danger");
             }
           }
 
@@ -325,17 +340,24 @@
             };
           }
 
+          function hidePlaceholder()
+          {
+            document.getElementById("placeholder-loading").style.display = "none";
+            document.getElementById("main-content")       .style.display = "block";
+          }
+
           function pageLoaded()
           {
             setIndeterminate();
             moveToTop();
             checkPollEnded();
             warnLeaving();
+            hidePlaceholder();
           }
           //window.onload = pageLoaded();
         </script>
       </head>
-      <body onload="pageLoaded();">
+      <body onload="pageLoaded();" >
         <div class="wrapper">
           <?php include($_SERVER['DOCUMENT_ROOT']."/includes/header.php"); ?>
           <?php include($_SERVER['DOCUMENT_ROOT']."/includes/navigation.php"); ?>
@@ -479,6 +501,7 @@
                             $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
                           }
 
+                          $term_dates = array();
                           while ($result = $term_dates_query->fetch_array())
                           {
                             $term_dates[] = $result;
@@ -487,7 +510,7 @@
                           $no_term_dates = count($term_dates);
                         ?>
 
-                        <div class="table-responsive">
+                        <div class="table-responsive" id="main-content" style="display:none">
                           <form id="update_attendance">
                             <table id="attendance-table" class="table card-table table-vcenter text-nowrap datatable">
                               <div class="p-2 my-0 d-flex">
@@ -725,6 +748,86 @@
                               </tbody>
                             </table>
                           </form>
+                        </div>
+
+                        <div class="card" id="placeholder-loading">
+                          <ul class="list-group list-group-flush placeholder-glow">
+                            <li class="list-group-item opacity-100">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-80">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-60">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-40">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item opacity-20">
+                              <div class="row align-items-center">
+                                <div class="col-auto">
+                                  <div class="avatar avatar-rounded placeholder"></div>
+                                </div>
+                                <div class="col-7">
+                                  <div class="placeholder placeholder-xs col-9"></div>
+                                  <div class="placeholder placeholder-xs col-7"></div>
+                                </div>
+                                <div class="col-2 ms-auto text-end">
+                                  <div class="placeholder placeholder-xs col-8"></div>
+                                  <div class="placeholder placeholder-xs col-10"></div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
                         </div>
 
                         <div class="card-footer d-flex">
