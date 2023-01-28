@@ -314,7 +314,14 @@ function findTimeAgo($past, $now = "now") {
     $timeDifference <= (($secondsPerMinute * 44) + 29)
   ) {
     $minutes = floor($timeDifference / $secondsPerMinute);
-    $timeAgo = $minutes." minutes ago";
+    if ($minutes == 1)
+    {
+      $timeAgo = "1 minute ago";
+    }
+    else
+    {
+      $timeAgo = $minutes." minutes ago";
+    }
   }
   // between 44mins30secs and 1hour29mins29secs
   else if(
@@ -338,7 +345,14 @@ function findTimeAgo($past, $now = "now") {
     )
   ) {
     $hours = floor($timeDifference / $secondsPerHour);
-    $timeAgo = $hours." hours ago";
+    if ($hours == 1)
+    {
+      $timeAgo = "1 hour ago";
+    }
+    else
+    {
+      $timeAgo = $hours." hours ago";
+    }
   }
   // between 23hours59mins30secs and 47hours59mins29secs
   else if(
@@ -372,7 +386,14 @@ function findTimeAgo($past, $now = "now") {
     )
   ) {
     $days = floor($timeDifference / $secondsPerDay);
-    $timeAgo = $days." days ago";
+    if ($days == 1)
+    {
+      $timeAgo = "1 day ago";
+    }
+    else
+    {
+      $timeAgo = $days." days ago";
+    }
   }
   // between 29days23hours59mins30secs and 59days23hours59mins29secs
   else if(
@@ -429,7 +450,14 @@ function findTimeAgo($past, $now = "now") {
   // 2years or more
   else {
     $years = floor($timeDifference / $secondsPerYear);
-    $timeAgo = "over ".$years." years ago";
+    if ($years == 1)
+    {
+      $timeAgo = "over 1 year ago";
+    }
+    else
+    {
+      $timeAgo = "over ".$years." years ago";
+    }
   }
 
   return $timeAgo;

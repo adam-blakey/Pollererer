@@ -10,7 +10,7 @@ function output_logins($max_height = 30)
         <p><a href="./members.php">Logins</a></p>
       </h3>
       <div class="ms-auto">
-        <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-login">
+        <a href="#" class="btn btn-outline-primary w-100 disabled" data-bs-toggle="modal" data-bs-target="#add-new-login">
           Add new
         </a>
       </div>
@@ -177,7 +177,7 @@ function output_members($max_height = 30)
         <p><a href="./members.php">Members</a></p>
       </h3>
       <div class="ms-auto">
-        <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-member">
+        <a href="#" class="btn btn-outline-primary w-100 disabled" data-bs-toggle="modal" data-bs-target="#add-new-member">
           Add new
         </a>
       </div>
@@ -487,7 +487,7 @@ function output_ensembles($max_height = 30)
         <p><a href="./ensembles.php">Ensembles</a></p>
       </h3>
       <div class="ms-auto">
-        <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-ensemble">
+        <a href="#" class="btn btn-outline-primary w-100 disabled" data-bs-toggle="modal" data-bs-target="#add-new-ensemble">
           Add new
         </a>
       </div>
@@ -619,7 +619,7 @@ function output_terms($max_height = 30)
         <p><a href="./terms.php">Terms</a></p>
       </h3>
       <div class="ms-auto">
-        <a href="#" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#add-new-term">
+        <a href="#" class="btn btn-outline-primary w-100 disabled" data-bs-toggle="modal" data-bs-target="#add-new-term">
           Add new
         </a>
       </div>
