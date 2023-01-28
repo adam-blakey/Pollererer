@@ -38,6 +38,7 @@ variables:
 # Run our tests
 setup:
   stage: build
+  needs: []
   script:
     - cd /builds/adam.blakey/Pollererer
     - cp ./test/sample_config.php ./config.php
@@ -46,5 +47,6 @@ setup:
 
 test1:
   stage: test
+  needs: ["setup"]
   script:
     - php ./test/sample_test.php
