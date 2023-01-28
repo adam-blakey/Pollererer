@@ -745,16 +745,16 @@ function output_term_dates($term_id, $max_height = 30)
 
   $ensembles_query = $db_connection->prepare("SELECT `ID`, `name` FROM `ensembles`");
   $ensembles_query->execute();
-  $ensembles_result = $ensembles_query->get_result();
-  $ensembles_query->fetch();
-  $ensembles_query->close();
+  //$ensembles_result = $ensembles_query->get_result();
+  $ensembles_query->bind_result($ensemble_id, $ensemble_name);
 
   $ensemble_ids   = array();
   $ensemble_names = array();
-  while($ensemble = $ensembles_result->fetch_assoc()) {
-    array_push($ensemble_ids, $ensemble["ID"]);
-    array_push($ensemble_names, $ensemble["name"]);
+  while($ensembles_query->fetch()) {
+    array_push($ensemble_ids, $ensemble_id);
+    array_push($ensemble_names, $ensemble_name);
   }
+  $ensembles_query->close();
 
 ?>
   <div class="card">
