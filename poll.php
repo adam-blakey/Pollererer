@@ -193,6 +193,7 @@
             var xhttp = new XMLHttpRequest();
 
             xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_attendance.php", true);
+            xhttp.timeout = 10000;
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             var attendance_data = document.getElementsByClassName("attendance-changed");
@@ -248,6 +249,20 @@
                 document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
                 document.getElementById("update-attendance-result-status").classList.add("bg-danger");
               }
+            }
+
+            xhttp.ontimeout = function() {
+              document.getElementById("update-attendance-result-title").innerHTML = "Oops! An error occured.";
+              document.getElementById("update-attendance-result-icon").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-red icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+              document.getElementById("update-attendance-result-text").innerHTML = "Error message: " + "Request to API timed out. <strong>Your attendance has not been saved.</strong>";
+              document.getElementById("update-attendance-result-button").innerHTML = "Understood.";
+              document.getElementById("update-attendance-result-button").classList.remove("disabled");
+              document.getElementById("update-attendance-result-button").classList.remove("btn-success");
+              document.getElementById("update-attendance-result-button").classList.remove("btn-primary");
+              document.getElementById("update-attendance-result-button").classList.add("btn-danger");
+              document.getElementById("update-attendance-result-status").classList.remove("bg-success");
+              document.getElementById("update-attendance-result-status").classList.remove("bg-primary");
+              document.getElementById("update-attendance-result-status").classList.add("bg-danger");
             }
           }
 

@@ -357,6 +357,8 @@
 
 			$send_email_result = $mail->send();
 
+			$mail->smtpClose();
+
 			if (!$send_email_result)
 			{
 				return "An error occurred while sending the email: ".$mail->ErrorInfo;

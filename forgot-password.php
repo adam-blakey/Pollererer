@@ -20,13 +20,14 @@
         }
       }
 
-      function sendNewPassword()
+      async function sendNewPassword()
       {
         document.getElementById("send-new-password-button").innerHTML = "Checking details...";
 
         var xhttp = new XMLHttpRequest();
 
         xhttp.open("POST", "./api/v1/send_new_password.php", true);
+        xhttp.timeout = 10000;
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
         var emailField = document.getElementById("emailField").value;
@@ -49,6 +50,11 @@
               document.getElementById("send-new-password-error").innerHTML = "Error message: " + JSON_response.error_message;
             }
           }
+        }
+
+        xhttp.ontimeout = function() {
+          document.getElementById("send-new-password-button").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="5" width="18" height="14" rx="2" /><polyline points="3 7 12 13 21 7" /></svg>Send me new password';
+          document.getElementById("send-new-password-error").innerHTML = "Error message: " + "Request to API timed out.";
         }
       }
     </script>
