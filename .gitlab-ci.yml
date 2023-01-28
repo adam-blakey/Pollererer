@@ -36,16 +36,15 @@ variables:
   MYSQL_ROOT_PASSWORD: mysql_strong_password
 
 # Run our tests
-# If Xdebug was installed you can generate a coverage report and see code coverage metrics.
-test:
+setup:
+  stage: build
   script:
-    - php --ini
-    - ls
-    - pwd
     - cd /builds/adam.blakey/Pollererer
-    - ls
-    - ls ./test/
     - cp ./test/sample_config.php ./config.php
     - nohup php -S localhost:8080 -t /builds/adam.blakey/Pollererer/ > phpd.log 2>&1 &
-    - wget http://localhost:8080/test/database_load.php
+    - php ./test/database_load.php
+
+test1:
+  stage: test
+  script:
     - php ./test/sample_test.php
