@@ -50,3 +50,9 @@ test1:
   needs: ["setup"]
   script:
     - php ./test/sample_test.php
+
+test2:
+  stage: test
+  needs: ["setup"]
+  script:
+    - php ./test/sample_test.php
