@@ -43,6 +43,7 @@ setup:
     - cd /builds/adam.blakey/Pollererer
     - cp ./test/sample_config.php ./config.php
     - nohup php -S localhost:8080 -t /builds/adam.blakey/Pollererer/ > phpd.log 2>&1 &
+    - ls -al ./includes/
     - php ./test/database_load.php
 
 test1:
