@@ -605,7 +605,7 @@
 					{
 						$mail->addAddress($address);
 					}
-					$mail->addCC("nsworep@nsw.org.uk");
+					$mail->addCC($config["admin_email"]);
 
 					if (count($config["email_pdf"]) >= 1)
 					{
