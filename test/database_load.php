@@ -1,4 +1,4 @@
-<?php require($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php"); ?>
+<?php require(getenv('PWD')."/includes/db_connect.php"); ?>
 
 <?php
 $db_connection = db_connect();
