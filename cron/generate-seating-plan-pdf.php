@@ -164,7 +164,7 @@
 		$pdf->SetTitle('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
 		$pdf->SetSubject('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
 
-		$seats_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `first_name`, `last_name`, `instrument`, `row`, `seat` FROM `members` INNER JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID`='".$ensemble_ID."' ORDER BY `row`, `seat` ASC");
+		$seats_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `first_name`, `last_name`, `instrument`, `row`, `seat` FROM `members` INNER JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID`='".$ensemble_ID."' AND `members`.`deleted`='0' ORDER BY `row`, `seat` ASC");
 
 		$names = [[]];
 		$instruments = [[]];
