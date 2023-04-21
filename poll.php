@@ -116,7 +116,9 @@
             for (var i=0; i<updateAttendances.length; i++)
             {
               updateAttendances[i].classList.remove("disabled");
-            }        
+            }
+            document.getElementById('updateAttendanceOnScreen').style.visibility = "visible";
+            document.getElementById('updateAttendanceOnScreen').style.opacity    = 0.9;
           }
 
           function viewEditHistory(member_ID, ensemble_ID, term_ID)
@@ -364,8 +366,7 @@
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
-                <div class="row row-cards mb-3">              
-                  <!--<div class="col-12">-->
+                <!-- <div class="row row-cards mb-3">              
                   <div class="col-md-3 col-lg-3">
                     <div class="card mb-3 bg-blue text-white">
                       <div class="card-stamp">
@@ -409,7 +410,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-12">
                     <div class="card">
                       <div class="card-header">
@@ -504,7 +505,15 @@
                           $term_dates = array();
                           while ($result = $term_dates_query->fetch_array())
                           {
+                            // TODO: REMOVE ME
+                            // if ($ensemble_ID == 2 and $result[2] == 42)
+                            // {
+
+                            // }
+                            // else
+                            // {
                             $term_dates[] = $result;
+                            // }
                           }
 
                           $no_term_dates = count($term_dates);
@@ -919,6 +928,25 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="updateAttendanceOnScreen">
+          <div class="card mb-3 bg-blue text-white">
+            <div class="card-stamp">
+              <div class="card-stamp-icon bg-white text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+              </div>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Don't forget to update!</h3>
+            </div>
+            <div class="card-body border-bottom py-3">
+              <p>
+                <a class="updateAttendance btn btn-white text-primary ms-auto disabled my-2" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                <a class="btn text-muted my-2" onclick="location.reload()">Reset</a>
+              </p>
             </div>
           </div>
         </div>
