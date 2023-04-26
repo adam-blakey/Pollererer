@@ -24,12 +24,13 @@
 
 				foreach ($term_dates_data as $data)
 				{
-					$id 	      = strip_tags($data["id"]);
-					$date       = strip_tags($data["date"]);
-					$start_time = strip_tags($data["start-time"]);
-					$end_time   = strip_tags($data["end-time"]);
-					$featured   = strip_tags($data["featured"]);
-					$deleted    = strip_tags($data["hidden"]);
+					$id 	       = strip_tags($data["id"]);
+					$date        = strip_tags($data["date"]);
+					$start_time  = strip_tags($data["start-time"]);
+					$end_time    = strip_tags($data["end-time"]);
+					$setup_group = strip_tags($data["setup-group"]);
+					$featured    = strip_tags($data["featured"]);
+					$deleted     = strip_tags($data["hidden"]);
 
 					if ($deleted == -1)
 					{
@@ -45,18 +46,18 @@
 					// A new ID and hasn't already been just inserted.
 					if (substr($id, 0, 3) == "new")
 					{
-						$term_dates_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`) VALUES ('".$term_ID."', '".$start_datetime."', '".$end_datetime."', '".$featured."', '".$deleted."')");
+						$term_dates_query = $db_connection->query("INSERT INTO `term_dates` (`term_ID`, `datetime`, `datetime_end`, `setup_group`, `is_featured`, `deleted`) VALUES ('".$term_ID."', '".$start_datetime."', '".$end_datetime."', '".$setup_group."', '".$featured."', '".$deleted."')");
 					}
 					// Existing record; will update.
 					else
 					{
-						$term_dates_query = $db_connection->query("UPDATE `term_dates` SET `datetime`='".$start_datetime."', `datetime_end`='".$end_datetime."', `is_featured`='".$featured."', `deleted`='".$deleted."' WHERE `ID`='".$id."'");
+						$term_dates_query = $db_connection->query("UPDATE `term_dates` SET `datetime`='".$start_datetime."', `datetime_end`='".$end_datetime."', `setup_group`='".$setup_group."', `is_featured`='".$featured."', `deleted`='".$deleted."' WHERE `ID`='".$id."'");
 					}
 
 					if (!$term_dates_query)
 					{
 						$JSON_response->status        = "error";
-						$JSON_response->error_message = "failed to insert into database after ".$total_successfully_inserted." successful insertions, failed on term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
+						$JSON_response->error_message = "failed to insert into database after ".$total_successfully_inserted." successful insertions, failed on term_ID=".$term_ID.", start_datetime=".$start_datetime.", end_datetime=".$end_datetime.", setup_group=".$setup_group.", featured=".$featured.", deleted=".$deleted."; ".$db_connection->error;
 
 						break;
 					}

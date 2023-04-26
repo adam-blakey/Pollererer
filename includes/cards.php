@@ -770,7 +770,7 @@ function output_term_dates($term_id, $max_height = 30)
     </div>
     <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
       <?php
-      $term_dates_query = $db_connection->prepare("SELECT `ID`, `datetime`, `datetime_end`, `is_featured`, `deleted` FROM `term_dates` WHERE `term_ID`=? ORDER BY `datetime` ASC");
+      $term_dates_query = $db_connection->prepare("SELECT `ID`, `datetime`, `datetime_end`, `setup_group`, `is_featured`, `deleted` FROM `term_dates` WHERE `term_ID`=? ORDER BY `datetime` ASC");
       $term_dates_query->bind_param("s", $term_id);
       $term_dates_query->execute();
 
@@ -789,6 +789,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
+                <th><button class="table-sort" data-sort="sort-setup">Setup group</button></th>
                 <th>Duplicate</th>
                 <th>Permanently delete</th>
               </tr>
@@ -821,6 +822,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><button class="table-sort" data-sort="sort-setup-group">Setup group</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
                 <th>Duplicate</th>
@@ -835,18 +837,20 @@ function output_term_dates($term_id, $max_height = 30)
 
               while ($term_date = $term_dates_result->fetch_assoc()) {
 
-                $id         = $term_date['ID'];
-                $date       = date("Y-m-d", $term_date['datetime']);
-                $start_time = date("H:i", $term_date['datetime']);
-                $end_time   = date("H:i", $term_date['datetime_end']);
-                $featured   = $term_date['is_featured'];
-                $hidden     = $term_date['deleted'];
+                $id          = $term_date['ID'];
+                $date        = date("Y-m-d", $term_date['datetime']);
+                $start_time  = date("H:i", $term_date['datetime']);
+                $end_time    = date("H:i", $term_date['datetime_end']);
+                $featured    = $term_date['is_featured'];
+                $setup_group = $term_date['setup_group'];
+                $hidden      = $term_date['deleted'];
 
-                $data_date       = strtotime(date("Y-m-d", $term_date['datetime']));
-                $data_start_time = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
-                $data_end_time   = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
-                $data_featured   = $term_date['is_featured'];
-                $data_hidden    = $term_date['deleted'];
+                $data_date        = strtotime(date("Y-m-d", $term_date['datetime']));
+                $data_start_time  = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
+                $data_end_time    = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
+                $data_featured    = $term_date['is_featured'];
+                $data_setup_group = $term_date['setup_group'];
+                $data_hidden      = $term_date['deleted'];
 
                 $id_array[] = $id;
 
@@ -872,6 +876,9 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
                     <input type="time" name="end-time" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
+                  </td>
+                  <td class="col-auto sort-setup-group" data-setup-group="<?= $data_setup_group; ?>">
+                    <input type="number" name="setup-group" id="setup-group-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$setup_group;?>" onchange="changedField(this, '<?=$id;?>', 'setup-group')">
                   </td>
                   <td class="col-auto sort-featured" data-featured="<?=$featured;?>">
                     <select name="featured" id="featured-<?=$id;?>" class="form-select" onchange="changedField(this, '<?=$id;?>', 'featured')" style="width: 100px;">
@@ -998,6 +1005,7 @@ function output_term_dates($term_id, $max_height = 30)
           <strong>Date</strong>: <br />
           <strong>Start time</strong>: <br />
           <strong>End time</strong>: <br />
+          <strong>Setup group</strong>: <br />
           <strong>Concert</strong>: <br />
           <strong>Hidden</strong>: <br />
           <strong>Term ID</strong>: <br />
@@ -1069,6 +1077,10 @@ function output_term_dates($term_id, $max_height = 30)
           name: 'sort-end-time'
         },
         {
+          attr: 'data-setup-group',
+          name: 'sort-setup-group'
+        },
+        {
           attr: 'data-featured',
           name: 'sort-featured'
         },
@@ -1102,6 +1114,13 @@ function output_term_dates($term_id, $max_height = 30)
         }
       }
       else if (name == "end-time")
+      {
+        if (!element.parentElement.parentElement.classList.contains('row-modified'))
+        {
+          element.parentElement.parentElement.classList.add('row-modified');
+        }
+      }
+      else if (name == "setup-group")
       {
         if (!element.parentElement.parentElement.classList.contains('row-modified'))
         {
@@ -1170,6 +1189,10 @@ function output_term_dates($term_id, $max_height = 30)
         var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
         element.parentElement.setAttribute("data-" + name, timestamp);
       }
+      else if (name == "setup-group")
+      {
+        element.parentElement.setAttribute("data-" + name, element.value);
+      }
       else if (name == "hidden")
       {
         element.parentElement.parentElement.setAttribute("data-" + name, (element.checked) ? "1" : "0");
@@ -1208,6 +1231,9 @@ function output_term_dates($term_id, $max_height = 30)
         rowInsert += '  </td>';
         rowInsert += '  <td class="col-auto sort-end-time" data-end-time="0">';
         rowInsert += '    <input type="time" name="end-time" id="end-time-new'+newCounter+'" class="form-control" autocomplete="off" value="" onchange="changedField(this, \'new'+newCounter+'\', \'end-time\')">';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-setup-group" data-setup-group="0">';
+        rowInsert += '    <input type="number" name="setup-group" id="setup-group-new'+newCounter+'" class="form-control" autocomplete="off" value="0" onchange="changedField(this, new'+newCounter+', \'setup-group\')">';
         rowInsert += '  </td>';
         rowInsert += '  <td class="col-auto sort-featured" data-featured="0">';
         rowInsert += '    <select name="featured" id="featured-new'+newCounter+'" class="form-select" onchange="changedField(this, new'+newCounter+', featured)" style="width: 100px;">';
@@ -1298,6 +1324,10 @@ function output_term_dates($term_id, $max_height = 30)
               name: 'sort-end-time'
             },
             {
+              attr: 'data-setup-group',
+              name: 'sort-setup-group'
+            },
+            {
               attr: 'data-featured',
               name: 'sort-featured'
             },
@@ -1331,10 +1361,11 @@ function output_term_dates($term_id, $max_height = 30)
         var dateCell      = lastRow.cells[1];
         var startTimeCell = lastRow.cells[2];
         var endTimeCell   = lastRow.cells[3];
-        var featuredCell  = lastRow.cells[4];
-        var hiddenCell    = lastRow.cells[5];
-        var duplicateCell = lastRow.cells[6];
-        var deleteCell    = lastRow.cells[7];
+        var setupCell     = lastRow.cells[4];
+        var featuredCell  = lastRow.cells[5];
+        var hiddenCell    = lastRow.cells[6];
+        var duplicateCell = lastRow.cells[7];
+        var deleteCell    = lastRow.cells[8];
 
         // // Update IDs.
         // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1380,6 +1411,13 @@ function output_term_dates($term_id, $max_height = 30)
         endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
         endTimeCell.getElementsByTagName('input')[0].value    = "";
         endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+
+        // Update setup group cell.
+        setupCell.setAttribute("data-setup-group", "0");
+        setupCell.getElementsByTagName('input')[0].id       = "setup-group-new" + newCounter;
+        setupCell.getElementsByTagName('input')[0].name     = "setup-group";
+        setupCell.getElementsByTagName('input')[0].value    = "0";
+        setupCell.getElementsByTagName('input')[0].onchange = function() { changedField(setupCell.getElementsByTagName('input')[0], "new" + newCounter, "setup-group"); };
 
         // Update featured cell.
         featuredCell.setAttribute("data-featured", "0");
@@ -1456,10 +1494,11 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[4];
-      var hiddenCell    = lastRow.cells[5];
-      var duplicateCell = lastRow.cells[6];
-      var deleteCell    = lastRow.cells[7];
+      var setupCell     = lastRow.cells[4];
+      var featuredCell  = lastRow.cells[5];
+      var hiddenCell    = lastRow.cells[6];
+      var duplicateCell = lastRow.cells[7];
+      var deleteCell    = lastRow.cells[8];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1503,6 +1542,13 @@ function output_term_dates($term_id, $max_height = 30)
       endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
       endTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('end-time-' + duplicateId).value;
       endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+
+      // Update setup group cell.
+      setupCell.setAttribute("data-setup-group", document.getElementById('setup-group-' + duplicateId).parentElement.getAttribute("data-setup-group"));
+      setupCell.getElementsByTagName('input')[0].id       = "setup-group-new" + newCounter;
+      setupCell.getElementsByTagName('input')[0].name     = "setup-group";
+      setupCell.getElementsByTagName('input')[0].value    = document.getElementById('setup-group-' + duplicateId).value;
+      setupCell.getElementsByTagName('input')[0].onchange = function() { changedField(setupCell.getElementsByTagName('input')[0], "new" + newCounter, "setup-group"); };
 
       // Update featured cell.
       featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.getAttribute("data-featured"));
@@ -1668,6 +1714,7 @@ function output_term_dates($term_id, $max_height = 30)
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>ID</strong>: "                                         + JSON_response.id           + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Start datetime</strong>: "                             + start_datetime_formatted   + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>End datetime</strong>: "                               + end_datetime_formatted     + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Setup group</strong>: "                                + JSON_response.setup_group  + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong><?=ucfirst($config["taxonomy_concert"]);?></strong>: " + JSON_response.is_featured  + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Hidden</strong>: "                                     + JSON_response.deleted      + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Term ID</strong>: "                                    + JSON_response.term_id      + "<br />";
