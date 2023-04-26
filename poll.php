@@ -495,11 +495,11 @@
                         <?php
                           if ($config["hide_past_dates"])
                           {
-                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 AND `datetime_end` >= UNIX_TIMESTAMP() ORDER BY `datetime` ASC");
+                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured`, `setup_group` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 AND `datetime_end` >= UNIX_TIMESTAMP() ORDER BY `datetime` ASC");
                           }
                           else
                           {
-                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
+                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured`, `setup_group` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
                           }
 
                           $term_dates = array();
@@ -627,6 +627,14 @@
                                                 <?=$strike_through_start;?>
                                                 <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?><!--<br /><span style="word-wrap: normal; white-space: pre-wrap">(<?=$term_date[4];?>)</span>-->
                                                 <?=$strike_through_end;?>
+                                                <?php
+                                                  if ($term_date[4]>0)
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-blue badge-notification badge-pill"><?= $term_date[4]; ?></span>
+                                                    <?php
+                                                  }
+                                                ?>
                                               </th>
                                               <?php
                                             }
