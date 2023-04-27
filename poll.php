@@ -531,7 +531,7 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
-                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
+                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID`, `setup_group` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
 
                               if ($members->num_rows == 0)
                               {
@@ -627,11 +627,12 @@
                                                 <?=$strike_through_start;?>
                                                 <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?><!--<br /><span style="word-wrap: normal; white-space: pre-wrap">(<?=$term_date[4];?>)</span>-->
                                                 <?=$strike_through_end;?>
+                                                <br />
                                                 <?php
                                                   if ($term_date[4]>0)
                                                   {
                                                     ?>
-                                                      <span class="badge bg-blue badge-notification badge-pill"><?= $term_date[4]; ?></span>
+                                                      <span class="badge bg-blue badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".$term_date[4]."."; ?>"><?= $term_date[4]; ?></span>
                                                     <?php
                                                   }
                                                 ?>
@@ -661,11 +662,21 @@
                                         <div class="d-flex py-1 align-items-center">
                                           <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                           <div class="flex-fill">
-                                            <?php if ($config["hide_instrument"]) { ?>
-                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?></div>
-                                            <?php } else { ?>
-                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
-                                            <?php } ?>
+                                            <div class="font-weight-medium">
+                                              <?php if ($config["hide_instrument"]) { ?>
+                                                <?=$member["first_name"]." ".$member["last_name"];?>
+                                              <?php } else { ?>
+                                                <?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span>
+                                              <?php } ?>
+                                              <?php
+                                                if ($member["setup_group"]>0)
+                                                {
+                                                  ?>
+                                                    <span class="badge bg-blue badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".$member["setup_group"]."."; ?>"><?= $member["setup_group"]; ?></span>
+                                                  <?php
+                                                }
+                                              ?>
+                                            </div>
                                             <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>, <?=$ensemble_ID;?>, <?=$term_ID;?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
                                               <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
@@ -727,6 +738,20 @@
                                                   <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
                                                   <span class="form-colorcheckbox-color "></span>
                                                 </label>
+                                                <?php
+                                                  if ($term_date[4] > 0 && $member["setup_group"] == $term_date[4])
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-blue" style="z-index:1000; position: relative; right: 2px; bottom: 24px;"></span>
+                                                    <?php
+                                                  }
+                                                  else
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-blue" style="visibility: hidden;"></span>
+                                                    <?php
+                                                  }
+                                                ?>
                                               </div>
                                             </td>
                                           <?php
