@@ -15,7 +15,7 @@
   $attendance_select_direction = isset($_GET["sortdir"])?$_GET["sortdir"]:"";
   $theme                       = isset($_GET["theme"])?$_GET["theme"]:"";
 
-  if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument")))
+  if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument", "setup_group")))
   {
     $attendance_select_sortby = "last_name";
   }
@@ -46,6 +46,31 @@
     $ensemble_ID = (isset($_GET["ensemble_ID"]))?intval($_GET["ensemble_ID"]):0;
     $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
   }
+?>
+
+<?php
+    // Setup group colours.
+    function setup_group_colour($group_number)
+    {
+        switch($group_number)
+        {
+            case 1:
+                return "azure";
+                break;
+            case 2:
+                return "teal";
+                break;
+            case 3:
+                return "orange";
+                break;
+            case 4:
+                return "purple";
+                break;
+            default:
+                return "blue";
+            
+        }
+    }
 ?>
 
 <?php
@@ -447,11 +472,11 @@
                                   <?php
                                     if ($config["hide_instrument"])
                                     {
-                                      $options = array("first_name" => "First name", "last_name" => "Last name");
+                                      $options = array("first_name" => "First name", "last_name" => "Last name", "setup_group" => "Setup group");
                                     }
                                     else
                                     {
-                                      $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                      $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument", "setup_group" => "Setup group");
                                     }
 
                                     foreach ($options as $value => $option)
@@ -571,6 +596,9 @@
                                     case 'instrument':
                                       $current_sort_initial = $member["instrument"];
                                       break;
+                                    case 'setup_group':
+                                      $current_sort_initial = "Setup group ".$member["setup_group"];
+                                      break;
                                     
                                     default:
                                       $current_sort_initial = '';
@@ -585,7 +613,7 @@
                                       <thead>
                                         <tr>
                                           <?php 
-                                            $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                            $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument", "setup_group" => "Setup group");
                                           ?>
                                           <th class="sticky-top w-1">Members (by <?=$options[$attendance_select_sortby];?>)
                                             <?php
@@ -632,7 +660,7 @@
                                                   if ($term_date[4]>0)
                                                   {
                                                     ?>
-                                                      <span class="badge bg-blue badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".$term_date[4]."."; ?>"><?= $term_date[4]; ?></span>
+                                                      <span class="badge bg-<?= setup_group_colour($term_date[4]); ?> badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".$term_date[4]."."; ?>"><?= $term_date[4]; ?></span>
                                                     <?php
                                                   }
                                                 ?>
@@ -672,7 +700,7 @@
                                                 if ($member["setup_group"]>0)
                                                 {
                                                   ?>
-                                                    <span class="badge bg-blue badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".$member["setup_group"]."."; ?>"><?= $member["setup_group"]; ?></span>
+                                                    <span class="badge bg-<?= setup_group_colour($member["setup_group"]); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".$member["setup_group"]."."; ?>"><?= $member["setup_group"]; ?></span>
                                                   <?php
                                                 }
                                               ?>
@@ -717,20 +745,35 @@
                                           // }
 
                                           //($attendance==NULL)?$attendance="1":$attendance=$attendance;
-                                          ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
-                                          ($attendance=="1")?$checked="checked":$checked="";
+                                          
+                                          if ($config["assume_attending"])
+                                          {
+                                            $indeterminate = "";
+                                            (($attendance=="1") || ($attendance==NULL))?$checked="checked":$checked="";
+
+                                            if (($attendance=="1") || ($attendance==NULL))
+                                            {
+                                              $term_date_counter[strval($term_date[2])]++;
+                                            }
+                                          }
+                                          else
+                                          {
+                                            ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
+                                            ($attendance=="1")?$checked="checked":$checked="";
+
+                                            if ($attendance=="1")
+                                            {
+                                              $term_date_counter[strval($term_date[2])]++;
+                                            }
+                                            elseif ($attendance == NULL)
+                                            {
+                                              $term_date_counter_intederminate[strval($term_date[2])]++; 
+                                            }
+                                          }
+
                                           ($term_date[1]<time())?$disabled="disabled":$disabled="";
                                           ($term_date[3])?$is_featured="bg-blue-25":$is_featured="";
-
-                                          if ($attendance=="1")
-                                          {
-                                            $term_date_counter[strval($term_date[2])]++;
-                                          }
-                                          elseif ($attendance == NULL)
-                                          {
-                                            $term_date_counter_intederminate[strval($term_date[2])]++; 
-                                          }
-
+                                          
                                           ?>
                                             <td class="text-center <?=$is_featured;?>">
                                               <div class="col-auto">
@@ -742,7 +785,7 @@
                                                   if ($term_date[4] > 0 && $member["setup_group"] == $term_date[4])
                                                   {
                                                     ?>
-                                                      <span class="badge bg-blue" style="z-index:1000; position: relative; right: 2px; bottom: 24px;"></span>
+                                                      <span class="badge bg-<?= setup_group_colour($member["setup_group"]) ;?>" style="z-index:1000; position: relative; right: 2px; bottom: 24px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000;"></span>
                                                     <?php
                                                   }
                                                   else

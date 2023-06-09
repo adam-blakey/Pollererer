@@ -32,6 +32,8 @@
 
 		    // Table
 		    public function SeatingTable($names, $instruments, $attendance) {
+						require($_SERVER['DOCUMENT_ROOT']."/config.php");
+
 		        // Colors, line width and bold font
 		        $this->SetFillColor(192, 30, 67);
 		        $this->SetTextColor(255);
@@ -96,7 +98,14 @@
 			            	}	
 			            	else
 			            	{
-			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #626976;">'.$column[$j].' ??</span>', $border, 0, 0, 1, 'L');
+											if ($config["assume_attending"])
+											{
+												$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #74b816;">'.$column[$j].'</span>', $border, 0, 0, 1, 'L');
+											}
+											else
+											{
+												$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #626976;">'.$column[$j].' ??</span>', $border, 0, 0, 1, 'L');
+											}
 			            	}
 			            	$this->Cell($height,  $height, '', 'LRTB',   0, 'L');
 			            	$this->Cell($spacing, $height, '', '',       0, 'L');

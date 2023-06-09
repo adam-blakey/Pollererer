@@ -56,7 +56,7 @@
 
 	$db_connection = db_connect();
 
-	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 60*60*0)." AND `datetime` <= ".($time->format('U') + 60*60*1)." AND ((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))");
+	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 90*60*0)." AND `datetime` <= ".($time->format('U') + 90*60*1)." AND ((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))");
 
 	while($rehearsal = $upcoming_rehearsals->fetch_assoc())
 	{
@@ -134,7 +134,14 @@
 						}
 						else
 						{
-							$no_response_list[$new_status->instrument][] = $new_status;
+							if ($config["assume_attending"])
+							{
+								$attendance_list[$new_status->instrument][] = $new_status;
+							}
+							else
+							{
+								$no_response_list[$new_status->instrument][] = $new_status;
+							}
 						}
 					}
 				}
@@ -372,7 +379,14 @@
 								$message .= '<tr>';
 									$message .= '<td align="center" valign="top" width="640">';
 							$message .= '<![endif]-->';
+								if ($config["assume_attending"])
+								{
+									$message .= '<span class="preheader" style="font-size: 0; display: none; max-height: 0; mso-hide: all; line-height: 0; color: transparent; height: 0; max-width: 0; opacity: 0; overflow: hidden; visibility: hidden; width: 0; padding: 0;">There are '.$attendance_count.' people attending, and '.$absence_count.' people confirmed absent.</span>';
+								}
+								else
+								{
 									$message .= '<span class="preheader" style="font-size: 0; display: none; max-height: 0; mso-hide: all; line-height: 0; color: transparent; height: 0; max-width: 0; opacity: 0; overflow: hidden; visibility: hidden; width: 0; padding: 0;">There are '.$attendance_count.' people attending, '.$no_response_count.' people with no response, and '.$absence_count.' people confirmed absent.</span>';
+								}
 									$message .= '<table class="wrap" cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; max-width: 640px; text-align: left;">';
 										$message .= '<tr>';
 											$message .= '<td class="p-sm" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding: 8px;">';
@@ -500,27 +514,30 @@
 																					$message .= '</table>';
 																				}
 
-																			$message .= '<h2 class="mt-xl border-bottom" style="font-weight: 300; font-size: 24px; line-height: 130%; border-bottom-width: 1px; border-bottom-color: #f0f0f0; border-bottom-style: solid; margin: 48px 0 .5em;">No responses</h2>';
-
-																				foreach ($no_response_list as $instrument => $status_list)
+																				if (!$config["assume_attending"])
 																				{
-																					$message .= '<h5 class="mt-xl" style="font-weight: 600; font-size: 14px; margin: 48px 0 .5em;">'.$instrument.'</h5>';
-																						$message .= '<table class="list" cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
+																					$message .= '<h2 class="mt-xl border-bottom" style="font-weight: 300; font-size: 24px; line-height: 130%; border-bottom-width: 1px; border-bottom-color: #f0f0f0; border-bottom-style: solid; margin: 48px 0 .5em;">No responses</h2>';
 
-																						foreach ($status_list as $status)
-																						{
-																							$message .= '<tr class="list-item">';
-																								$message .= '<td class="pr-md w-1p" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; width: 1%; padding-right: 16px;">';
-																									$message .= '<img src="'.$config["base_url"].'/emails/example/assets/icons-gray-slash.png" class=" va-middle" width="18" height="18" alt="slash" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
-																								$message .= '</td>';
-																								$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px;">';
-																									$message .= '<a href="https://tabler.io/emails?utm_source=demo" class="text-default" style="color: #444; text-decoration: none;">'.$status->first_name." ".$status->last_name.'</a>';
-																								$message .= '</td>';
-																								$message .= '<td class="font-sm text-muted w-auto text-right" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; color: #9eb0b7; width: auto; font-size: 13px;" align="right">'.findTimeAgo($status->edit_datetime).'</td>';
-																							$message .= '</tr>';
-																						}																
+																					foreach ($no_response_list as $instrument => $status_list)
+																					{
+																						$message .= '<h5 class="mt-xl" style="font-weight: 600; font-size: 14px; margin: 48px 0 .5em;">'.$instrument.'</h5>';
+																							$message .= '<table class="list" cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
 
-																					$message .= '</table>';
+																							foreach ($status_list as $status)
+																							{
+																								$message .= '<tr class="list-item">';
+																									$message .= '<td class="pr-md w-1p" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; width: 1%; padding-right: 16px;">';
+																										$message .= '<img src="'.$config["base_url"].'/emails/example/assets/icons-gray-slash.png" class=" va-middle" width="18" height="18" alt="slash" style="line-height: 100%; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />';
+																									$message .= '</td>';
+																									$message .= '<td style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px;">';
+																										$message .= '<a href="https://tabler.io/emails?utm_source=demo" class="text-default" style="color: #444; text-decoration: none;">'.$status->first_name." ".$status->last_name.'</a>';
+																									$message .= '</td>';
+																									$message .= '<td class="font-sm text-muted w-auto text-right" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 0; padding-bottom: 8px; color: #9eb0b7; width: auto; font-size: 13px;" align="right">'.findTimeAgo($status->edit_datetime).'</td>';
+																								$message .= '</tr>';
+																							}																
+
+																						$message .= '</table>';
+																					}
 																				}
 
 																			$message .= '<h2 class="mt-xl border-bottom" style="font-weight: 300; font-size: 24px; line-height: 130%; border-bottom-width: 1px; border-bottom-color: #f0f0f0; border-bottom-style: solid; margin: 48px 0 .5em;">Confirmed absences</h2>';
