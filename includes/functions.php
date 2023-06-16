@@ -498,4 +498,11 @@ function timestamp_range($timestamp_start, $timestamp_end)
   }
 }
 
+function get_pollererer_version()
+{
+  $version = file_get_contents($_SERVER['DOCUMENT_ROOT']."/.version");
+
+  return $version;
+}
+
 ?>
