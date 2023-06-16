@@ -452,24 +452,27 @@
 																						$message .= '</table>';
 																					$message .= '</td>';
 																					$message .= '<td class="col-spacer" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; width: 24px;" valign="top"></td>';
-																					$message .= '<td class="col text-center va-top" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;" align="center" valign="top">';
-																						$message .= '<table cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
-																							$message .= '<tr>';
-																								$message .= '<td class="text-left font-sm pb-xs" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 13px; padding-bottom: 4px;" align="left">No response</td>';
-																								$message .= '<td class="text-right font-sm pb-xs text-muted" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; color: #9eb0b7; font-size: 13px; padding-bottom: 4px;" align="right">'.$no_response_count.'</td>';
-																							$message .= '</tr>';
-																							$message .= '<tr>';
-																								$message .= '<td colspan="2" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;">';
-																									$message .= '<table class="chart" cellpadding="0" cellspacing="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; table-layout: fixed;">';
-																										$message .= '<tr>';
-																											$message .= '<td width="'.($no_response_count/$total_count*100)."%".'" class="chart-percentage bg-orange" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; padding-left: 5px; border-radius: 2px 0 0 2px; color: #fff;" bgcolor="#fd9644">'.round($no_response_count/$total_count*100, 1)."%".'</td>';
-																											$message .= '<td width="'.((1 - $no_response_count/$total_count)*100)."%".'" class="chart-percentage bg-orange-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fff5ec"></td>';
-																										$message .= '</tr>';
-																									$message .= '</table>';
-																								$message .= '</td>';
-																							$message .= '</tr>';
-																						$message .= '</table>';
-																					$message .= '</td>';
+																					if (!$config["assume_attending"])
+																					{
+																						$message .= '<td class="col text-center va-top" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;" align="center" valign="top">';
+																							$message .= '<table cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
+																								$message .= '<tr>';
+																									$message .= '<td class="text-left font-sm pb-xs" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 13px; padding-bottom: 4px;" align="left">No response</td>';
+																									$message .= '<td class="text-right font-sm pb-xs text-muted" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; color: #9eb0b7; font-size: 13px; padding-bottom: 4px;" align="right">'.$no_response_count.'</td>';
+																								$message .= '</tr>';
+																								$message .= '<tr>';
+																									$message .= '<td colspan="2" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;">';
+																										$message .= '<table class="chart" cellpadding="0" cellspacing="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; table-layout: fixed;">';
+																											$message .= '<tr>';
+																												$message .= '<td width="'.($no_response_count/$total_count*100)."%".'" class="chart-percentage bg-orange" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 12px; padding-left: 5px; border-radius: 2px 0 0 2px; color: #fff;" bgcolor="#fd9644">'.round($no_response_count/$total_count*100, 1)."%".'</td>';
+																												$message .= '<td width="'.((1 - $no_response_count/$total_count)*100)."%".'" class="chart-percentage bg-orange-lightest" style="height: 6px; font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 0; border-radius: 0 2px 2px 0;" bgcolor="#fff5ec"></td>';
+																											$message .= '</tr>';
+																										$message .= '</table>';
+																									$message .= '</td>';
+																								$message .= '</tr>';
+																							$message .= '</table>';
+																						$message .= '</td>';
+																					}
 																					$message .= '<td class="col-spacer" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; width: 24px;" valign="top"></td>';
 																					$message .= '<td class="col text-center va-top" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;" align="center" valign="top">';
 																						$message .= '<table cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%;">';
