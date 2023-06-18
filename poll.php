@@ -813,9 +813,18 @@
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
-                                    ?>
-                                      <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
-                                    <?php
+                                    if ($config["assume_attending"])
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong></td>
+                                      <?php
+                                    }
+                                    else
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
+                                      <?php
+                                    }
                                   }
                                 ?>
                               </tr>
@@ -824,9 +833,18 @@
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
-                                    ?>
-                                      <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
-                                    <?php
+                                    if ($config["assume_attending"])
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong></td>
+                                      <?php
+                                    }
+                                    else
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
+                                      <?php
+                                    }
                                   }
                                 ?>
                               </tr>

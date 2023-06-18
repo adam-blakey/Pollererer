@@ -53,10 +53,20 @@
 		        	$row_attendance = 0;
 		        	for ($i=0; $i < count($names); ++$i)
 		        	{
-		        		if ($attendance[$i][$j] == "1")
+								if ($config["assume_attending"])
+								{
+									if ($attendance[$i][$j] == "1" or $attendance[$i][$j] == NULL)
+									{
+										$row_attendance++;
+									}
+								}
+								else
 		        		{
-		        			$row_attendance++;
-		        		}
+									if ($attendance[$i][$j] == "1")
+									{
+										$row_attendance++;
+									}
+								}
 		        	}
 
 		            $this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($j+1), 1,  0, 'C', 1);
