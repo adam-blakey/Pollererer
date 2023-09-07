@@ -233,21 +233,33 @@ function login_valid()
 
 function login_restricted($user_level_required)
 {
+  if ($user_level_required < 0)
+  {
+    $ensemble_id = -$user_level_required;
+  }
+  else
+  {
+    $ensemble_id = 0;
+  }
+
   require_once($_SERVER['DOCUMENT_ROOT']."/includes/db_connect.php");
 
   $db_connection = db_connect();
 
   if (isset($_COOKIE['session_ID']))
   {
-    $login_query = $db_connection->query("SELECT `members`.`user_level` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
+    $login_query = $db_connection->query("SELECT `members`.`user_level`, `members`.`ID` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
 
     if ($login_query->num_rows == 0)
     {
       $current_user_level = 0;
+      $current_user_ID = 0;
     }
     else
     {
-      $current_user_level = $login_query->fetch_assoc()["user_level"];
+      $result = $login_query->fetch_assoc();
+      $current_user_level = $result["user_level"];
+      $current_user_ID = $result["ID"];
     }
   }
   else
@@ -259,9 +271,22 @@ function login_restricted($user_level_required)
   {
     return true;
   }
-  else if (login_valid() && $current_user_level > 0 && $current_user_level > $user_level_required)
+  else if (login_valid() && $current_user_level > 0 && $user_level_required > 0 && $current_user_level > $user_level_required)
   {
     return true;
+  }
+  else if (login_valid() && $current_user_level == 2)
+  {
+    $membership_query = $db_connection->query("SELECT `ID` FROM `members-ensembles` WHERE `member_ID`='".$current_user_ID."' AND `ensemble_ID`='".$ensemble_id."' LIMIT 1");
+
+    if ($membership_query->num_rows == 1)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
   else
   {

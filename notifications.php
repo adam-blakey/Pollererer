@@ -3,7 +3,7 @@
 <?php $db_connection = db_connect(); ?>
 
 <?php
-  if (login_valid() and login_restricted(1))
+  if (login_valid() and login_restricted(3))
   {
     ?>
     <!doctype html>
