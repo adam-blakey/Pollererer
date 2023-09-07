@@ -275,7 +275,7 @@ function login_restricted($user_level_required)
   {
     return true;
   }
-  else if (login_valid() && $current_user_level == 2)
+  else if (login_valid() && $current_user_level == 1)
   {
     $membership_query = $db_connection->query("SELECT `ID` FROM `members-ensembles` WHERE `member_ID`='".$current_user_ID."' AND `ensemble_ID`='".$ensemble_id."' LIMIT 1");
 
@@ -287,6 +287,14 @@ function login_restricted($user_level_required)
     {
       return false;
     }
+  }
+  else if (login_valid() && $ensemble_id > 0 && $current_user_level == 2)
+  {
+    return true;
+  }
+  else if (login_valid() && $current_user_level == 3)
+  {
+    return true;
   }
   else
   {
