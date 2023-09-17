@@ -34,10 +34,12 @@
 
 					if ($deleted == -1)
 					{
-						$JSON_response->status        = "error";
-						$JSON_response->error_message = "failed after ".$total_successfully_inserted." successful insertions, you must check the hidden box with term_ID=".$term_ID;
+						// $JSON_response->status        = "error";
+						// $JSON_response->error_message = "failed after ".$total_successfully_inserted." successful insertions, you must check the hidden box with term_ID=".$term_ID;
 
-						break;
+						// break;
+
+						$deleted = 0;
 					}
 
 					$start_datetime = strtotime($date."T".$start_time.":00");

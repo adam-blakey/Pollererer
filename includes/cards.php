@@ -787,9 +787,9 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><button class="table-sort" data-sort="sort-setup">Setup group</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
-                <th><button class="table-sort" data-sort="sort-setup">Setup group</button></th>
                 <th>Duplicate</th>
                 <th>Permanently delete</th>
               </tr>
@@ -797,7 +797,7 @@ function output_term_dates($term_id, $max_height = 30)
             <tbody class="table-tbody">
               <tr>
                 <td></td>
-                <td colspan="7">
+                <td colspan="8">
                   No dates to display.
                 </td>
               </tr>
@@ -1056,6 +1056,8 @@ function output_term_dates($term_id, $max_height = 30)
     }
   ?>
   <script type="text/javascript">
+    form_submitted = false;
+
     list = new List('table-default', {
       sortClass: 'table-sort',
       listClass: 'table-tbody',
@@ -1095,6 +1097,13 @@ function output_term_dates($term_id, $max_height = 30)
 
     fieldsCounter    = 0;
     termDatesCounter = 0;
+
+    window.addEventListener("beforeunload", function(e) {
+      if ((document.querySelector(".updateTermDates:not(.disabled)") != null || newCounter > 0) && form_submitted == false) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
 
     function changedField(element, id, name)
     {
@@ -1284,7 +1293,7 @@ function output_term_dates($term_id, $max_height = 30)
 
         tbody.innerHTML = rowInsert;
 
-        document.getElementById("hidden-new"+newCounter).indeterminate = true;
+        document.getElementById("hidden-new"+newCounter).indeterminate = false;
 
         // Add event listener for the date cell.
         window.Litepicker && (new Litepicker({
@@ -1673,6 +1682,8 @@ function output_term_dates($term_id, $max_height = 30)
 
           document.getElementById("update-term-dates-result-close-button").onclick = function() { window.location.reload(); };
           document.getElementById("update-term-dates-result-button").onclick = function() { window.location.reload(); };
+
+          form_submitted = true;
         }
         else {
           document.getElementById("update-term-dates-result-title").innerHTML = "Oops! An error occured.";
@@ -1707,8 +1718,8 @@ function output_term_dates($term_id, $max_height = 30)
           var start_datetime = new Date(JSON_response.datetime     * 1000);
           var end_datetime   = new Date(JSON_response.datetime_end * 1000);
 
-          var start_datetime_formatted = start_datetime.getFullYear() + "-" + ('0' + start_datetime.getMonth() + 1).substr(-2) + "-" + ('0' + start_datetime.getDate()).substr(-2) + " " + ('0' + start_datetime.getHours()).substr(-2) + ":" + ('0' + start_datetime.getMinutes()).substr(-2)
-          var end_datetime_formatted   = end_datetime.getFullYear()   + "-" + ('0' + end_datetime.getMonth()   + 1).substr(-2) + "-" + ('0' + end_datetime.getDate())  .substr(-2)   + " " + ('0' + end_datetime.getHours()).substr(-2)   + ":" + ('0' + end_datetime.getMinutes()).substr(-2)
+          var start_datetime_formatted = start_datetime.getFullYear() + "-" + (start_datetime.getMonth() + 1) + "-" + ('0' + start_datetime.getDate()).substr(-2) + " " + ('0' + start_datetime.getHours()).substr(-2) + ":" + ('0' + start_datetime.getMinutes()).substr(-2)
+          var end_datetime_formatted   = end_datetime.getFullYear()   + "-" + (end_datetime.getMonth()   + 1) + "-" + ('0' + end_datetime.getDate())  .substr(-2)   + " " + ('0' + end_datetime.getHours()).substr(-2)   + ":" + ('0' + end_datetime.getMinutes()).substr(-2)
 
           document.getElementById("delete-term-date-result-info").innerHTML  = "";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>ID</strong>: "                                         + JSON_response.id           + "<br />";
@@ -1764,7 +1775,7 @@ function output_term_dates($term_id, $max_height = 30)
 
       if (noRows == 0)
       {
-        document.getElementById("table-default").getElementsByTagName("tbody")[0].innerHTML = "<tr><td></td><td colspan=\"7\">No term dates found.</td></tr>";
+        document.getElementById("table-default").getElementsByTagName("tbody")[0].innerHTML = "<tr><td></td><td colspan=\"8\">No term dates found.</td></tr>";
       }
     }
   </script>
