@@ -183,81 +183,223 @@ function output_members($max_height = 30)
       </div>
     </div>
 
-    <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
-      <?php
-      //$members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
-      $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image` FROM `members` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
+    <div class="container-xl">
+      <ol id="sortable-users" class="row row-cards">
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">PK</span>
+              <h3 class="m-0 mb-1"><a href="#">Paweł Kuna</a></h3>
+              <div class="text-secondary">UI Designer</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-purple-lt">Owner</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">JL</span>
+              <h3 class="m-0 mb-1"><a href="#">Jeffie Lewzey</a></h3>
+              <div class="text-secondary">Chemical Engineer</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">MH</span>
+              <h3 class="m-0 mb-1"><a href="#">Mallory Hulme</a></h3>
+              <div class="text-secondary">Geologist IV</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">DS</span>
+              <h3 class="m-0 mb-1"><a href="#">Dunn Slane</a></h3>
+              <div class="text-secondary">Research Nurse</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">AM</span>
+              <h3 class="m-0 mb-1"><a href="#">Avivah Mugleston</a></h3>
+              <div class="text-secondary">Actuary</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+              </div>
+            </div>
+          </div>
+        </li>
+      </ol>
+      <div class="d-flex mt-4">
+        <ul class="pagination ms-auto">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+              <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
+              prev
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">4</a></li>
+          <li class="page-item"><a class="page-link" href="#">5</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">
+              next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-      if ($members->num_rows == 0) {
-      ?>
-        <div class="list-group-item">
-          <div class="row">
-            <div class="col">
-              <div class="text-body">No members to display.</div>
+    <script src="./dist/libs/drag-drop-touch/DragDropTouch.js"></script>
+    <script>
+      //-----------------------------------------------------------------------------
+      // demonstrate standard HTML5 drag/drop.
+      // this is based on the html5rocks tutorial published here:
+      // http://www.html5rocks.com/en/tutorials/dnd/basics/
+
+      // hook up event handlers
+      let cols = document.querySelectorAll('#sortable-users .sortable-user');
+      console.log(cols);
+      [].forEach.call(cols, function (col) {
+          col.addEventListener('dragstart', handleDragStart, false);
+          col.addEventListener('dragenter', handleDragEnter, false)
+          col.addEventListener('dragover', handleDragOver, false);
+          col.addEventListener('dragleave', handleDragLeave, false);
+          col.addEventListener('drop', handleDrop, false);
+          col.addEventListener('dragend', handleDragEnd, false);
+      });
+      updateListNumber();
+
+      let dragSrcEl = null;
+      function handleDragStart(e) {
+          if (e.target.className.indexOf('sortable-user') > -1) {
+              dragSrcEl = e.target;
+              dragSrcEl.style.opacity = '0.4';
+              let dt = e.dataTransfer;
+              dt.effectAllowed = 'move';
+              dt.setData('text', dragSrcEl.innerHTML);
+
+              // customize drag image for one of the panels
+              if (dt.setDragImage instanceof Function && e.target.innerHTML.indexOf('X') > -1) {
+                  let img = new Image();
+                  img.src = 'dragimage.jpg';
+                  dt.setDragImage(img, img.width / 2, img.height / 2);
+              }
+          }
+      }
+      function handleDragOver(e) {
+          if (dragSrcEl) {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'move';
+          }
+      }
+      function handleDragEnter(e) {
+          if (dragSrcEl) {
+              e.target.classList.add('over');
+          }
+      }
+      function handleDragLeave(e) {
+          if (dragSrcEl) {
+              e.target.classList.remove('over');
+          }
+      }
+      function handleDragEnd(e) {
+          dragSrcEl = null;
+          [].forEach.call(cols, function (col) {
+              col.style.opacity = '';
+              col.classList.remove('over');
+          });
+      }
+      function handleDrop(e) {
+          if (dragSrcEl) {
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              if (dragSrcEl != this) {
+                  swapDom(dragSrcEl, this);
+                  //dragSrcEl.innerHTML = e.target.innerHTML;
+                  //this.innerHTML = e.dataTransfer.getData('text');
+              }
+              updateListNumber();
+          }
+      }
+      function updateListNumber() {
+          let items = document.querySelectorAll('#sortable-users li');
+          for (let i = 0; i < items.length; i++) {
+              items[i].querySelector('.seat-number').innerHTML = i + 1;
+          }
+      }
+
+      // https://stackoverflow.com/questions/9732624/how-to-swap-dom-child-nodes-in-javascript
+      function swapDom(a,b) {
+          let aParent = a.parentNode;
+          let bParent = b.parentNode;
+          let aHolder = document.createElement("div");
+          let bHolder = document.createElement("div");
+          aParent.replaceChild(aHolder, a);
+          bParent.replaceChild(bHolder, b);
+          aParent.replaceChild(b, aHolder);
+          bParent.replaceChild(a, bHolder);    
+      }    
+    </script>
+
+    <!-- <div class="container-xl">
+      <div class="row row-cards">
+        <div class="card-body">
+          <div class="col-md-6 col-lg-2">
+            <div class="card" draggable="true">
+              <div class="card-body p-4 text-center">
+                <span class="avatar avatar-xl mb-3 rounded">AB</span>
+                <h3 class="m-0 mb-1"><a href="#">Adam Blakey</a></h3>
+                <div class="text-secondary">Clarinet</div>
+                <div class="text-secondary">NSWO</div>
+                <div class="mt-3">
+                <span class="badge bg-primary">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-2">
+            <div class="card" draggable="true">
+              <div class="card-body p-4 text-center">
+                <span class="avatar avatar-xl mb-3 rounded">GC</span>
+                <h3 class="m-0 mb-1"><a href="#">Gill Colley</a></h3>
+                <div class="text-secondary">French Horn</div>
+                <div class="text-secondary">NSWO</div>
+                <div class="mt-3">
+                <span class="badge bg-primary">3</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <?php
-      } else {
-        $sort_initial = '';
-
-        while ($member = $members->fetch_assoc()) {
-          $ensembles = $db_connection->query("SELECT `ensembles`.`name` AS `name` FROM `ensembles` LEFT JOIN `members-ensembles` ON `members-ensembles`.`ensemble_ID`=`ensembles`.`ID` WHERE `member_ID`='" . $member["ID"] . "'");
-
-          if ($ensembles->num_rows == 0) {
-            $ensemble_list = "no ensembles";
-          } else {
-            $first_loop = true;
-            $ensemble_list = "";
-            while ($ensemble = $ensembles->fetch_assoc()) {
-              if ($first_loop) {
-                $ensemble_list .= "";
-                $first_loop = false;
-              } else {
-                $ensemble_list .= ", ";
-              }
-
-              $ensemble_list .= $ensemble["name"];
-            }
-          }
-
-
-          if ($sort_initial != substr($member["first_name"], 0, 1)) {
-            $sort_initial = substr($member["first_name"], 0, 1);
-        ?>
-            <div class="list-group-header sticky-top"><?= $sort_initial; ?></div>
-          <?php
-          }
-          ?>
-          <div class="list-group-item">
-            <div class="row">
-              <div class="col-auto">
-                <a href="#">
-                  <?php
-                  if ($member["image"] != "") {
-                  ?>
-                    <span class="avatar" style="background-image: url(<?= $member["image"]; ?>)"></span>
-                  <?php
-                  } else {
-                  ?>
-                    <span class="avatar"><?= substr($member["first_name"], 0, 1) . substr($member["last_name"], 0, 1); ?></span>
-                  <?php
-                  }
-                  ?>
-                </a>
-              </div>
-              <div class="col text-truncate">
-                <a href="#" class="text-body d-block"><?= $member["first_name"] . " " . $member["last_name"]; ?></a>
-                <div class="text-muted text-truncate mt-n1"><?= $member["instrument"]; ?>; <?= $ensemble_list; ?></div>
-              </div>
-            </div>
-          </div>
-      <?php
-        }
-      }
-      ?>
-    </div>
-  </div>
+      </div>
+    </div> -->
 
   <div class="modal modal-blur fade" id="add-new-member" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
