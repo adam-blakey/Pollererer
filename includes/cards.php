@@ -878,10 +878,10 @@ function output_term_dates($term_id, $max_height = 30)
 
   require("./config.php");
 
-  $term_name_query = $db_connection->prepare("SELECT `name` FROM `terms` WHERE `ID` = ?");
+  $term_name_query = $db_connection->prepare("SELECT `name`,`hidden` FROM `terms` WHERE `ID` = ?");
   $term_name_query->bind_param("s", $term_id);
   $term_name_query->execute();
-  $term_name_query->bind_result($term_name);
+  $term_name_query->bind_result($term_name,$poll_hidden);
   $term_name_query->fetch();
   $term_name_query->close();
 
@@ -909,6 +909,17 @@ function output_term_dates($term_id, $max_height = 30)
           Add new
         </a>
       </div>
+    </div>
+    <div>
+      <label class="row m-auto">
+        <span class="col-3">Make poll visible to members?</span>
+        <span class="col-1 text-start">
+          <label class="form-check form-check-single form-switch">
+            <input id="poll-visible" class="form-check-input" type="checkbox" <?=($poll_hidden == 1)?"":"checked";?> onclick="allowSubmit()">
+          </label>
+        </span>
+        <span class="col-8"></span>
+      </label>
     </div>
     <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
       <?php
@@ -1247,6 +1258,18 @@ function output_term_dates($term_id, $max_height = 30)
       }
     });
 
+    function allowSubmit()
+    {
+      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+      fieldsCounterElement.innerHTML = fieldsCounter;
+
+      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+      termDatesCounterElement.innerHTML = termDatesCounter;
+
+      updateTermDatesElement = document.getElementsByClassName("updateTermDates")[0];
+      updateTermDatesElement.classList.remove("disabled");
+    }
+
     function changedField(element, id, name)
     {
       // Mark rows as modified.
@@ -1309,14 +1332,7 @@ function output_term_dates($term_id, $max_height = 30)
         termDatesCounter += 1;
       }
 
-      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
-      fieldsCounterElement.innerHTML = fieldsCounter;
-
-      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
-      termDatesCounterElement.innerHTML = termDatesCounter;
-
-      updateTermDatesElement = document.getElementsByClassName("updateTermDates")[0];
-      updateTermDatesElement.classList.remove("disabled");
+      allowSubmit();
 
       // Changes value of checkbox.
       if (name == "hidden")
@@ -1778,6 +1794,9 @@ function output_term_dates($term_id, $max_height = 30)
       xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_term-dates.php", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
+      var poll_visible = document.getElementById("poll-visible").checked ? 1 : 0;
+      var poll_hidden = Math.abs(poll_visible - 1);
+
       var modified_term_dates_rows = document.getElementsByClassName("row-modified");
       var extracted_term_dates_data = [];
       for (let i = 0; i < modified_term_dates_rows.length; i++) {
@@ -1803,7 +1822,11 @@ function output_term_dates($term_id, $max_height = 30)
         extracted_term_dates_data.push(extracted_row_data);
       }
 
-      xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>");
+      xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>&poll_hidden=" + poll_hidden);
+
+      // Log.
+      console.log("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>&poll_hidden=" + poll_hidden);
+
 
       xhttp.onload = function()
       {
