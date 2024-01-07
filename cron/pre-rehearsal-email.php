@@ -56,7 +56,23 @@
 
 	$db_connection = db_connect();
 
-	$upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 90*60*0)." AND `datetime` <= ".($time->format('U') + 90*60*1)." AND ((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))");
+	// $upcoming_rehearsals = $db_connection->query("SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email` FROM `term_dates` CROSS JOIN `ensembles` WHERE `term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 90*60*0)." AND `datetime` <= ".($time->format('U') + 90*60*1)." AND ((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))");
+	$rehearsal_minutes_before = 90;
+	$concert_minutes_before   = 5*60;
+
+	$upcoming_rehearsals = $db_connection->query("
+		SELECT DISTINCT `term_dates`.`ID` AS `term_dates_ID`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`admin_email`
+		FROM `term_dates` CROSS JOIN `ensembles`
+		WHERE (
+			`term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 0)." AND
+			`datetime` <= ".($time->format('U') + $rehearsal_minutes_before*60)." AND
+			((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))
+		) OR 
+		(
+			`term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 0)." AND
+			`datetime` <= ".($time->format('U') + $concert_minutes_before*60)." AND
+			`term_dates`.`is_featured` != 0
+		)");
 
 	while($rehearsal = $upcoming_rehearsals->fetch_assoc())
 	{
