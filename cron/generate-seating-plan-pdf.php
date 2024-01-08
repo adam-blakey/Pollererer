@@ -51,7 +51,7 @@
 		        for ($j=0; $j < $num_rows; ++$j)
 		        {
 		        	$row_attendance = 0;
-		        	for ($i=0; $i < count($names); ++$i)
+		        	for ($i=0; $i < count($names[$j]); ++$i)
 		        	{
 								if ($config["assume_attending"])
 								{
@@ -208,11 +208,15 @@
 				else
 				{
 					$attendance[$j-1][$i-1] = $attendance_query->fetch_assoc()["status"];
+				}
 
-					if ($attendance[$j-1][$i-1] == "1")
-					{
-						$total_attendance++;
-					}
+				if ($attendance[$j-1][$i-1] == "1")
+				{
+					$total_attendance++;
+				}
+				else if ($config["assume_attending"] and ($attendance[$j-1][$i-1] == "1" or $attendance[$j-1][$i-1] == NULL))
+				{
+					$total_attendance++;
 				}
 			}
 		}
@@ -230,10 +234,9 @@
 		$html = '
 		<strong>Date:</strong> '.$term_date_date->format("j/m/y").' <br />
 		<strong>Ensemble:</strong> '.$ensemble_name.' <br />
-		<strong>Confirmed attendees:</strong> '.$total_attendance.' <br />
+		<strong>Attendees:</strong> '.$total_attendance.' <br />
 
 		<h1>Rehearsal Seating for '.$ensemble_name.' on '.$term_date_date->format("jS F Y @ H:i:s").'</h1>
-		<br />
 		';
 
 		// output HTML
