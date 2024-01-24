@@ -50,28 +50,18 @@
 		        $num_rows = count($names[0]);
 		        for ($j=0; $j < $num_rows; ++$j)
 		        {
-		        	$row_attendance = 0;
+		        	$row_attendance = count($names[$j]);
 		        	for ($i=0; $i < count($names[$j]); ++$i)
 		        	{
-								if ($config["assume_attending"])
+								if ($attendance[$i][$j] == "0")
 								{
-									if ($attendance[$i][$j] == "1" or $attendance[$i][$j] == NULL)
-									{
-										$row_attendance++;
-									}
-								}
-								else
-		        		{
-									if ($attendance[$i][$j] == "1")
-									{
-										$row_attendance++;
-									}
+									$row_attendance--;
 								}
 		        	}
 
-		            $this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($j+1), 1,  0, 'C', 1);
-		            $this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
-		            $this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
+							$this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($j+1), 1,  0, 'C', 1);
+							$this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
+							$this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
 		        }
 		        $this->Ln();
 
@@ -180,8 +170,8 @@
 		$term_date_date ->setTimestamp($term_date_query->fetch_array()[0]);
 		$term_date_date ->setTimezone(new DateTimeZone('Europe/London'));
 
-		$pdf->SetTitle('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
-		$pdf->SetSubject('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
+		$pdf->SetTitle('Rehearsal Seating on '.$term_date_date->format("jS F"));
+		$pdf->SetSubject('Rehearsal Seating on '.$term_date_date->format("jS F"));
 
 		$seats_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `first_name`, `last_name`, `instrument`, `row`, `seat` FROM `members` INNER JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID`='".$ensemble_ID."' AND `members`.`deleted`='0' ORDER BY `row`, `seat` ASC");
 
@@ -210,16 +200,13 @@
 					$attendance[$j-1][$i-1] = $attendance_query->fetch_assoc()["status"];
 				}
 
-				if ($attendance[$j-1][$i-1] == "1")
+				if ($attendance[$j-1][$i-1] == "0")
 				{
-					$total_attendance++;
-				}
-				else if ($config["assume_attending"] and ($attendance[$j-1][$i-1] == "1" or $attendance[$j-1][$i-1] == NULL))
-				{
-					$total_attendance++;
+					$total_attendance--;
 				}
 			}
 		}
+		$total_attendance += count($attendance);
 
 		// HTML content
 		// $html = '

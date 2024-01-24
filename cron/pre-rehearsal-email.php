@@ -71,7 +71,7 @@
 		(
 			`term_dates`.`deleted`='0' AND `datetime` > ".($time->format('U') + 0)." AND
 			`datetime` <= ".($time->format('U') + $concert_minutes_before*60)." AND
-			`term_dates`.`is_featured` != 0
+			((`term_dates`.`is_featured` = 0) OR (`term_dates`.`is_featured` = -`ensembles`.`ID`))
 		)");
 
 	while($rehearsal = $upcoming_rehearsals->fetch_assoc())
