@@ -25,7 +25,7 @@
         <div class="card card-md">
           <div class="card-body">
 						<?php
-							$all_polls_query = $db_connection->query("SELECT DISTINCT `terms`.`ID` AS `term_ID`, `terms`.`name` AS `term_name`, `terms`.`safe_name` AS `term_safe_name`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`safe_name` AS `ensemble_safe_name` FROM `terms` CROSS JOIN `ensembles` WHERE `ensembles`.`hidden` = 0 AND `terms`.`hidden` = 0 ORDER BY `terms`.`ID`, `ensembles`.`ID` DESC");
+							$all_polls_query = $db_connection->query("SELECT DISTINCT `terms`.`ID` AS `term_ID`, `terms`.`name` AS `term_name`, `terms`.`safe_name` AS `term_safe_name`, `ensembles`.`ID` AS `ensemble_ID`, `ensembles`.`name` AS `ensemble_name`, `ensembles`.`safe_name` AS `ensemble_safe_name`, `ensembles`.`image` AS `ensemble_image`, `terms`.`image` AS `term_image` FROM `terms` CROSS JOIN `ensembles` WHERE `ensembles`.`hidden` = 0 AND `terms`.`hidden` = 0 ORDER BY `terms`.`ID`, `ensembles`.`ID` DESC");
 
 							if ($all_polls_query->num_rows == 0)
 							{
@@ -57,23 +57,28 @@
 												if ($poll_ended)
 												{
 													?>
-														<div class="ribbon bg-red">
+														<!-- <div class="ribbon bg-red">
 															ENDED
-														</div>
+														</div> -->
 													<?php
 												}
 												else
 												{
 													?>
-														<div class="ribbon bg-green">
+														<!-- <div class="ribbon bg-green">
 															ACTIVE
-														</div>
+														</div> -->
 													<?php
 												}
 												?>
+												<div class="card-stamp">
+													<div class="card-stamp-icon bg-yellow">
+														<img src="<?=$poll["term_image"];?>">
+													</div>
+												</div>
 												<div class="card-body">
-													<h3 class="card-title w-100"><?=$poll["ensemble_name"];?>: <?=$poll["term_name"];?></h3>
-													<a href="<?=$config["base_url"]."/".$poll["ensemble_safe_name"]."/".$poll["term_safe_name"]."/";?>" class="btn btn-primary w-100 <?=($poll_ended)?"disabled":"";?>">
+													<h3 class="card-title w-100"><span class="avatar avatar-sm" style="background-image: url('<?=$poll["ensemble_image"];?>')"></span> <?=$poll["ensemble_name"];?>: <?=$poll["term_name"];?></h3>
+													<a href="<?=$config["base_url"]."/".$poll["ensemble_safe_name"]."/".$poll["term_safe_name"]."/";?>" class="btn btn-primary w-100 <?=($poll_ended)?"disabled":"";?>" style="z-index: 1200 !important;">
 														Visit poll
 													</a>
 												</div>
