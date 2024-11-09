@@ -3,7 +3,7 @@
 <?php
   login_valid();
   
-  if(login_valid() and login_restricted(1))
+  if(login_valid() and login_restricted(3))
   {
     $db_connection = db_connect();
 
@@ -45,21 +45,21 @@
                         <?php output_members(30); ?>
                       </div>
                       <div class="col-12">
-                        <?php output_polls(15); ?>
+                        <?php output_polls(25); ?>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6 col-xl-8">
                     <div class="row row-cards">
                       <div class="col-12">
-                        <?php output_notifications(10); ?>
+                        <?php output_notifications(30); ?>
                       </div>
 
                       <div class="col-12">
                         <?php output_ensembles(10); ?>
                       </div>
                       <div class="col-12">
-                        <?php output_terms(10); ?>
+                        <?php output_terms(30); ?>
                       </div>
                     </div>
                   </div>

@@ -7,6 +7,8 @@
 
 	function generate_seating_plan_PDF($ensemble_ID, $term_date_ID)
 	{
+		global $config;
+
 		// Extend the TCPDF class to create custom Header and Footer
 		class SeatingPDF extends TCPDF {
 
@@ -32,6 +34,8 @@
 
 		    // Table
 		    public function SeatingTable($names, $instruments, $attendance) {
+						global $config;
+
 		        // Colors, line width and bold font
 		        $this->SetFillColor(192, 30, 67);
 		        $this->SetTextColor(255);
@@ -45,67 +49,81 @@
 		        $height      = 6;
 
 		        // Header
-		        $num_rows = count($names[0]);
+		        $num_rows = count($names);
 		        for ($j=0; $j < $num_rows; ++$j)
 		        {
 		        	$row_attendance = 0;
-		        	for ($i=0; $i < count($names); ++$i)
+							$num_cols = count(array_filter($names[$j]));
+		        	for ($i=0; $i < $num_cols; ++$i)
 		        	{
-		        		if ($attendance[$i][$j] == "1")
-		        		{
-		        			$row_attendance++;
-		        		}
+								if ($attendance[$j][$i] == "1" || ($attendance[$j][$i] == NULL && $config["assume_attending"]))
+								{
+									$row_attendance++;
+								}
 		        	}
 
-		            $this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, 'Row '.($j+1), 1,  0, 'C', 1);
-		            $this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
-		            $this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
+							$this->Cell($table_width/($num_rows)-$height-$spacing, $height+1, "Row ".($j+1)." ({$num_cols})", 1,  0, 'C', 1);
+							$this->Cell($height,  $height+1, $row_attendance, 'LRTB', 0, 'C', 1);
+							$this->Cell($spacing, $height+1, '',              '',     0, 'C', 0);
 		        }
 		        $this->Ln();
 
 		        // Names
-		        $previous_instrument = $instruments[0];
+		        $previous_instrument = array_map(function($row) {
+		            return $row[0];
+		        }, $instruments);
 		        $this->SetTextColor(0);
-		        for ($i=0; $i < count($names); ++$i)
+
+		        $max_count = count($names[1]);
+		        for ($i = 2; $i < count($names); ++$i) {
+		            $max_count = max(count(array_filter($names[$i])), $max_count);
+						}
+
+		        for ($i=0; $i < $max_count; ++$i)
 		        {
-		        		$column = $names[$i];
-
-		        		for ($j=0; $j < count($names[0]); ++$j)
+		        		for ($j=0; $j < count($names); ++$j)
 		        		{
-		        			$border  = '';
-		        			$border .= ($column[$j] != NULL and $column[$j] != '')?'L':'';
-			        		$border .= ($previous_instrument[$j] != $instruments[$i][$j])?'T':'';
-			        		$border .= ($i == count($names)-1 and $column[$j] != NULL and $column[$j] != '')?'B':'';
+									$column = $names[$j];
 
-		        			if ($column[$j] == NULL or $column[$j] == '')
+		        			$border  = '';
+		        			$border .= ($column[$i] != NULL and $column[$i] != '')?'L':'';
+			        		$border .= ($previous_instrument[$j] != $instruments[$j][$i])?'T':'';
+			        		$border .= ($i == (count(array_filter($names[$j]))-1) and $column[$i] != NULL and $column[$i] != '')?'B':'';
+
+		        			if ($column[$i] == NULL or $column[$i] == '')
 		        			{        				
-		        				$this->Cell($table_width/($num_rows)-$spacing, $height, $column[$j], $border, 0, 'L');
+		        				$this->Cell($table_width/($num_rows)-$spacing, $height, $column[$i], $border, 0, 'L');
 		        				$this->Cell($spacing,                 $height, '',          '',      0, 'L');
 		        			}
 		        			else
 		        			{
-			            	// $this->Cell($table_width/($num_rows)-$height-$spacing, $height, '<s>'.$column[$j].'</s>', $border, 0, 'L');
-			            	// $this->writeHTMLCell($height, $height, '', '', '<img src="'.$config["base_url"].'/emails/example/assets/icons-green-check.png" class=" va-middle" width="12" height="12" alt="check" style="outline: none; text-decoration: none; vertical-align: middle; font-size: 0; border-width: 0;" />', 'L', 0, 0, 1, 'L', 0);
-			            	if ($attendance[$i][$j] == "0")
+			            	if ($attendance[$j][$i] == "0")
 			            	{
-			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #d63939;"><s>'.$column[$j].'</s></span>', $border, 0, 0, 1, 'L');
+			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #d63939;"><s>'.$column[$i].'</s></span>', $border, 0, 0, 1, 'L');
 			            	}
-			            	else if ($attendance[$i][$j] == "1")
+			            	else if ($attendance[$j][$i] == "1")
 			            	{
-			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #74b816;">'.$column[$j].'</span>', $border, 0, 0, 1, 'L');
+			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #74b816;">'.$column[$i].'</span>', $border, 0, 0, 1, 'L');
 			            	}	
 			            	else
 			            	{
-			            		$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #626976;">'.$column[$j].' ??</span>', $border, 0, 0, 1, 'L');
+											if ($config["assume_attending"])
+											{
+												$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #74b816;">'.$column[$i].'</span>', $border, 0, 0, 1, 'L');
+											}
+											else
+											{
+												$this->writeHTMLCell($table_width/($num_rows)-$height-$spacing, $height, '', '', '<span style="color: #626976;">'.$column[$i].' ??</span>', $border, 0, 0, 1, 'L');
+											}
 			            	}
 			            	$this->Cell($height,  $height, '', 'LRTB',   0, 'L');
 			            	$this->Cell($spacing, $height, '', '',       0, 'L');
 			            }
+
+									$previous_instrument[$j] = $instruments[$j][$i];
 		            }
 		            $this->Ln();
-
-		            $previous_instrument = $instruments[$i];
-		        }
+						}
 		    }
 		}
 
@@ -161,10 +179,10 @@
 		$term_date_date ->setTimestamp($term_date_query->fetch_array()[0]);
 		$term_date_date ->setTimezone(new DateTimeZone('Europe/London'));
 
-		$pdf->SetTitle('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
-		$pdf->SetSubject('Rehearsal Seating for NSWO on '.$term_date_date->format("jS F"));
+		$pdf->SetTitle('Rehearsal Seating on '.$term_date_date->format("jS F"));
+		$pdf->SetSubject('Rehearsal Seating on '.$term_date_date->format("jS F"));
 
-		$seats_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `first_name`, `last_name`, `instrument`, `row`, `seat` FROM `members` INNER JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID`='".$ensemble_ID."' ORDER BY `row`, `seat` ASC");
+		$seats_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `first_name`, `last_name`, `instrument`, `row`, `seat` FROM `members` INNER JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` WHERE `members-ensembles`.`ensemble_ID`='".$ensemble_ID."' AND `members`.`deleted`='0' ORDER BY `row`, `seat` ASC");
 
 		$names = [[]];
 		$instruments = [[]];
@@ -177,23 +195,23 @@
 			$j = $member["seat"];
 			if ($i > 0 and $j > 0)
 			{
-				$names      [$j-1][$i-1] = $member["first_name"]." ".substr($member["last_name"], 0, 1);
-				$instruments[$j-1][$i-1] = $member["instrument"];
+				$names      [$i-1][$j-1] = $member["first_name"]." ".substr($member["last_name"], 0, 1);
+				$instruments[$i-1][$j-1] = $member["instrument"];
 
 				$attendance_query = $db_connection->query("SELECT `status`, `edit_datetime` FROM `attendance` WHERE `member_ID`='".$member['member_ID']."' AND `ensemble_ID`='".$ensemble_ID."' AND `term_dates_ID`='".$term_date_ID."' ORDER BY `edit_datetime` DESC LIMIT 1");
 
 				if ($attendance_query->num_rows == 0)
 				{
-					$attendance[$j-1][$i-1] = NULL;
+					$attendance[$i-1][$j-1] = NULL;
 				}
 				else
 				{
-					$attendance[$j-1][$i-1] = $attendance_query->fetch_assoc()["status"];
+					$attendance[$i-1][$j-1] = $attendance_query->fetch_assoc()["status"];
+				}
 
-					if ($attendance[$j-1][$i-1] == "1")
-					{
-						$total_attendance++;
-					}
+				if ($attendance[$i-1][$j-1] == "1" || ($attendance[$i-1][$j-1] == NULL && $config["assume_attending"]))
+				{
+					$total_attendance++;
 				}
 			}
 		}
@@ -209,33 +227,13 @@
 		// ';
 
 		$html = '
-		<strong>Date:</strong> '.$term_date_date->format("j/m/y").' <br />
-		<strong>Ensemble:</strong> '.$ensemble_name.' <br />
-		<strong>Confirmed attendees:</strong> '.$total_attendance.' <br />
+		<strong>Date:</strong> '.$term_date_date->format("j/m/y").', <strong>Ensemble:</strong> '.$ensemble_name.', <strong>Attendees:</strong> '.$total_attendance.'
 
 		<h1>Rehearsal Seating for '.$ensemble_name.' on '.$term_date_date->format("jS F Y @ H:i:s").'</h1>
-		<br />
 		';
 
 		// output HTML
 		$pdf->writeHTML($html, true, false, true, false, '');
-		// $pdf->SeatingTable(
-		// 	array('Row 1 [8]', 'Row 2 [13]', 'Row 3 [8]', 'Row 4 [16]', 'Row 5 [4]'),
-		// 	array(
-		// 		array('Alison', 'Nikki', 'Dave', 'Gemma', 'Jon'),
-		// 		array('Nicola', 'Rachel', 'Joe', 'Mel', 'Catriona'),
-		// 		array('Megan', 'Amanda', 'Ros', 'Sarah', 'Gareth'),
-		// 		array('Laura', 'Hannah', 'Jo', 'Gill', 'Mike'),
-		// 		array('Vicky', 'Hannah T', 'Catherine', 'Phil', '')
-		// 	),
-		// 	array(
-		// 		array('Flute', 'Flute', 'Bass Clarinet', 'French Horn', 'Percussion'),
-		// 		array('Flute', 'Flute', 'Bass Clarinet', 'French Horn', 'Percussion'),
-		// 		array('Flute', 'Flute', 'Alto Clarinet', 'French Horn', 'Percussion'),
-		// 		array('Flute', 'Saxophone', 'Alto Clarinet', 'French Horn', 'Percussion'),
-		// 		array('Oboe', 'Saxophone', 'Clarinet', 'Trumpet', '')
-		// 	)
-		// );
 
 		// REALLY HACKY WAY OF DOING THINGS.
 		$num_cols = max(array_keys($attendance))+1;

@@ -183,81 +183,223 @@ function output_members($max_height = 30)
       </div>
     </div>
 
-    <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
-      <?php
-      //$members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image`, `ensembles`.`name` AS `ensemble_name` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID` = `members`.`ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID` = `ensembles`.`ID` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
-      $members = $db_connection->query("SELECT `members`.`ID`, `first_name`, `last_name`, `instrument`, `members`.`image` FROM `members` WHERE `members`.`ID` >= 1 ORDER BY `first_name` ASC");
+    <div class="container-xl">
+      <ol id="sortable-users" class="row row-cards">
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">PK</span>
+              <h3 class="m-0 mb-1"><a href="#">Paweł Kuna</a></h3>
+              <div class="text-secondary">UI Designer</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-purple-lt">Owner</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">JL</span>
+              <h3 class="m-0 mb-1"><a href="#">Jeffie Lewzey</a></h3>
+              <div class="text-secondary">Chemical Engineer</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">MH</span>
+              <h3 class="m-0 mb-1"><a href="#">Mallory Hulme</a></h3>
+              <div class="text-secondary">Geologist IV</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">DS</span>
+              <h3 class="m-0 mb-1"><a href="#">Dunn Slane</a></h3>
+              <div class="text-secondary">Research Nurse</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+                <span class="badge bg-green-lt">Admin</span>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="sortable-user col-md-6 col-lg-2" draggable="true" style="list-style: none;">
+          <div class="card">
+            <div class="card-body p-4 text-center">
+              <span class="avatar avatar-xl mb-3 rounded">AM</span>
+              <h3 class="m-0 mb-1"><a href="#">Avivah Mugleston</a></h3>
+              <div class="text-secondary">Actuary</div>
+              <div class="text-secondary"><span class="row-number">1</span>.<span class="seat-number">0</span></div>
+              <div class="mt-3">
+              </div>
+            </div>
+          </div>
+        </li>
+      </ol>
+      <div class="d-flex mt-4">
+        <ul class="pagination ms-auto">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+              <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 6l-6 6l6 6"></path></svg>
+              prev
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">4</a></li>
+          <li class="page-item"><a class="page-link" href="#">5</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">
+              next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-      if ($members->num_rows == 0) {
-      ?>
-        <div class="list-group-item">
-          <div class="row">
-            <div class="col">
-              <div class="text-body">No members to display.</div>
+    <script src="./dist/libs/drag-drop-touch/DragDropTouch.js"></script>
+    <script>
+      //-----------------------------------------------------------------------------
+      // demonstrate standard HTML5 drag/drop.
+      // this is based on the html5rocks tutorial published here:
+      // http://www.html5rocks.com/en/tutorials/dnd/basics/
+
+      // hook up event handlers
+      let cols = document.querySelectorAll('#sortable-users .sortable-user');
+      console.log(cols);
+      [].forEach.call(cols, function (col) {
+          col.addEventListener('dragstart', handleDragStart, false);
+          col.addEventListener('dragenter', handleDragEnter, false)
+          col.addEventListener('dragover', handleDragOver, false);
+          col.addEventListener('dragleave', handleDragLeave, false);
+          col.addEventListener('drop', handleDrop, false);
+          col.addEventListener('dragend', handleDragEnd, false);
+      });
+      updateListNumber();
+
+      let dragSrcEl = null;
+      function handleDragStart(e) {
+          if (e.target.className.indexOf('sortable-user') > -1) {
+              dragSrcEl = e.target;
+              dragSrcEl.style.opacity = '0.4';
+              let dt = e.dataTransfer;
+              dt.effectAllowed = 'move';
+              dt.setData('text', dragSrcEl.innerHTML);
+
+              // customize drag image for one of the panels
+              if (dt.setDragImage instanceof Function && e.target.innerHTML.indexOf('X') > -1) {
+                  let img = new Image();
+                  img.src = 'dragimage.jpg';
+                  dt.setDragImage(img, img.width / 2, img.height / 2);
+              }
+          }
+      }
+      function handleDragOver(e) {
+          if (dragSrcEl) {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'move';
+          }
+      }
+      function handleDragEnter(e) {
+          if (dragSrcEl) {
+              e.target.classList.add('over');
+          }
+      }
+      function handleDragLeave(e) {
+          if (dragSrcEl) {
+              e.target.classList.remove('over');
+          }
+      }
+      function handleDragEnd(e) {
+          dragSrcEl = null;
+          [].forEach.call(cols, function (col) {
+              col.style.opacity = '';
+              col.classList.remove('over');
+          });
+      }
+      function handleDrop(e) {
+          if (dragSrcEl) {
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              if (dragSrcEl != this) {
+                  swapDom(dragSrcEl, this);
+                  //dragSrcEl.innerHTML = e.target.innerHTML;
+                  //this.innerHTML = e.dataTransfer.getData('text');
+              }
+              updateListNumber();
+          }
+      }
+      function updateListNumber() {
+          let items = document.querySelectorAll('#sortable-users li');
+          for (let i = 0; i < items.length; i++) {
+              items[i].querySelector('.seat-number').innerHTML = i + 1;
+          }
+      }
+
+      // https://stackoverflow.com/questions/9732624/how-to-swap-dom-child-nodes-in-javascript
+      function swapDom(a,b) {
+          let aParent = a.parentNode;
+          let bParent = b.parentNode;
+          let aHolder = document.createElement("div");
+          let bHolder = document.createElement("div");
+          aParent.replaceChild(aHolder, a);
+          bParent.replaceChild(bHolder, b);
+          aParent.replaceChild(b, aHolder);
+          bParent.replaceChild(a, bHolder);    
+      }    
+    </script>
+
+    <!-- <div class="container-xl">
+      <div class="row row-cards">
+        <div class="card-body">
+          <div class="col-md-6 col-lg-2">
+            <div class="card" draggable="true">
+              <div class="card-body p-4 text-center">
+                <span class="avatar avatar-xl mb-3 rounded">AB</span>
+                <h3 class="m-0 mb-1"><a href="#">Adam Blakey</a></h3>
+                <div class="text-secondary">Clarinet</div>
+                <div class="text-secondary">NSWO</div>
+                <div class="mt-3">
+                <span class="badge bg-primary">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-2">
+            <div class="card" draggable="true">
+              <div class="card-body p-4 text-center">
+                <span class="avatar avatar-xl mb-3 rounded">GC</span>
+                <h3 class="m-0 mb-1"><a href="#">Gill Colley</a></h3>
+                <div class="text-secondary">French Horn</div>
+                <div class="text-secondary">NSWO</div>
+                <div class="mt-3">
+                <span class="badge bg-primary">3</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <?php
-      } else {
-        $sort_initial = '';
-
-        while ($member = $members->fetch_assoc()) {
-          $ensembles = $db_connection->query("SELECT `ensembles`.`name` AS `name` FROM `ensembles` LEFT JOIN `members-ensembles` ON `members-ensembles`.`ensemble_ID`=`ensembles`.`ID` WHERE `member_ID`='" . $member["ID"] . "'");
-
-          if ($ensembles->num_rows == 0) {
-            $ensemble_list = "no ensembles";
-          } else {
-            $first_loop = true;
-            $ensemble_list = "";
-            while ($ensemble = $ensembles->fetch_assoc()) {
-              if ($first_loop) {
-                $ensemble_list .= "";
-                $first_loop = false;
-              } else {
-                $ensemble_list .= ", ";
-              }
-
-              $ensemble_list .= $ensemble["name"];
-            }
-          }
-
-
-          if ($sort_initial != substr($member["first_name"], 0, 1)) {
-            $sort_initial = substr($member["first_name"], 0, 1);
-        ?>
-            <div class="list-group-header sticky-top"><?= $sort_initial; ?></div>
-          <?php
-          }
-          ?>
-          <div class="list-group-item">
-            <div class="row">
-              <div class="col-auto">
-                <a href="#">
-                  <?php
-                  if ($member["image"] != "") {
-                  ?>
-                    <span class="avatar" style="background-image: url(<?= $member["image"]; ?>)"></span>
-                  <?php
-                  } else {
-                  ?>
-                    <span class="avatar"><?= substr($member["first_name"], 0, 1) . substr($member["last_name"], 0, 1); ?></span>
-                  <?php
-                  }
-                  ?>
-                </a>
-              </div>
-              <div class="col text-truncate">
-                <a href="#" class="text-body d-block"><?= $member["first_name"] . " " . $member["last_name"]; ?></a>
-                <div class="text-muted text-truncate mt-n1"><?= $member["instrument"]; ?>; <?= $ensemble_list; ?></div>
-              </div>
-            </div>
-          </div>
-      <?php
-        }
-      }
-      ?>
-    </div>
-  </div>
+      </div>
+    </div> -->
 
   <div class="modal modal-blur fade" id="add-new-member" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -414,7 +556,7 @@ function output_notifications($max_height = 30)
     </div>
     <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
       <?php
-      $notifications = $db_connection->query("SELECT `members`.`first_name`, `members`.`last_name`, `edit_datetime`, `members`.`instrument`, `status`, `members`.`image`, `term_dates`.`datetime` AS `rehearsal_date` FROM `attendance` LEFT JOIN `members` ON `attendance`.`member_ID` = `members`.`ID` LEFT JOIN `term_dates` ON `attendance`.`term_dates_ID` = `term_dates`.`ID` ORDER BY `edit_datetime` DESC");
+      $notifications = $db_connection->query("SELECT `members`.`first_name`, `members`.`last_name`, `edit_datetime`, `members`.`instrument`, `status`, `members`.`image`, `term_dates`.`datetime` AS `rehearsal_date` FROM `attendance` LEFT JOIN `members` ON `attendance`.`member_ID` = `members`.`ID` LEFT JOIN `term_dates` ON `attendance`.`term_dates_ID` = `term_dates`.`ID` ORDER BY `edit_datetime` DESC LIMIT 50");
 
       if ($notifications->num_rows == 0) {
       ?>
@@ -736,10 +878,10 @@ function output_term_dates($term_id, $max_height = 30)
 
   require("./config.php");
 
-  $term_name_query = $db_connection->prepare("SELECT `name` FROM `terms` WHERE `ID` = ?");
+  $term_name_query = $db_connection->prepare("SELECT `name`,`hidden` FROM `terms` WHERE `ID` = ?");
   $term_name_query->bind_param("s", $term_id);
   $term_name_query->execute();
-  $term_name_query->bind_result($term_name);
+  $term_name_query->bind_result($term_name,$poll_hidden);
   $term_name_query->fetch();
   $term_name_query->close();
 
@@ -768,9 +910,20 @@ function output_term_dates($term_id, $max_height = 30)
         </a>
       </div>
     </div>
+    <div>
+      <label class="row m-auto">
+        <span class="col-3">Make poll visible to members?</span>
+        <span class="col-1 text-start">
+          <label class="form-check form-check-single form-switch">
+            <input id="poll-visible" class="form-check-input" type="checkbox" <?=($poll_hidden == 1)?"":"checked";?> onclick="allowSubmit()">
+          </label>
+        </span>
+        <span class="col-8"></span>
+      </label>
+    </div>
     <div class="list-group list-group-flush overflow-auto" style="max-height: <?= $max_height; ?>rem">
       <?php
-      $term_dates_query = $db_connection->prepare("SELECT `ID`, `datetime`, `datetime_end`, `is_featured`, `deleted` FROM `term_dates` WHERE `term_ID`=? ORDER BY `datetime` ASC");
+      $term_dates_query = $db_connection->prepare("SELECT `ID`, `datetime`, `datetime_end`, `setup_group`, `is_featured`, `deleted` FROM `term_dates` WHERE `term_ID`=? ORDER BY `datetime` ASC");
       $term_dates_query->bind_param("s", $term_id);
       $term_dates_query->execute();
 
@@ -787,6 +940,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><button class="table-sort" data-sort="sort-setup">Setup group</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
                 <th>Duplicate</th>
@@ -796,7 +950,7 @@ function output_term_dates($term_id, $max_height = 30)
             <tbody class="table-tbody">
               <tr>
                 <td></td>
-                <td colspan="7">
+                <td colspan="8">
                   No dates to display.
                 </td>
               </tr>
@@ -821,6 +975,7 @@ function output_term_dates($term_id, $max_height = 30)
                 <th><button class="table-sort" data-sort="sort-date">Date</button></th>
                 <th><button class="table-sort" data-sort="sort-start-time">Start time</button></th>
                 <th><button class="table-sort" data-sort="sort-end-time">End time</button></th>
+                <th><button class="table-sort" data-sort="sort-setup-group">Setup group</button></th>
                 <th><button class="table-sort" data-sort="sort-featured"><?=$config["taxonomy_concert"];?></button></th>
                 <th><button class="table-sort" data-sort="sort-hidden">Hide</button></th>
                 <th>Duplicate</th>
@@ -835,18 +990,20 @@ function output_term_dates($term_id, $max_height = 30)
 
               while ($term_date = $term_dates_result->fetch_assoc()) {
 
-                $id         = $term_date['ID'];
-                $date       = date("Y-m-d", $term_date['datetime']);
-                $start_time = date("H:i", $term_date['datetime']);
-                $end_time   = date("H:i", $term_date['datetime_end']);
-                $featured   = $term_date['is_featured'];
-                $hidden     = $term_date['deleted'];
+                $id          = $term_date['ID'];
+                $date        = date("Y-m-d", $term_date['datetime']);
+                $start_time  = date("H:i", $term_date['datetime']);
+                $end_time    = date("H:i", $term_date['datetime_end']);
+                $featured    = $term_date['is_featured'];
+                $setup_group = $term_date['setup_group'];
+                $hidden      = $term_date['deleted'];
 
-                $data_date       = strtotime(date("Y-m-d", $term_date['datetime']));
-                $data_start_time = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
-                $data_end_time   = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
-                $data_featured   = $term_date['is_featured'];
-                $data_hidden    = $term_date['deleted'];
+                $data_date        = strtotime(date("Y-m-d", $term_date['datetime']));
+                $data_start_time  = strtotime(date("1970-01-01 H:i", $term_date['datetime']));
+                $data_end_time    = strtotime(date("1970-01-01 H:i", $term_date['datetime_end']));
+                $data_featured    = $term_date['is_featured'];
+                $data_setup_group = $term_date['setup_group'];
+                $data_hidden      = $term_date['deleted'];
 
                 $id_array[] = $id;
 
@@ -872,6 +1029,9 @@ function output_term_dates($term_id, $max_height = 30)
                   </td>
                   <td class="col-auto sort-end-time" data-end-time="<?= $data_end_time; ?>">
                     <input type="time" name="end-time" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
+                  </td>
+                  <td class="col-auto sort-setup-group" data-setup-group="<?= $data_setup_group; ?>">
+                    <input type="number" name="setup-group" id="setup-group-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$setup_group;?>" onchange="changedField(this, '<?=$id;?>', 'setup-group')">
                   </td>
                   <td class="col-auto sort-featured" data-featured="<?=$featured;?>">
                     <select name="featured" id="featured-<?=$id;?>" class="form-select" onchange="changedField(this, '<?=$id;?>', 'featured')" style="width: 100px;">
@@ -998,6 +1158,7 @@ function output_term_dates($term_id, $max_height = 30)
           <strong>Date</strong>: <br />
           <strong>Start time</strong>: <br />
           <strong>End time</strong>: <br />
+          <strong>Setup group</strong>: <br />
           <strong>Concert</strong>: <br />
           <strong>Hidden</strong>: <br />
           <strong>Term ID</strong>: <br />
@@ -1048,6 +1209,8 @@ function output_term_dates($term_id, $max_height = 30)
     }
   ?>
   <script type="text/javascript">
+    form_submitted = false;
+
     list = new List('table-default', {
       sortClass: 'table-sort',
       listClass: 'table-tbody',
@@ -1069,6 +1232,10 @@ function output_term_dates($term_id, $max_height = 30)
           name: 'sort-end-time'
         },
         {
+          attr: 'data-setup-group',
+          name: 'sort-setup-group'
+        },
+        {
           attr: 'data-featured',
           name: 'sort-featured'
         },
@@ -1083,6 +1250,25 @@ function output_term_dates($term_id, $max_height = 30)
 
     fieldsCounter    = 0;
     termDatesCounter = 0;
+
+    window.addEventListener("beforeunload", function(e) {
+      if ((document.querySelector(".updateTermDates:not(.disabled)") != null || newCounter > 0) && form_submitted == false) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
+    function allowSubmit()
+    {
+      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
+      fieldsCounterElement.innerHTML = fieldsCounter;
+
+      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
+      termDatesCounterElement.innerHTML = termDatesCounter;
+
+      updateTermDatesElement = document.getElementsByClassName("updateTermDates")[0];
+      updateTermDatesElement.classList.remove("disabled");
+    }
 
     function changedField(element, id, name)
     {
@@ -1102,6 +1288,13 @@ function output_term_dates($term_id, $max_height = 30)
         }
       }
       else if (name == "end-time")
+      {
+        if (!element.parentElement.parentElement.classList.contains('row-modified'))
+        {
+          element.parentElement.parentElement.classList.add('row-modified');
+        }
+      }
+      else if (name == "setup-group")
       {
         if (!element.parentElement.parentElement.classList.contains('row-modified'))
         {
@@ -1139,14 +1332,7 @@ function output_term_dates($term_id, $max_height = 30)
         termDatesCounter += 1;
       }
 
-      fieldsCounterElement = document.getElementsByClassName("fieldsCounter")[0];
-      fieldsCounterElement.innerHTML = fieldsCounter;
-
-      termDatesCounterElement = document.getElementsByClassName("termDatesCounter")[0];
-      termDatesCounterElement.innerHTML = termDatesCounter;
-
-      updateTermDatesElement = document.getElementsByClassName("updateTermDates")[0];
-      updateTermDatesElement.classList.remove("disabled");
+      allowSubmit();
 
       // Changes value of checkbox.
       if (name == "hidden")
@@ -1169,6 +1355,10 @@ function output_term_dates($term_id, $max_height = 30)
       {
         var timestamp = Date.parse("1970-01-01 " + element.value)/1000;
         element.parentElement.setAttribute("data-" + name, timestamp);
+      }
+      else if (name == "setup-group")
+      {
+        element.parentElement.setAttribute("data-" + name, element.value);
       }
       else if (name == "hidden")
       {
@@ -1208,6 +1398,9 @@ function output_term_dates($term_id, $max_height = 30)
         rowInsert += '  </td>';
         rowInsert += '  <td class="col-auto sort-end-time" data-end-time="0">';
         rowInsert += '    <input type="time" name="end-time" id="end-time-new'+newCounter+'" class="form-control" autocomplete="off" value="" onchange="changedField(this, \'new'+newCounter+'\', \'end-time\')">';
+        rowInsert += '  </td>';
+        rowInsert += '  <td class="col-auto sort-setup-group" data-setup-group="0">';
+        rowInsert += '    <input type="number" name="setup-group" id="setup-group-new'+newCounter+'" class="form-control" autocomplete="off" value="0" onchange="changedField(this, new'+newCounter+', \'setup-group\')">';
         rowInsert += '  </td>';
         rowInsert += '  <td class="col-auto sort-featured" data-featured="0">';
         rowInsert += '    <select name="featured" id="featured-new'+newCounter+'" class="form-select" onchange="changedField(this, new'+newCounter+', featured)" style="width: 100px;">';
@@ -1258,7 +1451,7 @@ function output_term_dates($term_id, $max_height = 30)
 
         tbody.innerHTML = rowInsert;
 
-        document.getElementById("hidden-new"+newCounter).indeterminate = true;
+        document.getElementById("hidden-new"+newCounter).indeterminate = false;
 
         // Add event listener for the date cell.
         window.Litepicker && (new Litepicker({
@@ -1298,6 +1491,10 @@ function output_term_dates($term_id, $max_height = 30)
               name: 'sort-end-time'
             },
             {
+              attr: 'data-setup-group',
+              name: 'sort-setup-group'
+            },
+            {
               attr: 'data-featured',
               name: 'sort-featured'
             },
@@ -1331,10 +1528,11 @@ function output_term_dates($term_id, $max_height = 30)
         var dateCell      = lastRow.cells[1];
         var startTimeCell = lastRow.cells[2];
         var endTimeCell   = lastRow.cells[3];
-        var featuredCell  = lastRow.cells[4];
-        var hiddenCell    = lastRow.cells[5];
-        var duplicateCell = lastRow.cells[6];
-        var deleteCell    = lastRow.cells[7];
+        var setupCell     = lastRow.cells[4];
+        var featuredCell  = lastRow.cells[5];
+        var hiddenCell    = lastRow.cells[6];
+        var duplicateCell = lastRow.cells[7];
+        var deleteCell    = lastRow.cells[8];
 
         // // Update IDs.
         // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1380,6 +1578,13 @@ function output_term_dates($term_id, $max_height = 30)
         endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
         endTimeCell.getElementsByTagName('input')[0].value    = "";
         endTimeCell.getElementsByTagName('input')[0].onchange = function() { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+
+        // Update setup group cell.
+        setupCell.setAttribute("data-setup-group", "0");
+        setupCell.getElementsByTagName('input')[0].id       = "setup-group-new" + newCounter;
+        setupCell.getElementsByTagName('input')[0].name     = "setup-group";
+        setupCell.getElementsByTagName('input')[0].value    = "0";
+        setupCell.getElementsByTagName('input')[0].onchange = function() { changedField(setupCell.getElementsByTagName('input')[0], "new" + newCounter, "setup-group"); };
 
         // Update featured cell.
         featuredCell.setAttribute("data-featured", "0");
@@ -1456,10 +1661,11 @@ function output_term_dates($term_id, $max_height = 30)
       var dateCell      = lastRow.cells[1];
       var startTimeCell = lastRow.cells[2];
       var endTimeCell   = lastRow.cells[3];
-      var featuredCell  = lastRow.cells[4];
-      var hiddenCell    = lastRow.cells[5];
-      var duplicateCell = lastRow.cells[6];
-      var deleteCell    = lastRow.cells[7];
+      var setupCell     = lastRow.cells[4];
+      var featuredCell  = lastRow.cells[5];
+      var hiddenCell    = lastRow.cells[6];
+      var duplicateCell = lastRow.cells[7];
+      var deleteCell    = lastRow.cells[8];
 
       // // Update IDs.
       // modifiedCell.id  = "modified-new"   + newCounter;
@@ -1503,6 +1709,13 @@ function output_term_dates($term_id, $max_height = 30)
       endTimeCell.getElementsByTagName('input')[0].name     = "end-time";
       endTimeCell.getElementsByTagName('input')[0].value    = document.getElementById('end-time-' + duplicateId).value;
       endTimeCell.getElementsByTagName('input')[0].onchange = function () { changedField(endTimeCell.getElementsByTagName('input')[0], "new" + newCounter, "end-time"); };
+
+      // Update setup group cell.
+      setupCell.setAttribute("data-setup-group", document.getElementById('setup-group-' + duplicateId).parentElement.getAttribute("data-setup-group"));
+      setupCell.getElementsByTagName('input')[0].id       = "setup-group-new" + newCounter;
+      setupCell.getElementsByTagName('input')[0].name     = "setup-group";
+      setupCell.getElementsByTagName('input')[0].value    = document.getElementById('setup-group-' + duplicateId).value;
+      setupCell.getElementsByTagName('input')[0].onchange = function() { changedField(setupCell.getElementsByTagName('input')[0], "new" + newCounter, "setup-group"); };
 
       // Update featured cell.
       featuredCell.setAttribute("data-featured", document.getElementById('featured-' + duplicateId).parentElement.getAttribute("data-featured"));
@@ -1581,6 +1794,9 @@ function output_term_dates($term_id, $max_height = 30)
       xhttp.open("POST", "<?=$config['base_url'];?>/api/v1/update_term-dates.php", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
+      var poll_visible = document.getElementById("poll-visible").checked ? 1 : 0;
+      var poll_hidden = Math.abs(poll_visible - 1);
+
       var modified_term_dates_rows = document.getElementsByClassName("row-modified");
       var extracted_term_dates_data = [];
       for (let i = 0; i < modified_term_dates_rows.length; i++) {
@@ -1606,7 +1822,11 @@ function output_term_dates($term_id, $max_height = 30)
         extracted_term_dates_data.push(extracted_row_data);
       }
 
-      xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>");
+      xhttp.send("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>&poll_hidden=" + poll_hidden);
+
+      // Log.
+      console.log("term_dates_data=" + JSON.stringify(extracted_term_dates_data) + "&term_ID=<?=$term_id;?>" + "&session_ID=<?=$_COOKIE["session_ID"];?>&poll_hidden=" + poll_hidden);
+
 
       xhttp.onload = function()
       {
@@ -1627,6 +1847,8 @@ function output_term_dates($term_id, $max_height = 30)
 
           document.getElementById("update-term-dates-result-close-button").onclick = function() { window.location.reload(); };
           document.getElementById("update-term-dates-result-button").onclick = function() { window.location.reload(); };
+
+          form_submitted = true;
         }
         else {
           document.getElementById("update-term-dates-result-title").innerHTML = "Oops! An error occured.";
@@ -1661,13 +1883,14 @@ function output_term_dates($term_id, $max_height = 30)
           var start_datetime = new Date(JSON_response.datetime     * 1000);
           var end_datetime   = new Date(JSON_response.datetime_end * 1000);
 
-          var start_datetime_formatted = start_datetime.getFullYear() + "-" + ('0' + start_datetime.getMonth() + 1).substr(-2) + "-" + ('0' + start_datetime.getDate()).substr(-2) + " " + ('0' + start_datetime.getHours()).substr(-2) + ":" + ('0' + start_datetime.getMinutes()).substr(-2)
-          var end_datetime_formatted   = end_datetime.getFullYear()   + "-" + ('0' + end_datetime.getMonth()   + 1).substr(-2) + "-" + ('0' + end_datetime.getDate())  .substr(-2)   + " " + ('0' + end_datetime.getHours()).substr(-2)   + ":" + ('0' + end_datetime.getMinutes()).substr(-2)
+          var start_datetime_formatted = start_datetime.getFullYear() + "-" + (start_datetime.getMonth() + 1) + "-" + ('0' + start_datetime.getDate()).substr(-2) + " " + ('0' + start_datetime.getHours()).substr(-2) + ":" + ('0' + start_datetime.getMinutes()).substr(-2)
+          var end_datetime_formatted   = end_datetime.getFullYear()   + "-" + (end_datetime.getMonth()   + 1) + "-" + ('0' + end_datetime.getDate())  .substr(-2)   + " " + ('0' + end_datetime.getHours()).substr(-2)   + ":" + ('0' + end_datetime.getMinutes()).substr(-2)
 
           document.getElementById("delete-term-date-result-info").innerHTML  = "";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>ID</strong>: "                                         + JSON_response.id           + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Start datetime</strong>: "                             + start_datetime_formatted   + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>End datetime</strong>: "                               + end_datetime_formatted     + "<br />";
+          document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Setup group</strong>: "                                + JSON_response.setup_group  + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong><?=ucfirst($config["taxonomy_concert"]);?></strong>: " + JSON_response.is_featured  + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Hidden</strong>: "                                     + JSON_response.deleted      + "<br />";
           document.getElementById("delete-term-date-result-info").innerHTML += "<strong>Term ID</strong>: "                                    + JSON_response.term_id      + "<br />";
@@ -1717,7 +1940,7 @@ function output_term_dates($term_id, $max_height = 30)
 
       if (noRows == 0)
       {
-        document.getElementById("table-default").getElementsByTagName("tbody")[0].innerHTML = "<tr><td></td><td colspan=\"7\">No term dates found.</td></tr>";
+        document.getElementById("table-default").getElementsByTagName("tbody")[0].innerHTML = "<tr><td></td><td colspan=\"8\">No term dates found.</td></tr>";
       }
     }
   </script>

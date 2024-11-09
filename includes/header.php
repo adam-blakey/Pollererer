@@ -52,8 +52,19 @@
 
               $icon_style = "style=\"background-image: url('".$login_query_result["image"]."')\"";
               $name       = $login_query_result["first_name"]." ".$login_query_result["last_name"];
-              $role       = $login_query_result["first_name"]." User";
 
+              if ($login_query_result["member_ID"] > 0)
+              {
+                $role       = "Administrator";
+                $group_user = false;
+              }
+              else
+              {
+                $role       = $login_query_result["first_name"]." User";
+                $group_user = true;
+              }
+
+              // To temporarily hide settings and notifications, which are not yet implemented.
               $group_user = true;
             }
 

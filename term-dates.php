@@ -19,7 +19,7 @@
 ?>
 
 <?php
-if (login_valid() and login_restricted(1))
+if (login_valid() and login_restricted(3))
 {
   if ($term_id_valid)
   {

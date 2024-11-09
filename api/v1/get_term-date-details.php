@@ -15,7 +15,7 @@
 
 		if ($user_level >= 1)
 		{
-			$term_date_query = $db_connection->query("SELECT `ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`, `term_ID` FROM `term_dates` WHERE `ID`='".$term_date_ID."'");
+			$term_date_query = $db_connection->query("SELECT `ID`, `datetime`, `datetime_end`, `is_featured`, `deleted`, `term_ID`, `setup_group` FROM `term_dates` WHERE `ID`='".$term_date_ID."'");
 
 			if ($term_date_query)
 			{
@@ -29,6 +29,7 @@
 				$JSON_response->is_featured  = $term_date["is_featured"];
 				$JSON_response->deleted      = $term_date["deleted"];
 				$JSON_response->term_id      = $term_date["term_ID"];
+				$JSON_response->setup_group  = $term_date["setup_group"];
 			}
 			else
 			{

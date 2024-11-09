@@ -54,8 +54,6 @@ This project was created for three main reasons:
 2. An excuse to use Tabler.io's amazing admin interface.
 3. An opportunity to learn about the ingredients of a modern web application.
 
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
-
 ### Built With
 
 These are the main pieces of software that this project uses.
@@ -99,23 +97,23 @@ cp test/sample_config.php config.php
 <?php
 
 $config = array(
-	"base_url"        => "http://localhost:8080/",
-	"home_url"        => "https://blakey.family",
+	"base_url"        => "https://attendance.pollererer.com/",
+	"home_url"        => "https://pollererer.com",
 	"db_host"         => "localhost",
 	"db_username"     => "mysql_user",
-	"db_password"     => "mysql_strong_password",
+	"db_password"     => "strong_password123456789",
 	"db_name"         => "mysql_database",
 	"repeat_headings" => true,
 	"software_name"   => "Pollererer Attendance",
-	"smtp_host"       => "",
-	"smtp_username"   => "",
-	"smtp_password"   => "",
-	"smtp_port"       => 0,
+	"smtp_host"       => "smtp.pollererer.com",
+	"smtp_username"   => "attendance@pollererer.com",
+	"smtp_password"   => "another_password123456789",
+	"smtp_port"       => 465,
 	"email_from"      => "attendance@pollererer.com",
-	"email_pdf"       => array(),
-	"admin_email"     => "spam@adamblakey.co.uk",
-	"logo_url"        => "https://attendance.nsw.org.uk/uploads/logo-horizontal.png",
-	"group_name"      => "Pollererer Test"
+	"email_pdf"       => array(1, 3),
+	"admin_email"     => "admin@pollererer.com",
+	"logo_url"        => "https://pollererer.com/uploads/logo.png",
+	"group_name"      => "The Musical Pollererers"
 );
 
 ?>
@@ -150,4 +148,4 @@ Project Link: [https://gitlab.com/adam.blakey/Pollererer](https://gitlab.com/ada
 [twitter-url]: https://twitter.com/amblakey
 [twitter-shield]: https://img.shields.io/twitter/follow/amblakey?style=flat-square
 
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: screenshot.png

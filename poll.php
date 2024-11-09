@@ -15,7 +15,7 @@
   $attendance_select_direction = isset($_GET["sortdir"])?$_GET["sortdir"]:"";
   $theme                       = isset($_GET["theme"])?$_GET["theme"]:"";
 
-  if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument")))
+  if (!in_array($attendance_select_sortby, array("first_name", "last_name", "datetime", "instrument", "setup_group")))
   {
     $attendance_select_sortby = "last_name";
   }
@@ -46,6 +46,31 @@
     $ensemble_ID = (isset($_GET["ensemble_ID"]))?intval($_GET["ensemble_ID"]):0;
     $term_ID     = (isset($_GET["term_ID"]))?intval($_GET["term_ID"]):0;
   }
+?>
+
+<?php
+    // Setup group colours.
+    function setup_group_colour($group_number)
+    {
+        switch($group_number)
+        {
+            case 1:
+                return "azure";
+                break;
+            case 2:
+                return "teal";
+                break;
+            case 3:
+                return "orange";
+                break;
+            case 4:
+                return "purple";
+                break;
+            default:
+                return "blue";
+            
+        }
+    }
 ?>
 
 <?php
@@ -116,7 +141,9 @@
             for (var i=0; i<updateAttendances.length; i++)
             {
               updateAttendances[i].classList.remove("disabled");
-            }        
+            }
+            document.getElementById('updateAttendanceOnScreen').style.visibility = "visible";
+            document.getElementById('updateAttendanceOnScreen').style.opacity    = 0.9;
           }
 
           function viewEditHistory(member_ID, ensemble_ID, term_ID)
@@ -364,8 +391,7 @@
           <div class="page-wrapper">
             <div class="page-body">
               <div class="container-xl">
-                <div class="row row-cards mb-3">              
-                  <!--<div class="col-12">-->
+                <!-- <div class="row row-cards mb-3">              
                   <div class="col-md-3 col-lg-3">
                     <div class="card mb-3 bg-blue text-white">
                       <div class="card-stamp">
@@ -409,7 +435,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-12">
                     <div class="card">
                       <div class="card-header">
@@ -446,11 +472,11 @@
                                   <?php
                                     if ($config["hide_instrument"])
                                     {
-                                      $options = array("first_name" => "First name", "last_name" => "Last name");
+                                      $options = array("first_name" => "First name", "last_name" => "Last name", "setup_group" => "Setup group");
                                     }
                                     else
                                     {
-                                      $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                      $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument", "setup_group" => "Setup group");
                                     }
 
                                     foreach ($options as $value => $option)
@@ -494,17 +520,25 @@
                         <?php
                           if ($config["hide_past_dates"])
                           {
-                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 AND `datetime_end` >= UNIX_TIMESTAMP() ORDER BY `datetime` ASC");
+                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured`, `setup_group` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 AND `datetime_end` >= UNIX_TIMESTAMP() ORDER BY `datetime` ASC");
                           }
                           else
                           {
-                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
+                            $term_dates_query = $db_connection->query("SELECT `datetime`, `datetime_end`, `ID`, `is_featured`, `setup_group` FROM term_dates WHERE `term_ID`='".$term_ID."' AND (`is_featured` >= 0 OR `is_featured`='-".$ensemble_ID."') AND `deleted`=0 ORDER BY `datetime` ASC");
                           }
 
                           $term_dates = array();
                           while ($result = $term_dates_query->fetch_array())
                           {
+                            // TODO: REMOVE ME
+                            // if ($ensemble_ID == 2 and $result[2] == 42)
+                            // {
+
+                            // }
+                            // else
+                            // {
                             $term_dates[] = $result;
+                            // }
                           }
 
                           $no_term_dates = count($term_dates);
@@ -522,7 +556,7 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
-                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
+                              $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID`, `setup_group` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
 
                               if ($members->num_rows == 0)
                               {
@@ -562,6 +596,9 @@
                                     case 'instrument':
                                       $current_sort_initial = $member["instrument"];
                                       break;
+                                    case 'setup_group':
+                                      $current_sort_initial = "Setup group ".$member["setup_group"];
+                                      break;
                                     
                                     default:
                                       $current_sort_initial = '';
@@ -576,7 +613,7 @@
                                       <thead>
                                         <tr>
                                           <?php 
-                                            $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument");
+                                            $options = array("first_name" => "First name", "last_name" => "Last name", "instrument" => "Instrument", "setup_group" => "Setup group");
                                           ?>
                                           <th class="sticky-top w-1">Members (by <?=$options[$attendance_select_sortby];?>)
                                             <?php
@@ -618,6 +655,15 @@
                                                 <?=$strike_through_start;?>
                                                 <?=$start->format('M');?><br /><span style="line-height: 30px; font-size: 32px; margin:none;"><?=$start->format('j');?></span><br /><?=$start->format('D');?><br /><?=$start->format('H:i');?><br /><?=$end->format('H:i');?><!--<br /><span style="word-wrap: normal; white-space: pre-wrap">(<?=$term_date[4];?>)</span>-->
                                                 <?=$strike_through_end;?>
+                                                <br />
+                                                <?php
+                                                  if ($term_date[4]>0)
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-<?= setup_group_colour($term_date[4]); ?> badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".$term_date[4]."."; ?>"><?= $term_date[4]; ?></span>
+                                                    <?php
+                                                  }
+                                                ?>
                                               </th>
                                               <?php
                                             }
@@ -644,11 +690,21 @@
                                         <div class="d-flex py-1 align-items-center">
                                           <span class="avatar me-2"><?=substr($member["first_name"], 0, 1).substr($member["last_name"], 0, 1);?></span>
                                           <div class="flex-fill">
-                                            <?php if ($config["hide_instrument"]) { ?>
-                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?></div>
-                                            <?php } else { ?>
-                                              <div class="font-weight-medium"><?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span></div>
-                                            <?php } ?>
+                                            <div class="font-weight-medium">
+                                              <?php if ($config["hide_instrument"]) { ?>
+                                                <?=$member["first_name"]." ".$member["last_name"];?>
+                                              <?php } else { ?>
+                                                <?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span>
+                                              <?php } ?>
+                                              <?php
+                                                if ($member["setup_group"]>0)
+                                                {
+                                                  ?>
+                                                    <span class="badge bg-<?= setup_group_colour($member["setup_group"]); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".$member["setup_group"]."."; ?>"><?= $member["setup_group"]; ?></span>
+                                                  <?php
+                                                }
+                                              ?>
+                                            </div>
                                             <a class="text-muted" style="cursor: pointer;" onclick="viewEditHistory(<?=$member["ID"];?>, <?=$ensemble_ID;?>, <?=$term_ID;?>)" data-bs-toggle="modal" data-bs-target="#edit-history">
                                               <!-- Download SVG icon from http://tabler-icons.io/i/pencil -->
                                               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" /><line x1="13.5" y1="6.5" x2="17.5" y2="10.5" /></svg>
@@ -689,20 +745,35 @@
                                           // }
 
                                           //($attendance==NULL)?$attendance="1":$attendance=$attendance;
-                                          ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
-                                          ($attendance=="1")?$checked="checked":$checked="";
+                                          
+                                          if ($config["assume_attending"])
+                                          {
+                                            $indeterminate = "";
+                                            (($attendance=="1") || ($attendance==NULL))?$checked="checked":$checked="";
+
+                                            if (($attendance=="1") || ($attendance==NULL))
+                                            {
+                                              $term_date_counter[strval($term_date[2])]++;
+                                            }
+                                          }
+                                          else
+                                          {
+                                            ($attendance==NULL)?$indeterminate="indeterminate":$indeterminate="";
+                                            ($attendance=="1")?$checked="checked":$checked="";
+
+                                            if ($attendance=="1")
+                                            {
+                                              $term_date_counter[strval($term_date[2])]++;
+                                            }
+                                            elseif ($attendance == NULL)
+                                            {
+                                              $term_date_counter_intederminate[strval($term_date[2])]++; 
+                                            }
+                                          }
+
                                           ($term_date[1]<time())?$disabled="disabled":$disabled="";
                                           ($term_date[3])?$is_featured="bg-blue-25":$is_featured="";
-
-                                          if ($attendance=="1")
-                                          {
-                                            $term_date_counter[strval($term_date[2])]++;
-                                          }
-                                          elseif ($attendance == NULL)
-                                          {
-                                            $term_date_counter_intederminate[strval($term_date[2])]++; 
-                                          }
-
+                                          
                                           ?>
                                             <td class="text-center <?=$is_featured;?>">
                                               <div class="col-auto">
@@ -710,6 +781,20 @@
                                                   <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
                                                   <span class="form-colorcheckbox-color "></span>
                                                 </label>
+                                                <?php
+                                                  if ($term_date[4] > 0 && $member["setup_group"] == $term_date[4])
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-<?= setup_group_colour($member["setup_group"]) ;?>" style="z-index:1000; position: relative; right: 2px; bottom: 24px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000;"></span>
+                                                    <?php
+                                                  }
+                                                  else
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-blue" style="visibility: hidden;"></span>
+                                                    <?php
+                                                  }
+                                                ?>
                                               </div>
                                             </td>
                                           <?php
@@ -728,9 +813,18 @@
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
-                                    ?>
-                                      <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
-                                    <?php
+                                    if ($config["assume_attending"])
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong></td>
+                                      <?php
+                                    }
+                                    else
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
+                                      <?php
+                                    }
                                   }
                                 ?>
                               </tr>
@@ -739,9 +833,18 @@
                                 <?php
                                   foreach($term_dates as $term_date)
                                   {
-                                    ?>
-                                      <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
-                                    <?php
+                                    if ($config["assume_attending"])
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong></td>
+                                      <?php
+                                    }
+                                    else
+                                    {
+                                      ?>
+                                        <td class="text-center"><strong><?=isset($term_date_counter[$term_date[2]])?$term_date_counter[$term_date[2]]:"0";?></strong> (<?=isset($term_date_counter_intederminate[$term_date[2]])?$term_date_counter_intederminate[$term_date[2]]:"0";?>)</td>
+                                      <?php
+                                    }
                                   }
                                 ?>
                               </tr>
@@ -919,6 +1022,25 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="updateAttendanceOnScreen">
+          <div class="card mb-3 bg-blue text-white">
+            <div class="card-stamp">
+              <div class="card-stamp-icon bg-white text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+              </div>
+            </div>
+            <div class="card-header">
+              <h3 class="card-title">Don't forget to update!</h3>
+            </div>
+            <div class="card-body border-bottom py-3">
+              <p>
+                <a class="updateAttendance btn btn-white text-primary ms-auto disabled my-2" onclick="updateAttendance()" data-bs-toggle="modal" data-bs-target="#update-attendance-result">Update</a>
+                <a class="btn text-muted my-2" onclick="location.reload()">Reset</a>
+              </p>
             </div>
           </div>
         </div>
