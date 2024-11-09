@@ -78,7 +78,8 @@ function output_restricted_page()
           <?php
             if (login_valid())
             {
-              $login_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `members`.`first_name`, `members`.`last_name`, `image` FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
+              // TODO: Note this pulls through the first ensemble the user is a member of.
+              $login_query = $db_connection->query("SELECT `members`.`ID` AS `member_ID`, `members`.`first_name`, `members`.`last_name`, `members`.`image`, `ensembles`.`name` AS 'ensemble_name' FROM `members` LEFT JOIN `logins_sessions` ON `members`.`ID`=`logins_sessions`.`member_ID` LEFT JOIN `members-ensembles` ON `members`.`ID`=`members-ensembles`.`member_ID` LEFT JOIN `ensembles` ON `members-ensembles`.`ensemble_ID`=`ensembles`.`ID` WHERE `logins_sessions`.`ID`='".$_COOKIE["session_ID"]."' LIMIT 1");
 
               if ($login_query->num_rows == 1)
               {
@@ -120,7 +121,7 @@ function output_restricted_page()
                           ?>
                           <h3 class="m-0 mb-1"><?=$login_row["first_name"]." ".$login_row["last_name"];?></h3>
                           <div class="mt-3">
-                            <span class="badge bg-blue-lt">Ensemble</span> <!-- <== Need to change this at some point to something like "administrator", etc. -->
+                            <span class="badge bg-blue-lt"><?=$login_row["ensemble_name"];?></span>
                           </div>
                         </div>
                         <div class="d-flex">
