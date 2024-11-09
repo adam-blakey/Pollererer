@@ -555,13 +555,8 @@ while ($rehearsal = $upcoming_rehearsals->fetch_assoc()) {
 			$message .= '<td class="py-xl" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 48px; padding-bottom: 48px;">';
 			$message .= '<table class="font-sm text-center text-muted" cellspacing="0" cellpadding="0" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; border-collapse: collapse; width: 100%; color: #9eb0b7; text-align: center; font-size: 13px;">';
 			$message .= '<tr>';
-			$message .= '<td class="px-lg" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-right: 24px; padding-left: 24px;">';
-			$message .= 'If you have any questions, feel free to message us at <a href="mailto:' . $config["admin_email"] . '" class="text-muted" style="color: #9eb0b7; text-decoration: none;">' . $config["admin_email"] . '</a>.';
-			$message .= '</td>';
-			$message .= '</tr>';
-			$message .= '<tr>';
 			$message .= '<td class="pt-md" style="font-family: Open Sans,-apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; padding-top: 16px;">';
-			$message .= 'You are receiving this email because you are an administrator of Pollererer. <a href="' . $config["base_url"] . '/emails" class="text-muted" style="color: #9eb0b7; text-decoration: none;">Unsubscribe (NOT YET IMPLMENTED)</a>';
+			$message .= 'You are receiving this email because you are an administrator of Pollererer. Unsubscribe by emailing '.$config["admin_email"].'.';
 			$message .= '</td>';
 			$message .= '</tr>';
 			$message .= '</table>';
