@@ -556,6 +556,13 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
+                              $setup_group_counts_query = $db_connection->query("SELECT `setup_group`, COUNT(`setup_group`) AS `count` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' GROUP BY `setup_group` ORDER BY `setup_group` ASC");
+                              $setup_group_counts = array();
+                              while ($result = $setup_group_counts_query->fetch_array())
+                              {
+                                $setup_group_counts[$result[0]] = $result[1];
+                              }
+
                               $members = $db_connection->query("SELECT `first_name`, `last_name`, `instrument`, `members`.`ID` AS `ID`, `setup_group` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' ORDER BY `".$attendance_select_sortby."` ".$attendance_select_direction);
 
                               if ($members->num_rows == 0)
@@ -597,7 +604,8 @@
                                       $current_sort_initial = $member["instrument"];
                                       break;
                                     case 'setup_group':
-                                      $current_sort_initial = "Setup group ".$member["setup_group"];
+                                      $people_plural = ($setup_group_counts[$member["setup_group"]] > 1)?"people":"person";
+                                      $current_sort_initial = "Setup group ".$member["setup_group"]. " (".$setup_group_counts[$member["setup_group"]]." ".$people_plural.")";
                                       break;
                                     
                                     default:
