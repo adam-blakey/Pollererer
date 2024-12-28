@@ -1031,7 +1031,7 @@ function output_term_dates($term_id, $max_height = 30)
                     <input type="time" name="end-time" id="end-time-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$end_time;?>" onchange="changedField(this, '<?=$id;?>', 'end-time')">
                   </td>
                   <td class="col-auto sort-setup-group" data-setup-group="<?= $data_setup_group; ?>">
-                    <input type="number" name="setup-group" id="setup-group-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$setup_group;?>" onchange="changedField(this, '<?=$id;?>', 'setup-group')">
+                    <input type="text" name="setup-group" id="setup-group-<?=$id;?>" class="form-control" autocomplete="off" value="<?=$setup_group;?>" onchange="changedField(this, '<?=$id;?>', 'setup-group')">
                   </td>
                   <td class="col-auto sort-featured" data-featured="<?=$featured;?>">
                     <select name="featured" id="featured-<?=$id;?>" class="form-select" onchange="changedField(this, '<?=$id;?>', 'featured')" style="width: 100px;">
