@@ -556,7 +556,7 @@
                               </div>
                               <tbody id="move-to-top-location">
                               <?php
-                              $setup_group_counts_query = $db_connection->query("SELECT `setup_group`, COUNT(`setup_group`) AS `count` FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' GROUP BY `setup_group` ORDER BY `setup_group` ASC");
+                              $setup_group_counts_query = $db_connection->query("SELECT LEFT(`setup_group`, 1), COUNT(LEFT(`setup_group`, 1)) FROM `members` LEFT JOIN `members-ensembles` ON `members-ensembles`.`member_ID`=`members`.`ID` WHERE `members-ensembles`.`ensemble_ID`=".$ensemble_ID." AND `members`.`deleted`='0' GROUP BY LEFT(`setup_group`, 1) ORDER BY LEFT(`setup_group`, 1) ASC");
                               $setup_group_counts = array();
                               while ($result = $setup_group_counts_query->fetch_array())
                               {
@@ -604,8 +604,8 @@
                                       $current_sort_initial = $member["instrument"];
                                       break;
                                     case 'setup_group':
-                                      $people_plural = ($setup_group_counts[$member["setup_group"]] > 1)?"people":"person";
-                                      $current_sort_initial = "Setup group ".$member["setup_group"]. " (".$setup_group_counts[$member["setup_group"]]." ".$people_plural.")";
+                                      $people_plural = ($setup_group_counts[substr($member["setup_group"], 0, 1)] > 1)?"people":"person";
+                                      $current_sort_initial = "Setup group ".substr($member["setup_group"], 0, 1). " (".$setup_group_counts[substr($member["setup_group"], 0, 1)]." ".$people_plural.")";
                                       break;
                                     
                                     default:
@@ -665,11 +665,21 @@
                                                 <?=$strike_through_end;?>
                                                 <br />
                                                 <?php
-                                                  if ($term_date[4]>0)
+                                                  if (substr($term_date[4], 0, 1)>0)
                                                   {
-                                                    ?>
-                                                      <span class="badge bg-<?= setup_group_colour($term_date[4]); ?> badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".$term_date[4]."."; ?>"><?= $term_date[4]; ?></span>
-                                                    <?php
+                                                    // Van driver weeks.
+                                                    if (strlen($term_date[4]) > 1)
+                                                    {
+                                                      ?>
+                                                        <span class="badge bg-<?= setup_group_colour(substr($term_date[4], 0, 1)); ?> badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".substr($term_date[4], 0, 1).", week ".substr($term_date[4], 2, 1)."."; ?>"><?= substr($term_date[4], 0, 3); ?></span>
+                                                      <?php
+                                                    }
+                                                    else
+                                                    {
+                                                      ?>
+                                                        <span class="badge bg-<?= setup_group_colour(substr($term_date[4], 0, 1)); ?> badge-notification badge-pill" title="<?= $start->format('M')." ".$start->format('j')." is setup group ".substr($term_date[4], 0, 1)."."; ?>"><?= substr($term_date[4], 0, 1); ?></span>
+                                                      <?php
+                                                    }
                                                   }
                                                 ?>
                                               </th>
@@ -705,11 +715,21 @@
                                                 <?=$member["first_name"]." ".$member["last_name"];?> <span class="">(<?=$member["instrument"];?>)</span>
                                               <?php } ?>
                                               <?php
-                                                if ($member["setup_group"]>0)
+                                                if (substr($member["setup_group"], 0, 1)>0)
                                                 {
-                                                  ?>
-                                                    <span class="badge bg-<?= setup_group_colour($member["setup_group"]); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".$member["setup_group"]."."; ?>"><?= $member["setup_group"]; ?></span>
-                                                  <?php
+                                                  // This means that this person is a van driver.
+                                                  if (strlen($member["setup_group"])>1)
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".substr($member["setup_group"], 0, 1)." and drives the van on week ".substr($member["setup_group"], 2, 1)."."; ?>"><?= substr($member["setup_group"], 0, 3); ?></span>
+                                                    <?php
+                                                  }
+                                                  else
+                                                  {
+                                                    ?>
+                                                      <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".substr($member["setup_group"], 0, 1)."."; ?>"><?= substr($member["setup_group"], 0, 1); ?></span>
+                                                    <?php
+                                                  }
                                                 }
                                               ?>
                                             </div>
@@ -784,17 +804,29 @@
                                           
                                           ?>
                                             <td class="text-center <?=$is_featured;?>">
-                                              <div class="col-auto">
+                                              <div class="col-1">
                                                 <label class="form-colorcheckbox bigger" style="margin: 0px;">
                                                   <input name="attendance-ensemble<?=$ensemble_ID;?>-user<?=$member["ID"];?>-termdate<?=$term_date[2];?>" form="update_attendance" type="checkbox" value="lime" class="form-colorcheckbox-input <?=$indeterminate;?>" <?=$checked;?> <?=$disabled;?> onchange="updateTotalChanged(this)" />
                                                   <span class="form-colorcheckbox-color "></span>
                                                 </label>
                                                 <?php
-                                                  if ($term_date[4] > 0 && $member["setup_group"] == $term_date[4])
+                                                  if (substr($term_date[4], 0, 1) > 0 && substr($member["setup_group"], 0, 1) == substr($term_date[4], 0, 1))
                                                   {
-                                                    ?>
-                                                      <span class="badge bg-<?= setup_group_colour($member["setup_group"]) ;?>" style="z-index:1000; position: relative; right: 2px; bottom: 24px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000;"></span>
-                                                    <?php
+                                                    // This is a van driver week.
+                                                    if (in_array($term_date[4], explode(",", $member["setup_group"])))
+                                                    {
+                                                      ?>
+                                                        <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)) ;?>" style="z-index:1000; position: relative; right: 14px; bottom: 18px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000; padding:0px 1px;">
+                                                          <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-truck"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M5 17h-2v-11a1 1 0 0 1 1 -1h9v12m-4 0h6m4 0h2v-6h-8m0 -5h5l3 5" /></svg>
+                                                        </span>
+                                                      <?php
+                                                    }
+                                                    else
+                                                    {
+                                                      ?>
+                                                        <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)) ;?>" style="z-index:1000; position: relative; right: 2px; bottom: 24px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000;"></span>
+                                                      <?php
+                                                    }
                                                   }
                                                   else
                                                   {
