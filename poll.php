@@ -721,7 +721,7 @@
                                                   if (strlen($member["setup_group"])>1)
                                                   {
                                                     ?>
-                                                      <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".substr($member["setup_group"], 0, 1)." and drives the van on week ".substr($member["setup_group"], 2, 1)."."; ?>"><?= substr($member["setup_group"], 0, 3); ?></span>
+                                                      <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)); ?> badge-notification badge-pill" title="<?= $member["first_name"]." is part of setup group ".substr($member["setup_group"], 0, 1)."."; ?>"><?= $member["setup_group"]; ?></span>
                                                     <?php
                                                   }
                                                   else
@@ -813,7 +813,7 @@
                                                   if (substr($term_date[4], 0, 1) > 0 && substr($member["setup_group"], 0, 1) == substr($term_date[4], 0, 1))
                                                   {
                                                     // This is a van driver week.
-                                                    if (in_array($term_date[4], explode(",", $member["setup_group"])))
+                                                    if (strlen($term_date[4]) > 1 && in_array($term_date[4], explode(",", $member["setup_group"])))
                                                     {
                                                       ?>
                                                         <span class="badge bg-<?= setup_group_colour(substr($member["setup_group"], 0, 1)) ;?>" style="z-index:1000; position: relative; right: 14px; bottom: 18px; border-color: #ffffff; box-shadow: 0px 0px 3px #000000; padding:0px 1px;">
