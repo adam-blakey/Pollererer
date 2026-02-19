@@ -665,7 +665,8 @@
                                                 <?=$strike_through_end;?>
                                                 <br />
                                                 <?php
-                                                  if (substr($term_date[4], 0, 1)>0)
+                                                  // Don't show setup group badge if this is a featured date
+                                                  if (!$term_date[3] && substr($term_date[4], 0, 1)>0)
                                                   {
                                                     // Van driver weeks.
                                                     if (strlen($term_date[4]) > 1)
